@@ -1,0 +1,4 @@
+interface:
+  display_name: "腾讯文档 Opendoc"
+  short_description: "安全读取和搜索腾讯文档 opendoc 表格数据。"
+  default_prompt: "读取这个腾讯文档 opendoc URL，并提取可见表格行。"

@@ -1,0 +1,4 @@
+interface:
+  display_name: "聊天 Agent 机器人架构"
+  short_description: "设计聊天软件接入、路由、会话、心跳和状态计数架构"
+  default_prompt: "帮我设计一个聊天机器人到 Codex/Agent 的架构，包括消息接入、路由、会话管理、agent 启动/引导、心跳和状态计数。"

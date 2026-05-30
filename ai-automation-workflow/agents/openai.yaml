@@ -1,0 +1,4 @@
+interface:
+  display_name: "AI自动化工作流"
+  short_description: "腾讯文档任务拉取、多Agent分析与方案回填自动化流程"
+  default_prompt: "从腾讯文档拉取待处理任务，整理本地方案文档，组织子agent分析，并回填修正方案。"

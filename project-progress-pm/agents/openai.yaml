@@ -1,0 +1,4 @@
+interface:
+  display_name: "项目进度 PM"
+  short_description: "巡检项目进度表并生成催办话术。"
+  default_prompt: "根据这个腾讯文档链接巡检项目进度，列出需要跟进的人、事项、风险和催办话术。"

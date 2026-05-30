@@ -1,0 +1,361 @@
+---
+name: chat-agent-bot-architecture
+description: 设计和实现聊天软件机器人到 Codex/Agent 的通用架构。Use when Codex needs to build or review a QQ/NapCat, WeChat, Feishu/Lark, Discord, Slack, Telegram, or internal IM bot that receives chat messages, persists history, routes mentions/private/reply events into agent sessions, manages conversation threads, starts or steers agents, designs heartbeat schedules, maintains counters/caches/state files, or turns a project PM bot into a reusable robot pattern.
+---
+
+# Chat Agent Bot Architecture
+
+## 核心目标
+
+把聊天软件机器人做成“可持续工作的项目成员”，而不是只会转发消息的 webhook。
+
+一个成熟机器人至少包含六层：
+
+1. 接入层：连接聊天软件，接收消息，发送消息。
+2. 事件层：规范化事件，落盘历史，保留原始 payload。
+3. 路由层：判断哪些消息要触发 agent，哪些只记录。
+4. 会话层：把事件投递到固定 agent 会话，避免重复开线程。
+5. 心跳层：无消息时也主动巡检缓存、排期、待办和外部系统。
+6. 状态层：维护计数、游标、缓存、活跃任务、归档和幂等。
+
+## 总体架构
+
+```text
+Chat Platform
+  -> Adapter / Gateway
+  -> Raw Event Log
+  -> Normalized Message Store
+  -> Router
+  -> Agent Session Manager
+  -> Codex / Agent Runtime
+  -> Action Queue / Drafts
+  -> Human Approval
+  -> Chat Platform / External Systems
+```
+
+关键原则：
+
+- 接收和发送分离。接收消息可以自动，发送外部消息默认要用户授权。
+- 消息路由和 agent 执行分离。路由只决定“是否提醒/启动/引导”，agent 决定“怎么处理”。
+- 实时消息和心跳巡检分离。实时消息负责响应上下文变化，心跳负责主动推进。
+- 只要涉及外部系统写入或群发，都要有 dry-run / 待审草稿，除非用户明确授权自动执行。
+
+## 机器人姿态
+
+机器人要把维护自身工作记忆当成自己的职责，不能把问题甩给用户。
+
+必须避免的表达：
+
+- “为什么你老是不停改这个文件？”
+- “这个应该写到腾讯文档吧，你自己去改。”
+- “这里面的内容是不是要移除？”
+- “本地只应该放永久记录，所以我不处理。”
+- “都写到腾讯文档去。”
+- “本地只保留长期规则，其他全删。”
+
+正确行为：
+
+- 主动判断信息分层：外部事实源、项目状态、机器人工作缓存、临时运行日志、归档记录。
+- 需要写腾讯文档时，直接形成写回 dry-run；如果已获授权，就写入并回读核验。
+- 需要清理本地缓存时，给出具体 diff 或直接清理可安全清理的临时项。
+- 需要保留本地长期记忆时，说明它用于恢复上下文、定位 message_id、避免重复催办或恢复等待链。
+- 如果边界不确定，提出一个具体整理方案，而不是质问用户为什么没有维护文件。
+- 不要一刀切迁移。先按信息类型决定去向，再执行或生成 dry-run。
+
+文件分层建议：
+
+- 外部真相源：腾讯文档、Issue、工单、数据库；保存所有工作内容、工作状态和项目协作事实，例如项目状态、负责人结论、验收/关闭口径、排期、待办、风险、下一步动作。
+- 本地永久记录：机器人后续工作必须长期依赖、但不适合写进外部真相源的运行记录，例如身份映射、message_id 索引、项目作息、用户偏好、thread id、路由游标、去重键、恢复线索。不要把工作状态长期放在本地。
+- 本地工作缓存可以存在，但必须永远保持为一段短摘要，而不是流水账或第二份项目表。摘要只回答：最新看到的消息是什么、当前还有什么待处理、下一步准备做什么、需要哪些 message_id/thread id 用于恢复。
+- 本地归档：已闭环事项的复盘信息和关键证据，不参与日常活跃队列。
+- 临时日志：raw event、debug log、下载缓存；可按 TTL 或大小清理。
+
+机器人看到缓存文件变大时，应先分类整理、归档、压缩或生成写回计划；不要把“该写哪里/该删哪里”的判断压力抛回给用户。
+
+分流规则：
+
+- 写外部真相源：所有工作内容和工作状态，包括工作项状态、负责人结论、验收结论、关闭原因、排期承诺、待办、风险、下一步动作、需要团队共享或影响项目推进的事实。
+- 留本地永久记录：机器人运行所需、且不适合进入外部真相源的技术状态和恢复线索，包括群号/用户映射、称呼、项目作息、用户偏好、message_id 索引、thread id、路由计数、游标、去重键、最近跟进点对应的索引。
+- 留本地工作缓存：只能是一段话摘要，不能追加成列表流水。每次心跳或消息处理后都覆盖更新这一段话，保持“最新消息 + 当前待处理 + 下一步 + 必要恢复索引”。
+- 归档到本地：已闭环事项的复盘、关键消息证据、写回记录、误判修正规则。
+- 清理或压缩：重复流水、过期统计快照、已写入外部真相源且不再需要逐条恢复的中间过程。
+
+当用户指出“文件混乱/一直被改”时，机器人应该输出类似下面的整理计划：
+
+```text
+我会按四类处理：
+1. 所有工作内容和项目事实，整理为腾讯文档待写 dry-run。
+2. 机器人恢复上下文必须用的 message_id、称呼、thread id、路由游标和去重键，保留在本地永久记录。
+3. 已闭环流水，移到本地归档。
+4. 本地工作缓存覆盖成一段话摘要；重复统计和过期过程记录清理或压缩。
+```
+
+不要把机器人内部技术状态写进腾讯文档，例如内部游标、message_id、路由状态、agent thread id、调试日志和恢复线索。但凡属于工作内容、工作状态、项目事实、排期、待办、风险、负责人结论、下一步动作或验收口径，都应进入腾讯文档或形成待写 dry-run。本地只放机器人后续工作需要永久依赖的运行记录；若需要“工作缓存”，只保留一段持续覆盖更新的摘要。
+
+本地工作缓存推荐格式：
+
+```text
+最新消息：<时间/发送者/message_id/一句话概括>。待处理：<当前仍需推进的 1-3 件事或“无”>。下一步：<下个心跳/工作窗口要做什么>。恢复索引：<必要 message_id/thread id/外部行定位>。
+```
+
+这段缓存要覆盖更新，不要追加历史；历史应在聊天日志、外部真相源或归档里。
+
+## 聊天软件接入
+
+每个平台都抽象成同一组能力：
+
+- `receive`: 收到群聊、私聊、回复、引用、图片、文件、撤回、自己发送消息。
+- `send`: 发送群聊、私聊、回复、引用、图片、文件。
+- `history`: 拉历史消息，补齐监听断档。
+- `identity`: 识别机器人自己、群号、用户号、昵称、群名。
+- `health`: 检查连接状态、登录状态、心跳和限流。
+
+适配器落地要求：
+
+- 保留原始事件：`raw-events.jsonl`，便于以后修路由 bug。
+- 写规范化记录：例如 `group-messages.jsonl`、`private-messages.jsonl`。
+- 每条记录至少包含：`time`、`platform`、`chatType`、`chatId`、`senderId`、`senderName`、`messageId`、`rawText`、`segments`、`replyToMessageId`、`isSelf`、`rawEventPath`。
+- 图片/文件不要只存 `[图片]`，要保存可追溯的 file id、URL、缓存路径或拉取方式。
+- 发送消息走单独 action API，不要让 agent 随手从接收 handler 里直接发。
+
+## 消息路由
+
+路由不是简单的 `text.includes("@bot")`。至少支持：
+
+- 私聊：默认触发 agent。
+- 群显式 at：结构化 at segment、CQ at、平台 mention 对象。
+- 回复/引用机器人：reply segment 指向机器人消息，或文本里带机器人昵称/QQ/ID。
+- 关键词命令：例如 `/ping`、`/查`、`/总结`。
+- 自身消息：默认记录，只有需要“机器人自己发的消息也进入上下文”时才触发。
+- 普通群消息：默认只记录，不触发，避免刷屏。
+
+路由输出建议是结构化对象：
+
+```ts
+type RouteDecision = {
+  action: "ignore" | "record" | "notify" | "startAgent" | "steerAgent";
+  reason: string;
+  priority: "low" | "normal" | "high" | "urgent";
+  targetThreadKey: string;
+  relatedMessageIds: string[];
+  shouldDraftReply: boolean;
+};
+```
+
+不要把路由理由写死在 UI 文案里。保存 `reason`，后续 debug 时能知道为什么触发。
+
+## 会话管理
+
+每类机器人要有固定会话，而不是每条消息创建一个新会话。
+
+推荐状态文件：
+
+```json
+{
+  "threads": {
+    "qq-pm-monitor": {
+      "threadId": "019e...",
+      "name": "QQ 消息监听",
+      "lastStartedAt": "2026-05-30T12:00:00+08:00",
+      "active": false,
+      "lastEventId": "platform-message-id",
+      "notificationCount": 42
+    }
+  }
+}
+```
+
+会话路由规则：
+
+- 固定 thread name，例如 `QQ 消息监听`；不要把时间和消息序号拼进会话名。
+- 如果目标 thread 空闲，启动一个新 agent turn。
+- 如果目标 thread 已有 agent 正在运行，把新消息作为“引导/steer”追加到当前 turn。
+- 如果启动失败，记录失败事件和错误，不要丢消息。
+- 如果 thread id 失效，清理旧 id，重建固定名称会话，并记录一次迁移。
+
+Codex Desktop IPC 经验：
+
+- Windows Desktop 可用 `\\.\pipe\codex-ipc`，协议是 4 字节 little-endian 长度 + UTF-8 JSON frame。
+- 先发 `initialize`，并对 `client-discovery-request` 回复 `canHandle:false`。
+- 空闲时用 `thread-follower-start-turn`。
+- 运行中用 `thread-follower-steer-turn`，这是 UI 里的“引导 / Ctrl+Enter”的程序化等价。
+- 监听 `thread-stream-state-changed` 来维护 active/idle 状态。
+- 不要用外部 `codex app-server --listen` 冒充 Desktop 当前窗口；那可能写入同一套文件，但 UI 不一定订阅它。
+
+## 启动 Agent
+
+启动 agent 的输入要告诉它三件事：
+
+1. 这是哪个机器人/平台来的提醒。
+2. 应该读取哪些本地日志和缓存。
+3. 允许做什么，不允许做什么。
+
+模板：
+
+```text
+这是来自 <平台>/<机器人> 的实时消息提醒。
+请读取 <data-dir> 下相关 JSONL 的最新记录，结合项目缓存理解上下文。
+本轮目标：判断是否需要推进事项、整理待办、生成待审话术或 dry-run。
+不要自动发送外部消息，不要写外部系统，除非用户在当前 Codex 会话中明确授权。
+```
+
+运行中 steer 的输入要更短：
+
+```text
+这是运行中的 <平台>/<机器人> 补充消息。
+请把它作为当前任务的新上下文继续处理，不要另开思路。
+```
+
+避免的输入：
+
+- “收到请回复一句 OK”：会让 agent 看起来启动了但没有做事。
+- 只贴原始消息不告诉它读哪里：agent 容易漏上下文。
+- 让 agent 自动回复群：容易误发、刷屏或越权。
+
+## 心跳设计
+
+心跳不是“定时看看有没有新消息”。它负责无消息时的主动推进。
+
+心跳优先级：
+
+1. 读机器人项目上下文和活跃缓存。
+2. 读消息日志，补齐新消息、回复链和未处理事件。
+3. 读外部事实源，例如腾讯文档、Issue、工单、数据库、项目排期。
+4. 维护队列：闭环归档、活跃项更新、等待链更新、下一步动作。
+5. 生成内部产物：排期小清单、负责人清单、待写 dry-run、待审回复。
+6. 到达合适沟通窗口时，才建议对外发消息。
+
+频率设计：
+
+- 实时事件：消息到达即触发路由。
+- 上班时间：高频心跳，例如 15 分钟，用来推进和响应。
+- 下班/周末：低频心跳，例如 1 小时，用来内部整理，不主动打扰人。
+- 紧急事件：单独高优先级，不依赖普通心跳。
+
+创建心跳 agent / automation 时，默认使用最新可用模型，并且推理强度用 `high`。心跳负责读缓存、读外部事实源、核状态、拆排期和形成下一步动作，不是简单 echo；不要默认用旧模型、`minimal` 或 `low`。如果某个平台的 heartbeat API 不暴露 model / reasoning effort，就在 prompt 里明确要求“使用当前默认最新模型能力、深入巡检/主动推进/不得只看最新消息”；cron 类 automation 应显式配置最新模型和 `reasoningEffort: "high"`。
+
+心跳输出必须至少有一类具体产物：
+
+- 缓存更新建议。
+- 外部系统写回 dry-run。
+- 下一批 1-3 个可推进事项。
+- 待审群/私聊话术。
+- 下一轮观察点和等待对象。
+
+如果只输出“没有新消息，无需处理”，说明心跳提示词不合格。
+
+## 计数与状态架构
+
+计数分三类，不要混在一个 `count` 里：
+
+- 接收计数：收到多少原始事件、群消息、私聊、图片、文件、自身消息。
+- 路由计数：触发了多少 notify/start/steer，忽略了多少普通消息，失败了多少。
+- 业务计数：未闭环事项、待验收、待确认、待排期、等待回复、已归档。
+
+推荐状态文件：
+
+```json
+{
+  "cursors": {
+    "group:474222421": {
+      "lastMessageId": "1784407816",
+      "lastSeenAt": "2026-05-30T12:00:00+08:00"
+    }
+  },
+  "counters": {
+    "rawEvents": 1200,
+    "groupMessages": 930,
+    "privateMessages": 18,
+    "routedNotifications": 42,
+    "agentStarts": 12,
+    "agentSteers": 30,
+    "routeErrors": 0
+  },
+  "business": {
+    "activeItems": 17,
+    "waitingReplies": 5,
+    "pendingReview": 9,
+    "archivedItems": 31
+  }
+}
+```
+
+计数使用规则：
+
+- 更新计数要幂等。用 `messageId` / event id 去重，不要重启后重复计数。
+- `notificationCount` 只表示投递给 agent 的次数，不代表业务处理完成数。
+- 业务计数从缓存或事实源重算，不要长期相信旧快照。
+- 每次心跳报告里只展示与决策相关的计数，不要用大而空的总数淹没行动建议。
+
+## 缓存与归档
+
+机器人必须有项目级缓存，不要完全依赖对话上下文。
+
+活跃缓存记录：
+
+- 稳定事项标题或摘要。
+- 关联外部行/issue/message id。
+- 当前状态、负责人、等待对象。
+- 最近一次提问时间和 message id。
+- 下一步动作。
+- 是否允许自动发送或写回。
+
+归档记录：
+
+- 最终结论。
+- 关键证据 message id。
+- 写回位置和值。
+- 关闭时间。
+
+原则：
+
+- 活跃缓存只放还需要继续看的事。
+- 已闭环移入归档，避免反复催。
+- Row number 只能当临时参考，继续处理前用内容/负责人/状态重新定位。
+- 上下文压缩或重启后，先读缓存和归档再行动。
+
+## 外部动作安全
+
+把外部动作做成两阶段：
+
+1. Draft：生成待审消息、待写表格、待调用 API。
+2. Commit：用户明确授权后执行。
+
+默认禁止：
+
+- 自动群发。
+- 自动私聊。
+- 自动写腾讯文档/Issue/数据库。
+- 自动改触发实现流程的状态列。
+
+可以自动做：
+
+- 记录消息。
+- 更新本地缓存。
+- 生成 dry-run。
+- 启动/引导 Codex 内部 agent。
+- 健康检查和读取公开/已授权数据。
+
+## 最小实现清单
+
+新做一个聊天 agent bot 时，至少交付：
+
+- 适配器：能接收消息、发送测试消息、拉历史。
+- 数据目录：`raw-events.jsonl`、规范化消息 JSONL、`state.json`、项目缓存。
+- 路由器：私聊、at、reply/quote、关键词、自身消息、普通消息。
+- 会话管理：固定 thread、active/idle、start/steer、失败重试。
+- 心跳：上班高频、下班低频、无消息主动推进。
+- 安全门：外部发送和写入默认 dry-run。
+- 验证：收一条私聊、群 at、群 reply、普通群消息、连续消息、agent 运行中 steer、重启恢复。
+
+## 常见失败模式
+
+- 只监听 at，漏掉 reply/quote 到机器人的消息。
+- 每条消息创建新会话，导致一堆并行 agent。
+- 运行中继续 start turn，而不是 steer，引发混乱或报错。
+- 心跳只看最新群消息，没消息就空跑。
+- 只做全表总数统计，不拆下一步可执行清单。
+- 非工作时间直接停工，而不是低频做内部整理。
+- 计数混乱，把收到消息数、投递 agent 数、业务闭环数混为一谈。
+- 手写 session 文件或连错 app-server，以为 UI 已接入。
+- PowerShell inline 中文导致 `??`，误判平台编码有问题。
