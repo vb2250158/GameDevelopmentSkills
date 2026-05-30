@@ -6,10 +6,10 @@
 
 | Skill | 用途 |
 | :--- | :--- |
-| `read-tencent-docs-opendoc` | 读取、搜索腾讯文档 opendoc 数据，并在明确授权时通过腾讯文档 MCP 修改在线表格。 |
-| `ai-automation-workflow` | 从腾讯文档任务清单拉取待处理项，整理本地任务包，分析方案，回填方案并推进已确认修复。 |
-| `chat-agent-bot-architecture` | 设计聊天软件机器人到 Codex/Agent 的通用架构，包括消息接入、路由、会话、心跳和状态管理。 |
-| `project-progress-pm` | 基于腾讯文档项目进度表做 PM 巡检、识别风险、生成催办话术和维护待写回结论。 |
+| [`read-tencent-docs-opendoc`](read-tencent-docs-opendoc/) | 读取、搜索腾讯文档 opendoc 数据，并在明确授权时通过腾讯文档 MCP 修改在线表格。 |
+| [`ai-automation-workflow`](ai-automation-workflow/) | 从腾讯文档任务清单拉取待处理项，整理本地任务包，分析方案，回填方案并推进已确认修复。 |
+| [`chat-agent-bot-architecture`](chat-agent-bot-architecture/) | 设计聊天软件机器人到 Codex/Agent 的通用架构，包括消息接入、路由、会话、心跳和状态管理。 |
+| [`project-progress-pm`](project-progress-pm/) | 基于腾讯文档项目进度表做 PM 巡检、识别风险、生成催办话术和维护待写回结论。 |
 
 ## 目录结构
 
