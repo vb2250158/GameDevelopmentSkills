@@ -2,6 +2,10 @@
 
 设计聊天软件机器人到 Codex/Agent 的通用架构，覆盖消息接入、事件规范化、路由、会话、心跳、状态和人工确认边界。
 
+成熟参考案例：[NapCatCodexGateway](https://github.com/vb2250158/NapCatCodexGateway)。
+
+这个案例已经落地了 QQ/NapCat 到 Codex Desktop 的完整链路：NapCat 反向 WebSocket 接收消息，本地 gateway 记录 JSONL 并路由直接 @、直接回复、间接回复，Codex Desktop IPC 负责固定线程 start/steer，NapCat 插件页面负责管理多个 gateway 和消息模板。
+
 ## 需要准备
 
 - 明确目标聊天平台，例如 QQ/NapCat、微信、飞书、Discord、Slack、Telegram 或内部 IM。
@@ -30,6 +34,18 @@ DRY_RUN=true
 - 会话层复用固定 thread，避免每条消息都开新会话。
 - 心跳层在没有新消息时也巡检待办、缓存和外部系统。
 - 状态层保存游标、计数、活跃任务、归档和幂等键。
+
+## QQ / NapCat 成熟路由
+
+QQ 群消息建议收敛为三类路由：
+
+- 直接 @：当前消息本身直接 @ 机器人，且不是回复消息。
+- 直接回复：当前消息直接回复机器人。QQ 回复常会自动带 @，所以要先判断回复，再判断普通 @。
+- 间接回复：当前消息回复了某个用户，而被回复的那条消息里曾经 @ 过机器人。
+
+发送给 Codex 的消息模板建议按路由拆成“直接 @ 模板、直接回复模板、间接回复模板、私聊模板”，并暴露 `{messageTarget}`、`{repliedMessageId}`、`{repliedMessage}` 等变量，方便 agent 还原目标和回复链。
+
+NapCat 插件侧建议按官方插件机制组织为 `package.json`、`index.mjs`、`webui/`，在 `plugin_init(ctx)` 中注册页面/API。插件负责管理配置和展示状态，实际 WebSocket 监听、Codex IPC、JSONL 落盘由本地 gateway 服务负责。
 
 ## 使用边界
 

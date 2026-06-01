@@ -40,6 +40,35 @@ Chat Platform
 - 实时消息和心跳巡检分离。实时消息负责响应上下文变化，心跳负责主动推进。
 - 只要涉及外部系统写入或群发，都要有 dry-run / 待审草稿，除非用户明确授权自动执行。
 
+## 成熟案例：NapCatCodexGateway
+
+成熟参考实现：[vb2250158/NapCatCodexGateway](https://github.com/vb2250158/NapCatCodexGateway)。
+
+这个案例已经验证了 QQ/NapCat 到 Codex Desktop 的完整链路：
+
+```text
+NapCat WebSocket 客户端
+  -> 本地 gateway 接收 OneBot 事件
+  -> JSONL 消息日志与 Codex 投递日志
+  -> 路由器判断直接 @ / 直接回复 / 间接回复
+  -> Codex Desktop IPC 固定线程 start / steer
+  -> NapCat 插件页面管理多 gateway、端口、模板和运行状态
+```
+
+可复用设计点：
+
+- 用本地 gateway manager 管理多个 gateway，而不是把所有配置塞进单进程命令行。
+- NapCat 插件只做管理界面和配置桥接；实际消息接收、Codex IPC、日志落盘由独立 gateway 服务负责。
+- NapCat 插件按官方机制提供 `package.json`、`index.mjs`、`webui/`，在 `plugin_init(ctx)` 中使用 `ctx.router` 注册页面和 API。
+- WebSocket Client 用于接收 QQ 事件；HTTP Server 用于主动发送 QQ 消息和调用 OneBot API。这两个配置要在 UI 里写清楚，最好从 NapCat OneBot 配置文件/API 中读取成下拉选项。
+- 发送给 Codex 的消息模板不要硬编码在 handler 里；按路由类型拆成可编辑模板，例如直接 @、直接回复、间接回复、私聊。
+- 模板变量要暴露消息目标和回复链，例如 `{messageTarget}`、`{targetType}`、`{targetId}`、`{repliedMessageId}`、`{repliedMessage}`。
+- 路由理由用于 debug 可以存在于内部结构，但不要强迫用户在模板里理解抽象字段；用户可见模板应直接写清楚触发说明。
+- Codex Desktop IPC 运行中追加消息时，如果 `steer` 返回 active turn 已结束，要自动切回 `start`，不要丢消息。
+- 管理页面显示“当前进程日志”，重启时清掉旧堆栈，避免旧错误误导用户判断当前状态。
+
+这个案例适合作为 QQ/NapCat 类项目的基线：先复用“NapCat 插件 + 本地 gateway manager + Codex IPC + JSONL 日志 + 模板化路由”结构，再按具体项目改业务模板、工作缓存和外部事实源。
+
 ## 机器人姿态
 
 机器人要把维护自身工作记忆当成自己的职责，不能把问题甩给用户。
@@ -118,16 +147,68 @@ Chat Platform
 - 图片/文件不要只存 `[图片]`，要保存可追溯的 file id、URL、缓存路径或拉取方式。
 - 发送消息走单独 action API，不要让 agent 随手从接收 handler 里直接发。
 
+### NapCat / OneBot 插件化落地
+
+当平台是 QQ/NapCat 时，优先使用“NapCat 插件管理界面 + 本地 gateway 服务”的拆分：
+
+- NapCat 网络配置：
+  - WebSocket 客户端：NapCat 主动连接本地 gateway，用于接收群聊、私聊、回复、图片等 OneBot 事件。
+  - HTTP 服务器：gateway 主动请求 NapCat，用于发送群聊/私聊和调用 OneBot API。
+- NapCat 插件：
+  - 按官方插件机制提供 `package.json`、`index.mjs`、`webui/`。
+  - `package.json` 的 `name` 应使用 `napcat-plugin-` 前缀，并提供 `plugin`、`version`、`main`、`description`、`author`、`napcat.tags`、`napcat.minVersion`、`napcat.homepage`。
+  - 在 `plugin_init(ctx)` 中注册页面、静态资源和 API；配置持久化使用 `ctx.configPath`；日志使用 `ctx.logger`。
+  - 插件可以读取 NapCat OneBot 配置，给 WebSocket 客户端和 HTTP 服务器做下拉选择，减少手填端口错误。
+- 本地 gateway：
+  - 负责监听 WebSocket、保存 JSONL、路由消息、投递 Codex、调用 NapCat HTTP API。
+  - 运行配置放在 `gateways.json` 或等价配置文件；真实配置、日志、token、数据目录不提交到仓库。
+  - 多 gateway 用 manager 管理 start/stop/restart/status，不要靠手工开多个终端。
+
 ## 消息路由
 
 路由不是简单的 `text.includes("@bot")`。至少支持：
 
 - 私聊：默认触发 agent。
 - 群显式 at：结构化 at segment、CQ at、平台 mention 对象。
-- 回复/引用机器人：reply segment 指向机器人消息，或文本里带机器人昵称/QQ/ID。
+- 直接回复机器人：当前消息是 reply/quote，且回复目标是机器人或当前回复消息自动带了机器人 at。
+- 间接回复机器人：当前消息回复了某个用户，而被回复的那条消息里曾经 at / mention 过机器人。
 - 关键词命令：例如 `/ping`、`/查`、`/总结`。
 - 自身消息：默认记录，只有需要“机器人自己发的消息也进入上下文”时才触发。
 - 普通群消息：默认只记录，不触发，避免刷屏。
+
+QQ/NapCat 群路由建议明确收敛成三类：
+
+```ts
+type GroupRouteKind = "direct_at" | "direct_reply" | "indirect_reply";
+```
+
+- `direct_at`：当前消息本身直接 @ 机器人，且不是回复消息。
+- `direct_reply`：当前消息直接回复机器人。注意 QQ 回复经常会自动带 `[CQ:at]`，所以要优先判断 reply，再判断普通 at，避免把直接回复误判成直接 @。
+- `indirect_reply`：当前消息回复了某个用户，而被回复的那条消息中曾经 @ 过机器人。实现上需要用 `replyToMessageId` 回查本地消息日志或平台历史。
+
+不要只看当前消息文本。成熟路由需要同时检查：
+
+- 结构化消息段，例如 `at`、`reply`、平台 mention 对象。
+- CQ 码文本，例如 `[CQ:at,qq=...]`、`[CQ:reply,id=...]`。
+- 被回复消息的原始内容和 message id。
+- 机器人自己的 QQ / ID / 昵称。
+
+发送给 agent 的模板建议按路由拆分，而不是在一个模板里塞复杂原因变量：
+
+- 直接 @ 模板。
+- 直接回复模板。
+- 间接回复模板。
+- 私聊模板。
+
+模板变量要覆盖消息目标和回复链，例如：
+
+```text
+{routeKind} {time} {targetType} {targetId} {messageTarget}
+{groupId} {userId} {selfId} {sender} {senderName}
+{message} {rawMessage} {messageId}
+{repliedMessageId} {repliedMessage}
+{botNickname} {dataDir} {groupLogPath} {privateLogPath}
+```
 
 路由输出建议是结构化对象：
 
@@ -135,6 +216,7 @@ Chat Platform
 type RouteDecision = {
   action: "ignore" | "record" | "notify" | "startAgent" | "steerAgent";
   reason: string;
+  routeKind?: "private" | "direct_at" | "direct_reply" | "indirect_reply" | "command";
   priority: "low" | "normal" | "high" | "urgent";
   targetThreadKey: string;
   relatedMessageIds: string[];
@@ -142,7 +224,7 @@ type RouteDecision = {
 };
 ```
 
-不要把路由理由写死在 UI 文案里。保存 `reason`，后续 debug 时能知道为什么触发。
+内部可以保存 `reason` 用于 debug，但用户可编辑模板不应依赖抽象的 reason 字段。模板里直接写清楚该路由的触发说明，减少配置理解成本。
 
 ## 会话管理
 
@@ -180,6 +262,7 @@ Codex Desktop IPC 经验：
 - 空闲时用 `thread-follower-start-turn`。
 - 运行中用 `thread-follower-steer-turn`，这是 UI 里的“引导 / Ctrl+Enter”的程序化等价。
 - 监听 `thread-stream-state-changed` 来维护 active/idle 状态。
+- `steer` 可能因为 active turn 已经结束而失败；遇到类似 `SteerTurnInactiveError` 或“active turn already ended”时，应把本地 active 状态置空并自动切回 `start`，不要丢消息。
 - 不要用外部 `codex app-server --listen` 冒充 Desktop 当前窗口；那可能写入同一套文件，但 UI 不一定订阅它。
 
 ## 启动 Agent
