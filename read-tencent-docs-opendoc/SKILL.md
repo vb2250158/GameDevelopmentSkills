@@ -82,25 +82,25 @@ node C:\Users\Administrator\.codex\skills\read-tencent-docs-opendoc\scripts\tenc
 查看在线表格子表信息：
 
 ```powershell
-node C:\Users\Administrator\.codex\skills\read-tencent-docs-opendoc\scripts\tencent-docs-mcp.mjs get-sheet-info --url "https://docs.qq.com/sheet/DSXprT0RUZ0RJQ0JE?tab=BB08J2"
+node C:\Users\Administrator\.codex\skills\read-tencent-docs-opendoc\scripts\tencent-docs-mcp.mjs get-sheet-info --url "https://docs.qq.com/sheet/<file_id>?tab=<sheet_id>"
 ```
 
 读取区域：
 
 ```powershell
-node C:\Users\Administrator\.codex\skills\read-tencent-docs-opendoc\scripts\tencent-docs-mcp.mjs get-range --url "https://docs.qq.com/sheet/DSXprT0RUZ0RJQ0JE?tab=BB08J2" --range A1:C3
+node C:\Users\Administrator\.codex\skills\read-tencent-docs-opendoc\scripts\tencent-docs-mcp.mjs get-range --url "https://docs.qq.com/sheet/<file_id>?tab=<sheet_id>" --range A1:C3
 ```
 
 设置单元格：
 
 ```powershell
-node C:\Users\Administrator\.codex\skills\read-tencent-docs-opendoc\scripts\tencent-docs-mcp.mjs set-cell --url "https://docs.qq.com/sheet/DSXprT0RUZ0RJQ0JE?tab=BB08J2" --cell A1 --value "你好"
+node C:\Users\Administrator\.codex\skills\read-tencent-docs-opendoc\scripts\tencent-docs-mcp.mjs set-cell --url "https://docs.qq.com/sheet/<file_id>?tab=<sheet_id>" --cell A1 --value "你好"
 ```
 
 批量写入多个单元格时，使用 `sheet.set_range_value`。`row` / `col` 均为 0-based，A1 是 `row=0,col=0`：
 
   ```powershell
-  node C:\Users\Administrator\.codex\skills\read-tencent-docs-opendoc\scripts\tencent-docs-mcp.mjs call-tool --name sheet.set_range_value --args '{"file_id":"DSXprT0RUZ0RJQ0JE","sheet_id":"BB08J2","values":[{"row":0,"col":0,"value_type":"STRING","string_value":"你好"},{"row":0,"col":1,"value_type":"STRING","string_value":"世界"}]}'
+  node C:\Users\Administrator\.codex\skills\read-tencent-docs-opendoc\scripts\tencent-docs-mcp.mjs call-tool --name sheet.set_range_value --args '{"file_id":"<file_id>","sheet_id":"<sheet_id>","values":[{"row":0,"col":0,"value_type":"STRING","string_value":"你好"},{"row":0,"col":1,"value_type":"STRING","string_value":"世界"}]}'
   ```
 
   当写入值包含长中文、换行、空格、反引号或 Markdown 代码片段时，优先把 JSON 参数写入 UTF-8 无 BOM 文件，再使用 `--args-file <path>`，避免 PowerShell / cmd 参数转义把 JSON 拆坏。
@@ -110,7 +110,7 @@ node C:\Users\Administrator\.codex\skills\read-tencent-docs-opendoc\scripts\tenc
 调用任意 MCP 工具：
 
 ```powershell
-node C:\Users\Administrator\.codex\skills\read-tencent-docs-opendoc\scripts\tencent-docs-mcp.mjs call-tool --name sheet.set_cell_value --args '{"file_id":"DSXprT0RUZ0RJQ0JE","sheet_id":"BB08J2","row":0,"col":0,"value_type":"STRING","string_value":"你好"}'
+node C:\Users\Administrator\.codex\skills\read-tencent-docs-opendoc\scripts\tencent-docs-mcp.mjs call-tool --name sheet.set_cell_value --args '{"file_id":"<file_id>","sheet_id":"<sheet_id>","row":0,"col":0,"value_type":"STRING","string_value":"你好"}'
 ```
 
 ## 工作流程

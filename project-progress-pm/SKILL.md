@@ -347,7 +347,7 @@ node C:\Users\Administrator\.codex\skills\read-tencent-docs-opendoc\scripts\tenc
   const res = await fetch("http://127.0.0.1:<napcat-http-port>/send_group_msg", {
     method: "POST",
     headers: { "content-type": "application/json; charset=utf-8" },
-    body: JSON.stringify({ group_id: 474222421, message, auto_escape: false })
+    body: JSON.stringify({ group_id: "<group_id>", message, auto_escape: false })
   });
   console.log(await res.text());
   ```
