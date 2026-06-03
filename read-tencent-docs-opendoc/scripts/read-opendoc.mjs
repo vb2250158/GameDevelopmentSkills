@@ -2,6 +2,7 @@
 
 import { inflateSync } from "node:zlib";
 import { writeFileSync } from "node:fs";
+import { excelSerialToIsoDate } from "./dates.mjs";
 
 function usage(exitCode = 0) {
   const text = `Usage:
@@ -190,9 +191,7 @@ function extractNumberPool(poolBuf) {
 }
 
 function excelSerialToDate(serial) {
-  if (!Number.isFinite(serial) || serial < 30000 || serial > 70000) return null;
-  const millis = Math.round((serial - 25569) * 86400 * 1000);
-  return new Date(millis).toISOString().slice(0, 10);
+  return excelSerialToIsoDate(serial) || null;
 }
 
 function textFromJsonPayload(raw) {

@@ -9,7 +9,7 @@ description: 设计和实现聊天软件机器人到 Codex/Agent 的通用架构
 
 把聊天软件机器人做成“可持续工作的项目成员”，而不是只会转发消息的 webhook。
 
-一个成熟机器人至少包含六层：
+一个成熟机器人至少包含七层：
 
 1. 接入层：连接聊天软件，接收消息，发送消息。
 2. 事件层：规范化事件，落盘历史，保留原始 payload。
@@ -17,6 +17,7 @@ description: 设计和实现聊天软件机器人到 Codex/Agent 的通用架构
 4. 会话层：把事件投递到固定 agent 会话，避免重复开线程。
 5. 心跳层：无消息时也主动巡检缓存、排期、待办和外部系统。
 6. 状态层：维护计数、游标、缓存、活跃任务、归档和幂等。
+7. 控制台层：用独立 WebUI / Bot Hub 管理平台、路由、agent、插件、草稿、安全门和运行状态。
 
 ## 总体架构
 
@@ -25,7 +26,8 @@ Chat Platform
   -> Adapter / Gateway
   -> Raw Event Log
   -> Normalized Message Store
-  -> Router
+  -> Bot Hub / Middleware
+  -> Router / Policy Engine
   -> Agent Session Manager
   -> Codex / Agent Runtime
   -> Action Queue / Drafts
@@ -39,6 +41,121 @@ Chat Platform
 - 消息路由和 agent 执行分离。路由只决定“是否提醒/启动/引导”，agent 决定“怎么处理”。
 - 实时消息和心跳巡检分离。实时消息负责响应上下文变化，心跳负责主动推进。
 - 只要涉及外部系统写入或群发，都要有 dry-run / 待审草稿，除非用户明确授权自动执行。
+- WebUI 是控制面，不是业务真相源。它可以展示状态、编辑配置、审批草稿、查看日志和触发重放；项目事实仍应写入腾讯文档、Issue、工单或数据库。
+
+如果机器人不只是单个平台单个 agent，推荐在 gateway 和 agent runtime 之间加一层独立中间层：
+
+```text
+QQ / WeChat / Feishu / Discord / Slack / Telegram
+  -> Platform Adapters
+  -> Bot Hub API
+  -> Event Store / State Store
+  -> Pipeline: normalize -> dedupe -> route -> enrich -> policy -> dispatch
+  -> Agent Drivers: Codex / OpenAI / local LLM / workflow scripts
+  -> Action Queue
+  -> WebUI Console
+```
+
+## 独立 WebUI / Bot Hub 中间层
+
+当需求接近 AstrBot 这类“多平台接入 + 多插件 + 多模型/多 agent + 管理后台”时，不要把所有逻辑塞进某个平台插件。推荐做一个独立 Bot Hub：
+
+```text
+Platform Plugin / Adapter
+  -> Bot Hub HTTP/WebSocket API
+  -> Event Pipeline
+  -> Agent Orchestrator
+  -> Approval / Action Center
+  -> Platform Send API
+```
+
+各组件职责：
+
+- 平台插件：只负责平台生命周期、登录态、收发桥接、配置发现和轻量健康检查。
+- Bot Hub API：统一接收各平台事件，提供发送、审批、重放、状态、配置和日志查询 API。
+- Event Pipeline：做规范化、去重、回复链补齐、附件缓存、身份映射、限流和路由。
+- Agent Orchestrator：按 bot/profile/thread key 选择 Codex 线程、OpenAI API、本地模型、工作流脚本或人工队列。
+- Action Center：保存待审群消息、私聊、表格写回、Issue 更新和外部 API 调用；用户确认后再 commit。
+- WebUI Console：管理平台连接、bot profile、路由规则、模板、agent driver、插件、心跳、草稿、运行日志和指标。
+
+WebUI 推荐页面：
+
+- Dashboard：平台连接、gateway 状态、agent 活跃 turn、队列长度、最近错误、心跳状态。
+- Platforms：QQ/NapCat、WeChat、Feishu/Lark、Discord、Slack、Telegram 等适配器配置。
+- Bots：每个机器人 profile 的名称、权限、触发范围、目标项目、默认 agent、数据目录。
+- Routes：私聊、群 at、reply、间接 reply、关键词、普通消息记录、限流和优先级规则。
+- Prompts：按 route kind 维护模板，不要把模板硬编码在 handler 里。
+- Agents：Codex Desktop IPC、OpenAI API、本地模型、脚本工作流等 driver 的配置和健康检查。
+- Approvals：待审回复、待写外部系统、dry-run diff、执行记录和回滚线索。
+- Logs：raw event、normalized message、route decision、agent dispatch、action commit 的可搜索视图。
+- Replay：选择一条历史 event 重新跑 normalize/route/dispatch，用于调试路由 bug。
+
+中间层数据模型建议：
+
+```ts
+type BotProfile = {
+  id: string;
+  name: string;
+  platformScopes: string[];
+  defaultAgentDriver: "codex-desktop" | "openai-api" | "local-llm" | "workflow";
+  dataDir: string;
+  permissions: {
+    autoRecord: boolean;
+    autoStartAgent: boolean;
+    autoSendExternal: boolean;
+    autoWriteExternalSystems: boolean;
+  };
+};
+
+type PipelineStep =
+  | "normalize"
+  | "dedupe"
+  | "resolveIdentity"
+  | "resolveReplyChain"
+  | "cacheAttachment"
+  | "route"
+  | "applyPolicy"
+  | "dispatchAgent"
+  | "enqueueAction";
+```
+
+类 AstrBot 设计可以借鉴“插件 + 事件总线 + 管理后台”的形态，但要保留 Codex/项目 PM 机器人需要的安全边界：
+
+- 插件只注册能力：平台适配、命令、路由扩展、事实源读取、动作执行器、UI 面板。
+- 插件不要直接绕过 Action Center 给外部群发消息或写业务系统。
+- 插件 API 要区分 `read`、`draft`、`commit` 权限；默认只给 `read` 和 `draft`。
+- 路由、prompt、权限和 agent driver 配置要按 bot profile 隔离，避免一个群的设置影响另一个群。
+- 所有插件执行都要写 audit log：输入 event id、输出 action id、是否 commit、操作者和时间。
+
+什么时候需要独立 WebUI / Bot Hub：
+
+- 同时接多个平台或多个 QQ 号/群。
+- 需要非开发人员调整路由、模板、审批草稿或查看运行状态。
+- 一个机器人要切换多个 agent driver，例如 Codex、OpenAI API、本地 LLM、脚本工作流。
+- 需要历史事件重放、日志搜索、权限控制、插件市场或团队协作。
+
+什么时候不需要：
+
+- 只有一个平台、一个群、一个固定 Codex 线程，且配置很少变化。
+- 只是临时验证消息到 Codex 的链路。
+- 用户不需要管理后台，直接用本地配置文件和日志即可。
+
+落地技术建议：
+
+- 后端：Node.js/TypeScript 或 Python/FastAPI 均可；优先选项目已有栈。
+- 前端：React/Vite 或现有管理后台框架；WebUI 只做控制台，不做营销页。
+- 存储：开发期可用 SQLite + JSONL；生产期再考虑 Postgres。raw event 仍建议保留 JSONL 方便追查。
+- 通信：平台到 Hub 用 WebSocket/HTTP；Hub 到 Codex Desktop 用 IPC；Hub 到 OpenAI/API 模型用官方 SDK。
+- 配置：用户可见配置进 WebUI；token、cookie、密钥进 secret store 或本机环境，不提交仓库。
+- 部署：本机机器人用单进程 manager 启动 API + WebUI + gateway；团队版再拆服务。
+
+WebUI 最容易犯的错：
+
+- 把 WebUI 做成第二份项目表，和腾讯文档/Issue 产生事实冲突。
+- 让平台插件直接包含 agent 编排、外部写入和审批逻辑，后续无法多平台复用。
+- 只有“启动/停止”按钮，没有重放、日志、路由理由和 action 审批。
+- 允许任何插件直接发送群消息，缺少权限和 audit log。
+- 修改 prompt 或路由后没有版本记录，导致问题无法复盘。
 
 ## 成熟案例：NapCatCodexGateway
 
@@ -163,6 +280,17 @@ NapCat WebSocket 客户端
   - 负责监听 WebSocket、保存 JSONL、路由消息、投递 Codex、调用 NapCat HTTP API。
   - 运行配置放在 `gateways.json` 或等价配置文件；真实配置、日志、token、数据目录不提交到仓库。
   - 多 gateway 用 manager 管理 start/stop/restart/status，不要靠手工开多个终端。
+- 主动发送 QQ 消息时，优先用 Node `fetch` 调 NapCat HTTP API，避免每次临时写 Python 脚本。短英文 / 纯 CQ 码可用 one-liner；包含中文、长文本、换行或多个 CQ 码时，默认用临时 Node 脚本或 action API，不要把中文直接放进 PowerShell 命令行、here-string、`Invoke-RestMethod -Body` 或 `node -e` 参数里。当前环境已实测：PowerShell inline 中文会在进入 Node/Python 前被替换成 `?`，导致 QQ 端全乱码；只做 JSON escape / `ensure_ascii` 不能修复已经损坏的文本。
+  ```javascript
+  const message = "[CQ:reply,id=123][CQ:at,qq=1050739541] \u91cd\u53d1\u4e00\u4e0b";
+  const res = await fetch("http://127.0.0.1:<napcat-http-port>/send_group_msg", {
+    method: "POST",
+    headers: { "content-type": "application/json; charset=utf-8" },
+    body: JSON.stringify({ group_id: 474222421, message, auto_escape: false })
+  });
+  console.log(await res.text());
+  ```
+  群聊使用 `/send_group_msg`，私聊使用 `/send_private_msg`；需要 reply / at 时在 `message` 里使用 CQ 码，且 `auto_escape:false`。临时脚本推荐保持源文件全 ASCII，用 `\uXXXX` Unicode escape 还原中文；或只读取已确认 UTF-8 的 JSON / txt 文件。
 
 ## 消息路由
 
@@ -424,12 +552,14 @@ Codex Desktop IPC 经验：
 新做一个聊天 agent bot 时，至少交付：
 
 - 适配器：能接收消息、发送测试消息、拉历史。
+- 中间层：统一 Bot Hub API，接收平台事件，输出 route decision、agent dispatch 和 action draft。
 - 数据目录：`raw-events.jsonl`、规范化消息 JSONL、`state.json`、项目缓存。
 - 路由器：私聊、at、reply/quote、关键词、自身消息、普通消息。
 - 会话管理：固定 thread、active/idle、start/steer、失败重试。
 - 心跳：上班高频、下班低频、无消息主动推进。
 - 安全门：外部发送和写入默认 dry-run。
-- 验证：收一条私聊、群 at、群 reply、普通群消息、连续消息、agent 运行中 steer、重启恢复。
+- 控制台：至少能查看连接状态、最近事件、路由理由、agent 状态、待审草稿和错误日志。
+- 验证：收一条私聊、群 at、群 reply、普通群消息、连续消息、agent 运行中 steer、重启恢复、历史 event 重放、待审 action commit。
 
 ## 常见失败模式
 
@@ -441,4 +571,8 @@ Codex Desktop IPC 经验：
 - 非工作时间直接停工，而不是低频做内部整理。
 - 计数混乱，把收到消息数、投递 agent 数、业务闭环数混为一谈。
 - 手写 session 文件或连错 app-server，以为 UI 已接入。
+- WebUI 只做配置表单，没有事件重放、路由理由、审批队列和 audit log，出了问题无法定位。
+- 把平台插件做成巨型单体，里面混着收消息、agent 编排、业务写入和 UI，导致换平台时无法复用。
+- 类 AstrBot 插件直接发送外部消息或写业务系统，绕过 dry-run、权限和人工审批。
 - PowerShell inline 中文导致 `??`，误判平台编码有问题。
+- Node `fetch` 仍把中文写在 `node -e` 或 PowerShell 命令文本里，结果源文本已经在 shell/Codex 层损坏；正确做法是 action API、ASCII 临时脚本 + Unicode escape，或读取已确认 UTF-8 的消息文件。

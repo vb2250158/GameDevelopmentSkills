@@ -3,7 +3,6 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, dirname, extname, join, relative, resolve } from "node:path";
 import {
   cellsToMatrix,
-  excelSerialToDate,
   getRange,
   getSheetInfo,
   headerMap,
@@ -11,6 +10,7 @@ import {
   requireHeader,
   requireOption,
 } from "./lib/tencent-docs.mjs";
+import { normalizeIsoDate } from "./lib/dates.mjs";
 
 function usage() {
   console.error(`用法：
@@ -48,15 +48,6 @@ function parseA1Range(text = "A1:AZ501") {
     endRow: Math.max(start.row, end.row),
     endCol: Math.max(start.col, end.col),
   };
-}
-
-function normalizeDate(value) {
-  if (!value) return "";
-  const serial = excelSerialToDate(value);
-  if (serial) return serial;
-  const match = String(value).match(/(20\d{2})[-/.年](\d{1,2})/);
-  if (!match) return String(value);
-  return `${match[1]}-${match[2].padStart(2, "0")}`;
 }
 
 function directImageUrls(value) {
@@ -186,7 +177,8 @@ async function main() {
     const owner = col.owner == null ? "" : matrix.get(row, col.owner).trim();
     const status = col.status == null ? "" : matrix.get(row, col.status).trim();
     const submitter = col.submitter == null ? "" : matrix.get(row, col.submitter).trim();
-    const date = col.date == null ? "" : normalizeDate(matrix.get(row, col.date).trim());
+    const dateRaw = col.date == null ? "" : matrix.get(row, col.date).trim();
+    const date = col.date == null ? "" : normalizeIsoDate(dateRaw).value;
     const solution = col.solution == null ? "" : matrix.get(row, col.solution).trim();
     if (opts.owner && !owner.includes(opts.owner)) continue;
     if (effectiveStatus && !status.includes(effectiveStatus)) continue;
@@ -194,12 +186,13 @@ async function main() {
     if (solutionState === "nonempty" && !solution) continue;
     if (opts.submitter && !submitter.includes(opts.submitter)) continue;
     if (opts.month && !date.startsWith(opts.month)) continue;
-    const targetDate = col.targetDate == null ? "" : normalizeDate(matrix.get(row, col.targetDate).trim());
+    const targetDateRaw = col.targetDate == null ? "" : matrix.get(row, col.targetDate).trim();
+    const targetDate = col.targetDate == null ? "" : normalizeIsoDate(targetDateRaw).value;
     const type = col.type == null ? "" : matrix.get(row, col.type).trim();
     const priority = col.priority == null ? "" : matrix.get(row, col.priority).trim();
     const solutionComment = col.solutionComment == null ? "" : matrix.get(row, col.solutionComment).trim();
     const confirmSolution = col.confirmSolution == null ? "" : matrix.get(row, col.confirmSolution).trim();
-    rows.push({ row, rowNumber: row + 1, desc, owner, status, submitter, date, targetDate, type, priority, solution, solutionComment, confirmSolution });
+    rows.push({ row, rowNumber: row + 1, desc, owner, status, submitter, date, dateRaw, targetDate, targetDateRaw, type, priority, solution, solutionComment, confirmSolution });
   }
   rows.sort((a, b) => priorityRank(a.priority) - priorityRank(b.priority) || a.rowNumber - b.rowNumber);
 
@@ -325,7 +318,9 @@ async function main() {
       owner: item.owner,
       submitter: item.submitter,
       date: item.date,
+      dateRaw: item.dateRaw,
       targetDate: item.targetDate,
+      targetDateRaw: item.targetDateRaw,
       type: item.type,
       details,
       supplements: supplements.map(([label, value]) => ({ label, value })),

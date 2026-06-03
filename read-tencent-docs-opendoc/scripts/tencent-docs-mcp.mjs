@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { execFileSync } from "node:child_process";
-import { writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 
 const DEFAULT_ENDPOINT = "https://docs.qq.com/openapi/mcp";
 const MCP_PROTOCOL_VERSION = "2025-06-18";
@@ -10,6 +10,7 @@ function usage(exitCode = 0) {
   const text = `Usage:
   node tencent-docs-mcp.mjs list-tools [--query text] [--format text|json]
   node tencent-docs-mcp.mjs call-tool --name <tool> --args '<json>'
+  node tencent-docs-mcp.mjs call-tool --name <tool> --args-file <path>
   node tencent-docs-mcp.mjs get-sheet-info --url <sheet-url>
   node tencent-docs-mcp.mjs get-range --url <sheet-url> --range A1:C3 [--csv]
   node tencent-docs-mcp.mjs set-cell --url <sheet-url> --cell A1 --value "你好"
@@ -19,6 +20,7 @@ Options:
   --token <token>      Token value. Prefer TENCENT_DOCS_TOKEN instead.
   --name <tool>        MCP tool name for call-tool.
   --args <json>        JSON arguments for call-tool.
+  --args-file <path>   Read JSON arguments for call-tool from a UTF-8 file.
   --url <url>          Tencent Docs sheet URL, e.g. https://docs.qq.com/sheet/<file_id>?tab=<sheet_id>
   --file-id <id>       Tencent Docs file ID. Overrides --url parsing.
   --sheet-id <id>      Sheet/tab ID. Overrides --url tab parsing.
@@ -71,6 +73,7 @@ function parseArgs(argv) {
     else if (arg === "--token") opts.token = next();
     else if (arg === "--name") opts.name = next();
     else if (arg === "--args") opts.args = next();
+    else if (arg === "--args-file") opts.argsFile = next();
     else if (arg === "--query" || arg === "-q") opts.query = next();
     else if (arg === "--url") opts.url = next();
     else if (arg === "--file-id") opts.fileId = next();
@@ -242,7 +245,9 @@ function extractStructured(result) {
 function buildCall(opts) {
   if (opts.command === "call-tool") {
     if (!opts.name) throw new Error("call-tool requires --name.");
-    return { name: opts.name, args: opts.args ? JSON.parse(opts.args) : {} };
+    if (opts.args && opts.argsFile) throw new Error("Use only one of --args or --args-file.");
+    const argsText = opts.argsFile ? readFileSync(opts.argsFile, "utf8") : opts.args;
+    return { name: opts.name, args: argsText ? JSON.parse(argsText) : {} };
   }
 
   if (opts.command === "get-sheet-info") {
