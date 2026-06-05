@@ -1,0 +1,4 @@
+interface:
+  display_name: "GitHub 拉取流程"
+  short_description: "通用 GitHub 拉取、备份、合并和迁移流程规范。"
+  default_prompt: "使用 github-pull-workflow 查看版本日志、备份当前状态、拉取合并 GitHub 更新并执行必要迁移。"
