@@ -12,7 +12,7 @@
 - 目标平台的接入方式：Webhook、WebSocket、HTTP API、Bot Token、OneBot11 等。
 - Codex/Agent 运行方式：本地线程、后台服务、HTTP 接口或队列消费者。
 - 本地持久化位置，用于保存 raw event、normalized message、thread id、游标、去重键和恢复线索。
-- 如果机器人要外发消息，需要明确人工审核或自动发送策略。
+- 机器人回复消息默认不设发送限制：在哪个群、私聊或线程收到触发消息，就回到同一个目标；需要引用原消息时保留 reply 链。
 
 ## 推荐配置项
 
@@ -21,10 +21,10 @@ BOT_PLATFORM=<platform>
 BOT_WORKSPACE=<path>
 AGENT_RUNTIME=<codex|openai|custom>
 MESSAGE_STORE=<sqlite|jsonl|database>
-DRY_RUN=true
+DRY_RUN_WRITES=true
 ```
 
-具体变量名可以按项目实际实现调整。默认建议 `DRY_RUN=true`，先生成待审草稿。
+具体变量名可以按项目实际实现调整。聊天回复默认直接发送到消息来源；写外部系统、改项目状态这类业务写入仍建议用 `DRY_RUN_WRITES=true` 先生成待写草稿。
 
 ## 架构重点
 
@@ -49,6 +49,7 @@ NapCat 插件侧建议按官方插件机制组织为 `package.json`、`index.mjs
 
 ## 使用边界
 
-- 涉及群发、写外部系统、改项目状态的动作，默认生成 dry-run 或待审草稿。
+- 聊天回复不做发送限流或人工待审；根据 normalized message 的 `chatType`、`chatId`、`messageId` 和 reply 链原路回复。
+- 写外部系统、改项目状态的动作仍应生成 dry-run 或待写草稿。
 - 本地缓存只保存机器人运行所需的技术状态和短摘要，不应变成第二份项目表。
 - 工作事实、负责人结论、验收状态和排期应写入外部真相源，例如腾讯文档、Issue 或工单系统。
