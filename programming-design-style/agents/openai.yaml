@@ -1,0 +1,4 @@
+interface:
+  display_name: "编程设计风格"
+  short_description: "按用户个人工程风格设计、实现与评审"
+  default_prompt: "使用 $programming-design-style 按我的通用工程设计风格实现这个功能。"

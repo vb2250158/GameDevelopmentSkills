@@ -12,6 +12,8 @@
 | [`project-progress-pm`](project-progress-pm/) | 基于腾讯文档项目进度表做 PM 巡检，维护状态批注，拆分待实现 / 待验收 / 待确认队列并推进闭环。 |
 | [`github-submit-workflow`](github-submit-workflow/) | 通用 GitHub 提交流程，包含改动核对、脱敏处理、详细版本日志、提交说明和推送。 |
 | [`github-pull-workflow`](github-pull-workflow/) | 通用 GitHub 拉取流程，包含版本日志阅读、备份、拉取合并、冲突处理和配置/逻辑迁移。 |
+| [`programming-design-style`](programming-design-style/) | 按用户通用工程设计风格协助做模块拆分、数据表现分离、配置外置、事件解耦和工具优先的实现/评审。 |
+| [`programming-design-review`](programming-design-review/) | 按用户编程设计风格巡检代码库或目标模块，并输出可视化设计摩擦报告和改进候选。 |
 
 ## 目录结构
 
