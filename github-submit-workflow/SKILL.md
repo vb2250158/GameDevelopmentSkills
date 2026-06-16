@@ -28,24 +28,32 @@ Treat every GitHub submission as a publish operation. Verify scope, remove sensi
    - Replace sensitive values with placeholders such as `<redacted>`, `<token>`, `<internal-host>`, or project-approved environment variable names.
    - If a real secret was already committed or may have been exposed, tell the user clearly that the credential should be rotated. Do not print the secret.
 
-4. Verify behavior before committing.
+4. Update project version metadata when present.
+   - Check common version sources such as `package.json`, lockfiles, manifest files, build metadata, app metadata, and existing release or changelog files.
+   - If the project has an explicit version number and the submission changes shipped behavior, bump the appropriate version before committing.
+   - Keep paired version files in sync, such as `package.json` and `package-lock.json`.
+   - If the project has a changelog or release log, add or update an entry for the new version.
+   - The version log and commit body must explicitly name the released version number.
+
+5. Verify behavior before committing.
    - Run the smallest meaningful test, build, lint, format, or validation command available for the project.
    - If no reliable validation exists, state that explicitly in the final summary.
    - If validation fails, fix the issue before committing unless the user asks to publish a known failing state.
 
-5. Write a detailed version log.
+6. Write a detailed version log.
+   - State the new version number when the project has version metadata.
    - Summarize what changed, why it changed, and which files or modules were affected.
    - Include behavior changes, configuration changes, migration notes, compatibility notes, and validation results.
    - Prefer adding or updating the project changelog when the repo already has one.
    - If there is no changelog, include the detailed version log in the commit body or PR notes.
 
-6. Prepare a good commit message.
+7. Prepare a good commit message.
    - Use a concise subject that names the actual change, for example `Add GitHub publish workflow skills`.
    - Add a commit body when the change is non-trivial.
-   - Include bullets for: changed behavior, desensitization result, version log, and validation.
+   - Include bullets for: version number when present, changed behavior, desensitization result, version log, and validation.
    - Avoid vague messages such as `update`, `fix`, or `changes`.
 
-7. Stage, commit, and push.
+8. Stage, commit, and push.
    - Stage only reviewed files.
    - Re-run `git diff --cached --stat` and `git diff --cached` before committing.
    - Commit after the staged diff matches the intended scope.
@@ -58,6 +66,7 @@ End with a compact publish report:
 
 - branch and remote pushed
 - commit hash and subject
+- released version number when present
 - version log summary
 - desensitization result
 - validation command and result
