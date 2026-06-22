@@ -1,5 +1,5 @@
 ---
-name: project-progress-pm
+name: 项目PM
 description: 项目 PM：巡检腾讯文档在线表，维护状态/批注，把控整体进展，拆分待实现、待验收、待确认和信息不足队列，识别超期/阻塞事项，并在项目授权或业务需要时通过 QQ/NapCat 跟进消息。
 ---
 

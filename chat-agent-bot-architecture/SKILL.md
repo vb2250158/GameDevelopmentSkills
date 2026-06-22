@@ -31,16 +31,16 @@ Chat Platform
   -> Agent Session Manager
   -> Codex / Agent Runtime
   -> Action Queue / Drafts
-  -> Business Write Approval
+  -> Human Approval
   -> Chat Platform / External Systems
 ```
 
 关键原则：
 
-- 接收和发送分离。聊天回复默认不设发送限制：在哪个群、私聊或线程收到消息，就用同一个 `chatType` / `chatId` 回复回去；需要承接上下文时带上原消息 reply 链。
+- 接收和发送分离。接收消息可以自动，发送外部消息默认要用户授权。
 - 消息路由和 agent 执行分离。路由只决定“是否提醒/启动/引导”，agent 决定“怎么处理”。
 - 实时消息和心跳巡检分离。实时消息负责响应上下文变化，心跳负责主动推进。
-- 聊天消息发送不做默认 dry-run / 待审；只有写外部系统、改业务状态或调用非聊天副作用 API 时，才进入 dry-run / 待写草稿。
+- 只要涉及外部系统写入或群发，都要有 dry-run / 待审草稿，除非用户明确授权自动执行。
 - WebUI 是控制面，不是业务真相源。它可以展示状态、编辑配置、审批草稿、查看日志和触发重放；项目事实仍应写入腾讯文档、Issue、工单或数据库。
 
 如果机器人不只是单个平台单个 agent，推荐在 gateway 和 agent runtime 之间加一层独立中间层：
@@ -65,17 +65,17 @@ Platform Plugin / Adapter
   -> Bot Hub HTTP/WebSocket API
   -> Event Pipeline
   -> Agent Orchestrator
-  -> Action Log / Action Center
+  -> Approval / Action Center
   -> Platform Send API
 ```
 
 各组件职责：
 
 - 平台插件：只负责平台生命周期、登录态、收发桥接、配置发现和轻量健康检查。
-- Bot Hub API：统一接收各平台事件，提供原路回复、发送、重放、状态、配置和日志查询 API。
-- Event Pipeline：做规范化、去重、回复链补齐、附件缓存、身份映射和路由。
+- Bot Hub API：统一接收各平台事件，提供发送、审批、重放、状态、配置和日志查询 API。
+- Event Pipeline：做规范化、去重、回复链补齐、附件缓存、身份映射、限流和路由。
 - Agent Orchestrator：按 bot/profile/thread key 选择 Codex 线程、OpenAI API、本地模型、工作流脚本或人工队列。
-- Action Center：保存已发送聊天动作、待写表格、Issue 更新和外部 API 调用；聊天回复可直接 commit，业务系统写入仍由用户确认后 commit。
+- Action Center：保存待审群消息、私聊、表格写回、Issue 更新和外部 API 调用；用户确认后再 commit。
 - WebUI Console：管理平台连接、bot profile、路由规则、模板、agent driver、插件、心跳、草稿、运行日志和指标。
 
 WebUI 推荐页面：
@@ -83,10 +83,10 @@ WebUI 推荐页面：
 - Dashboard：平台连接、gateway 状态、agent 活跃 turn、队列长度、最近错误、心跳状态。
 - Platforms：QQ/NapCat、WeChat、Feishu/Lark、Discord、Slack、Telegram 等适配器配置。
 - Bots：每个机器人 profile 的名称、权限、触发范围、目标项目、默认 agent、数据目录。
-- Routes：私聊、群 at、reply、间接 reply、关键词、普通消息记录、原路回复目标和优先级规则。
+- Routes：私聊、群 at、reply、间接 reply、关键词、普通消息记录、限流和优先级规则。
 - Prompts：按 route kind 维护模板，不要把模板硬编码在 handler 里。
 - Agents：Codex Desktop IPC、OpenAI API、本地模型、脚本工作流等 driver 的配置和健康检查。
-- Actions：已发送回复、待写外部系统、dry-run diff、执行记录和回滚线索。
+- Approvals：待审回复、待写外部系统、dry-run diff、执行记录和回滚线索。
 - Logs：raw event、normalized message、route decision、agent dispatch、action commit 的可搜索视图。
 - Replay：选择一条历史 event 重新跑 normalize/route/dispatch，用于调试路由 bug。
 
@@ -122,8 +122,8 @@ type PipelineStep =
 类 AstrBot 设计可以借鉴“插件 + 事件总线 + 管理后台”的形态，但要保留 Codex/项目 PM 机器人需要的安全边界：
 
 - 插件只注册能力：平台适配、命令、路由扩展、事实源读取、动作执行器、UI 面板。
-- 插件发送聊天消息时走 Action Center 记录审计，但不需要人工待审；插件不得绕过 Action Center 写业务系统。
-- 插件 API 要区分 `read`、`send`、`draft`、`commit` 权限；聊天回复使用 `send`，业务系统写入使用 `draft` / `commit`。
+- 插件不要直接绕过 Action Center 给外部群发消息或写业务系统。
+- 插件 API 要区分 `read`、`draft`、`commit` 权限；默认只给 `read` 和 `draft`。
 - 路由、prompt、权限和 agent driver 配置要按 bot profile 隔离，避免一个群的设置影响另一个群。
 - 所有插件执行都要写 audit log：输入 event id、输出 action id、是否 commit、操作者和时间。
 
@@ -180,7 +180,6 @@ NapCat WebSocket 客户端
 - WebSocket Client 用于接收 QQ 事件；HTTP Server 用于主动发送 QQ 消息和调用 OneBot API。这两个配置要在 UI 里写清楚，最好从 NapCat OneBot 配置文件/API 中读取成下拉选项。
 - 发送给 Codex 的消息模板不要硬编码在 handler 里；按路由类型拆成可编辑模板，例如直接 @、直接回复、间接回复、私聊。
 - 模板变量要暴露消息目标和回复链，例如 `{messageTarget}`、`{targetType}`、`{targetId}`、`{repliedMessageId}`、`{repliedMessage}`。
-- 发送动作必须从这些变量还原回复目标：群消息回原群，私聊回原用户，频道/线程消息回原频道/线程；不得把回复集中发到固定群或固定私聊。
 - 路由理由用于 debug 可以存在于内部结构，但不要强迫用户在模板里理解抽象字段；用户可见模板应直接写清楚触发说明。
 - Codex Desktop IPC 运行中追加消息时，如果 `steer` 返回 active turn 已结束，要自动切回 `start`，不要丢消息。
 - 管理页面显示“当前进程日志”，重启时清掉旧堆栈，避免旧错误误导用户判断当前状态。
@@ -255,7 +254,7 @@ NapCat WebSocket 客户端
 - `send`: 发送群聊、私聊、回复、引用、图片、文件。
 - `history`: 拉历史消息，补齐监听断档。
 - `identity`: 识别机器人自己、群号、用户号、昵称、群名。
-- `health`: 检查连接状态、登录状态、心跳和平台 API 状态。
+- `health`: 检查连接状态、登录状态、心跳和限流。
 
 适配器落地要求：
 
@@ -303,7 +302,7 @@ NapCat WebSocket 客户端
 - 间接回复机器人：当前消息回复了某个用户，而被回复的那条消息里曾经 at / mention 过机器人。
 - 关键词命令：例如 `/ping`、`/查`、`/总结`。
 - 自身消息：默认记录，只有需要“机器人自己发的消息也进入上下文”时才触发。
-- 普通群消息：可按 bot profile 的路由策略触发；一旦触发，也必须回到原群或原线程。
+- 普通群消息：默认只记录，不触发，避免刷屏。
 
 QQ/NapCat 群路由建议明确收敛成三类：
 
@@ -348,13 +347,8 @@ type RouteDecision = {
   routeKind?: "private" | "direct_at" | "direct_reply" | "indirect_reply" | "command";
   priority: "low" | "normal" | "high" | "urgent";
   targetThreadKey: string;
-  replyTarget: {
-    chatType: "group" | "private" | "channel" | "thread";
-    chatId: string;
-    replyToMessageId?: string;
-  };
   relatedMessageIds: string[];
-  shouldSendReply: boolean;
+  shouldDraftReply: boolean;
 };
 ```
 
@@ -412,8 +406,8 @@ Codex Desktop IPC 经验：
 ```text
 这是来自 <平台>/<机器人> 的实时消息提醒。
 请读取 <data-dir> 下相关 JSONL 的最新记录，结合项目缓存理解上下文。
-本轮目标：判断是否需要推进事项、整理待办，并在需要回应时直接按消息来源原路回复。
-聊天回复不需要额外授权；不要写外部系统，除非用户在当前 Codex 会话中明确授权。
+本轮目标：判断是否需要推进事项、整理待办、生成待审话术或 dry-run。
+不要自动发送外部消息，不要写外部系统，除非用户在当前 Codex 会话中明确授权。
 ```
 
 运行中 steer 的输入要更短：
@@ -427,7 +421,7 @@ Codex Desktop IPC 经验：
 
 - “收到请回复一句 OK”：会让 agent 看起来启动了但没有做事。
 - 只贴原始消息不告诉它读哪里：agent 容易漏上下文。
-- 让 agent 回复到固定群或固定私聊：会破坏“在哪收到，就在哪回复”的上下文。
+- 让 agent 自动回复群：容易误发、刷屏或越权。
 
 ## 心跳设计
 
@@ -439,8 +433,8 @@ Codex Desktop IPC 经验：
 2. 读消息日志，补齐新消息、回复链和未处理事件。
 3. 读外部事实源，例如腾讯文档、Issue、工单、数据库、项目排期。
 4. 维护队列：闭环归档、活跃项更新、等待链更新、下一步动作。
-5. 生成内部产物：排期小清单、负责人清单、待写 dry-run、原路回复内容。
-6. 到达合适沟通窗口时，按最近触发消息的来源直接回复。
+5. 生成内部产物：排期小清单、负责人清单、待写 dry-run、待审回复。
+6. 到达合适沟通窗口时，才建议对外发消息。
 
 频率设计：
 
@@ -456,7 +450,7 @@ Codex Desktop IPC 经验：
 - 缓存更新建议。
 - 外部系统写回 dry-run。
 - 下一批 1-3 个可推进事项。
-- 已发送或待发送的原路群/私聊话术。
+- 待审群/私聊话术。
 - 下一轮观察点和等待对象。
 
 如果只输出“没有新消息，无需处理”，说明心跳提示词不合格。
@@ -474,7 +468,7 @@ Codex Desktop IPC 经验：
 ```json
 {
   "cursors": {
-    "group:474222421": {
+    "group:<group_id>": {
       "lastMessageId": "1784407816",
       "lastSeenAt": "2026-05-30T12:00:00+08:00"
     }
@@ -515,7 +509,7 @@ Codex Desktop IPC 经验：
 - 当前状态、负责人、等待对象。
 - 最近一次提问时间和 message id。
 - 下一步动作。
-- 最近触发消息的回复目标，以及是否允许写回业务系统。
+- 是否允许自动发送或写回。
 
 归档记录：
 
@@ -533,20 +527,15 @@ Codex Desktop IPC 经验：
 
 ## 外部动作安全
 
-把外部动作按类型分开：
+把外部动作做成两阶段：
 
-1. Chat Send：聊天回复直接按来源发送，并记录 action log。
-2. Draft：写表格、Issue、数据库或非聊天 API 时生成待写草稿。
-3. Commit：用户明确授权后执行业务系统写入。
-
-聊天发送规则：
-
-- 不限制自动群聊回复和私聊回复。
-- 群里收到就回原群，私聊收到就回原私聊，频道/线程收到就回原频道/线程。
-- 如果当前消息是 reply/quote，优先回复原 message id；否则回复当前触发消息或直接发送到同一 chat。
+1. Draft：生成待审消息、待写表格、待调用 API。
+2. Commit：用户明确授权后执行。
 
 默认禁止：
 
+- 自动群发。
+- 自动私聊。
 - 自动写腾讯文档/Issue/数据库。
 - 自动改触发实现流程的状态列。
 
@@ -554,9 +543,8 @@ Codex Desktop IPC 经验：
 
 - 记录消息。
 - 更新本地缓存。
-- 生成业务写入 dry-run。
+- 生成 dry-run。
 - 启动/引导 Codex 内部 agent。
-- 原路发送聊天回复。
 - 健康检查和读取公开/已授权数据。
 
 ## 最小实现清单
@@ -564,15 +552,14 @@ Codex Desktop IPC 经验：
 新做一个聊天 agent bot 时，至少交付：
 
 - 适配器：能接收消息、发送测试消息、拉历史。
-- 中间层：统一 Bot Hub API，接收平台事件，输出 route decision、agent dispatch 和 chat send action。
+- 中间层：统一 Bot Hub API，接收平台事件，输出 route decision、agent dispatch 和 action draft。
 - 数据目录：`raw-events.jsonl`、规范化消息 JSONL、`state.json`、项目缓存。
 - 路由器：私聊、at、reply/quote、关键词、自身消息、普通消息。
 - 会话管理：固定 thread、active/idle、start/steer、失败重试。
 - 心跳：上班高频、下班低频、无消息主动推进。
-- 回复目标：根据 `chatType`、`chatId`、`messageId`、`replyToMessageId` 实现“在哪收到，就在哪回复”。
-- 安全门：聊天发送直接执行；业务系统写入默认 dry-run。
-- 控制台：至少能查看连接状态、最近事件、路由理由、agent 状态、已发送动作、待写草稿和错误日志。
-- 验证：收一条私聊、群 at、群 reply、普通群消息、连续消息、agent 运行中 steer、重启恢复、历史 event 重放、业务写入 action commit。
+- 安全门：外部发送和写入默认 dry-run。
+- 控制台：至少能查看连接状态、最近事件、路由理由、agent 状态、待审草稿和错误日志。
+- 验证：收一条私聊、群 at、群 reply、普通群消息、连续消息、agent 运行中 steer、重启恢复、历史 event 重放、待审 action commit。
 
 ## 常见失败模式
 
@@ -586,6 +573,6 @@ Codex Desktop IPC 经验：
 - 手写 session 文件或连错 app-server，以为 UI 已接入。
 - WebUI 只做配置表单，没有事件重放、路由理由、审批队列和 audit log，出了问题无法定位。
 - 把平台插件做成巨型单体，里面混着收消息、agent 编排、业务写入和 UI，导致换平台时无法复用。
-- 类 AstrBot 插件发送聊天消息不记录 action log，或写业务系统时绕过 dry-run、权限和人工审批。
+- 类 AstrBot 插件直接发送外部消息或写业务系统，绕过 dry-run、权限和人工审批。
 - PowerShell inline 中文导致 `??`，误判平台编码有问题。
 - Node `fetch` 仍把中文写在 `node -e` 或 PowerShell 命令文本里，结果源文本已经在 shell/Codex 层损坏；正确做法是 action API、ASCII 临时脚本 + Unicode escape，或读取已确认 UTF-8 的消息文件。
