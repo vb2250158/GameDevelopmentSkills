@@ -332,7 +332,7 @@ node C:\Users\Administrator\.codex\skills\read-tencent-docs-opendoc\scripts\tenc
 使用 OneBot / NapCat 发送 QQ 群消息时，若需要回复某条消息或 @ 人，消息正文必须使用 CQ 码并保持 `auto_escape=false`。格式示例：
 
 ```text
-[CQ:reply,id=633245087][CQ:at,qq=3942256814] 已改成 为老师。
+[CQ:reply,id=<message_id>][CQ:at,qq=<qq_id>] 已改成 <称呼>。
 ```
 
 规则：
@@ -343,7 +343,7 @@ node C:\Users\Administrator\.codex\skills\read-tencent-docs-opendoc\scripts\tenc
 - 发送 JSON 时 `auto_escape=false`，否则 CQ 码会被当作普通文本。
 - 当前 Codex 环境里，主动发送 QQ 私聊/群聊优先使用 Node `fetch` 调 NapCat HTTP。短英文 / 纯 CQ 码可用 one-liner；包含中文、长文本、换行或多个 CQ 码时，默认创建一个临时 Node 脚本发送，不要把中文直接放进 PowerShell 命令行。临时脚本必须满足下面之一：脚本源文件全 ASCII，中文用 `\uXXXX` Unicode escape 拼出；或脚本只读取一个已确认 UTF-8 的 JSON / txt 文件作为消息内容。
   ```javascript
-  const message = "[CQ:reply,id=123][CQ:at,qq=1050739541] \u91cd\u53d1\u4e00\u4e0b\uff1aRow509 ...";
+  const message = "[CQ:reply,id=<message_id>][CQ:at,qq=<qq_id>] \u91cd\u53d1\u4e00\u4e0b\uff1aRow509 ...";
   const res = await fetch("http://127.0.0.1:<napcat-http-port>/send_group_msg", {
     method: "POST",
     headers: { "content-type": "application/json; charset=utf-8" },
@@ -360,7 +360,7 @@ node C:\Users\Administrator\.codex\skills\read-tencent-docs-opendoc\scripts\tenc
 
 群聊发言要像正常同事，不要像表格机器人：
 
-- 优先使用群里的名字 / 昵称 + “老师”，或用户明确确认过的称呼。不要自己把对方姓名改成过于熟的叫法，例如不要擅自把“陈振伟老师 / 恍隔如梦世”叫成“老陈老师”；可用“陈老师”或“恍隔如梦世老师”。如果群里已有更自然的叫法，就沿用群里的叫法。
+- 优先使用群里的名字 / 昵称 + “老师”，或用户明确确认过的称呼。不要自己把对方姓名改成过于熟的叫法，例如不要擅自把“<成员姓名>老师 / <群昵称>”叫成“老<姓氏>老师”；可用“<姓氏>老师”或“<群昵称>老师”。如果群里已有更自然的叫法，就沿用群里的叫法。
 - 群聊回复必须从群里的上下文出发：先看对方在群里刚说了什么、回复了哪条、群里其他人是否已经补充；只回应群成员能理解的内容。Codex 会话里用户给的提示词、截图批评、内部心跳结论、缓存摘要和表格统计是后台调试信息，不能直接当成群内共识或发言依据。
 - 不要说“我盯着”“我这边已记”“后面按未回复链继续盯”这类机器人后台话。需要承接时，用群里自然说法，例如“收到，等包出来再看验收结果”“这条我先按关闭处理”“我先去表里核一下有没有记录”。
 - 不知道谁是谁时先问用户确认，不要猜测负责人和 QQ 号的对应关系。
@@ -429,13 +429,13 @@ rg --files -g "project-progress-pm*.md" -g "*进度*.md" -g "*跟进*.md" -g "*Q
 更自然的跟进示例：
 
 ```text
-陈老师，我刚看表里 iOS 闪退那组状态有点对不上，想帮你收一下。现在是已经关闭了，还是还缺一轮真机日志？你有空回我一句就行。
+<称呼>，我刚看表里 iOS 闪退那组状态有点对不上，想帮你收一下。现在是已经关闭了，还是还缺一轮真机日志？你有空回我一句就行。
 ```
 
 不推荐的跟进示例：
 
 ```text
-@陈振伟 Row 35-38、49 请给当前状态：已修待验收 / 还缺真机日志 / 暂不处理？
+@<负责人> Row 35-38、49 请给当前状态：已修待验收 / 还缺真机日志 / 暂不处理？
 ```
 
 如果发错了或误催：

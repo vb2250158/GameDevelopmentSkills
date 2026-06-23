@@ -282,7 +282,7 @@ NapCat WebSocket 客户端
   - 多 gateway 用 manager 管理 start/stop/restart/status，不要靠手工开多个终端。
 - 主动发送 QQ 消息时，优先用 Node `fetch` 调 NapCat HTTP API，避免每次临时写 Python 脚本。短英文 / 纯 CQ 码可用 one-liner；包含中文、长文本、换行或多个 CQ 码时，默认用临时 Node 脚本或 action API，不要把中文直接放进 PowerShell 命令行、here-string、`Invoke-RestMethod -Body` 或 `node -e` 参数里。当前环境已实测：PowerShell inline 中文会在进入 Node/Python 前被替换成 `?`，导致 QQ 端全乱码；只做 JSON escape / `ensure_ascii` 不能修复已经损坏的文本。
   ```javascript
-  const message = "[CQ:reply,id=123][CQ:at,qq=1050739541] \u91cd\u53d1\u4e00\u4e0b";
+  const message = "[CQ:reply,id=<message_id>][CQ:at,qq=<qq_id>] \u91cd\u53d1\u4e00\u4e0b";
   const res = await fetch("http://127.0.0.1:<napcat-http-port>/send_group_msg", {
     method: "POST",
     headers: { "content-type": "application/json; charset=utf-8" },
