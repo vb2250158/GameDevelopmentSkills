@@ -1,4 +1,4 @@
 interface:
   display_name: "编程设计巡检"
   short_description: "按你的设计风格巡检代码"
-  default_prompt: "Use $programming-design-review 按我的编程设计风格巡检这块代码，并输出设计摩擦报告。"
+  default_prompt: "Use $programming-design-review 按我的编程设计风格巡检这块代码，并输出设计矛盾报告。"
