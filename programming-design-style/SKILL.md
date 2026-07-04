@@ -1,6 +1,6 @@
 ---
 name: programming-design-style
-description: Apply the user's general programming design style for modular architecture, single-responsibility code, data/presentation separation, configurable behavior, event-based decoupling, tool-first workflows, and AI-assisted implementation. Use when designing, implementing, reviewing, refactoring, or explaining software in any project according to the user's preferred engineering habits.
+description: "Apply the user's general programming and engineering design style in any project. Use broadly for coding, code changes, feature implementation, bug fixes, architecture design, module design, API design, data model design, state management, UI/backend/gameplay implementation, refactoring, code review, technical planning, implementation explanation, tests, tooling, scripts, editors, configuration flows, data/presentation separation, single-responsibility modules, configurable behavior, event-based decoupling, tool-first workflows, and AI-assisted software work. Trigger when the user says to write code, change code, implement, fix, debug, review, refactor, design a system/module, explain implementation, or otherwise work on software according to the user's preferred engineering habits."
 ---
 
 # 编程设计风格
@@ -63,6 +63,12 @@ description: Apply the user's general programming design style for modular archi
 ### 把说定的事记下来
 
 如果讨论中出现了以后会反复用到的新概念，给它起一个清楚的名字，并写到项目文档、注释、设计文档或任务说明里。若用户明确拒绝某个方向，而且理由以后也会用到，建议把这个决定记下来，避免以后重复提出。
+
+### 大幅重构先归档
+
+如果用户准备或要求做大幅重构、替换旧架构、删除旧实现、迁移生成逻辑，先不要直接删旧文件。优先在项目根目录创建 `archive/` 目录，并按原项目相对路径完整镜像旧文件位置，把即将废弃的旧实现复制进去。例如原文件是 `src/foo/bar.js`，归档位置就是 `archive/src/foo/bar.js`。这样后续可以对照旧行为、找回手调数据、确认不是误删新逻辑。
+
+归档不是继续维护两套实现。完成迁移后，新逻辑必须有唯一入口；旧入口要么从正式调用链移除，要么在代码、索引、注册表、文档和测试里明确标注为过时，不允许“旧逻辑还活着但没人知道”。如果项目存在 SQL、迁移表、生成索引、工具 registry、任务表或文档索引，也要同步更新，避免下次 Agent 或工具又走回旧路径。
 
 ## 核心原则
 
@@ -159,6 +165,14 @@ description: Apply the user's general programming design style for modular archi
 重复、易错、需要非程序角色参与、需要批量处理或需要稳定验收的工作，优先做成工具、配置流程或编辑器扩展。
 
 工具设计要服务实际协作：少让人记步骤，多让工具承载默认值、校验、批量操作和可视化反馈。
+
+### 编辑器存档文件化
+
+编辑器、路线工具、地图工具、静态报告和调试面板里的“保存”，默认必须写入项目文件，例如 JSON、CSV、Markdown 或项目已有存档格式。浏览器 `localStorage`、`sessionStorage`、IndexedDB、URL 参数和内存变量只能作为缓存、草稿恢复、性能加速或临时预览状态，不能作为正式存档真源。
+
+如果工具运行在浏览器里，需要保存项目数据，优先设计 HTTP 本地工具接口、脚本命令或明确的文件写入流程。静态页面不能写文件时，UI 必须明确显示“已缓存/未保存到文件”，并提供可复制 JSON 或其他兜底，而不是把缓存叫做保存。
+
+正式保存时先归档旧文件，再写新文件。归档文件放在同目录或项目约定的 `archive/` 目录，文件名带日期时间后缀。多步骤生成工具要让每一步的数据独立存在：当前步骤基于上一步生成自己的结果，不能静默覆盖上一步源数据。
 
 ### AI 协作方式
 
