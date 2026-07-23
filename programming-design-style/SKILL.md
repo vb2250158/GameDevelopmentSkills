@@ -1,6 +1,6 @@
 ---
 name: programming-design-style
-description: "Apply the user's general programming and engineering design style in any project. Use broadly for coding, code changes, feature implementation, bug fixes, architecture design, module design, API design, data model design, state management, UI/backend/gameplay implementation, refactoring, code review, technical planning, implementation explanation, tests, tooling, scripts, editors, configuration flows, data/presentation separation, single-responsibility modules, configurable behavior, event-based decoupling, tool-first workflows, and AI-assisted software work. Trigger when the user says to write code, change code, implement, fix, debug, review, refactor, design a system/module, explain implementation, or otherwise work on software according to the user's preferred engineering habits."
+description: "Apply the user's engineering design style to implementation, debugging, architecture, refactoring, code review, tooling, and UI/backend/gameplay work. Enforces modular ownership, data/presentation separation, unified backend reuse across Web/desktop/tray/mobile/editor clients, single sources of truth, configurable behavior, event decoupling, and tool-first workflows. Use whenever Codex designs, writes, fixes, explains, reviews, or restructures software according to the user's preferred engineering habits."
 ---
 
 # 编程设计风格
@@ -9,15 +9,17 @@ description: "Apply the user's general programming and engineering design style 
 
 按用户的通用工程风格协助做设计、实现、评审和重构。不要绑定某个具体项目、框架、存档方案或工具名；项目里的 `ModuleControl`、`BaseModule`、编辑器工具等只作为来源示例，真正要继承的是背后的设计习惯。
 
-需要更多来源材料时，读取 `references/source-notes.md`。
+需要更多来源材料时，读取 `references/source-notes.md`。任务涉及新增客户端、前后端边界或多端复用时，完整读取 `references/frontend-backend-boundaries.md`。
 
 ## 工作流程
 
 1. 先理解需求：确认用户要解决的问题、想要的效果、不做什么、有什么限制。
-2. 先找现有实现：搜索已有模块、配置、事件、工具、UI、数据流和调用范式，优先复用项目习惯。
-3. 先拆清楚再写代码：把业务动作、数据状态、表现反馈、配置来源、各模块负责的事、模块之间怎么配合讲清楚。
+2. 先找现有实现：搜索已有模块、配置、事件、工具、UI、数据流、后端服务、API、共享契约和调用范式。新增 Web、桌面、托盘、移动端、编辑器等前端时，必须跨出目标目录检查同类客户端和统一后端，不能只复用当前前端附近的旧代码。
+3. 先拆清楚再写代码：把业务动作、数据状态、表现反馈、配置来源、统一业务入口、各模块负责的事、模块之间怎么配合讲清楚。
 4. 再实现一条能跑通的主流程：先把最关键的一条链路做出来，再补特殊情况、报错、工具和表现细节。
 5. 最后自查：检查是不是把很多事塞进了同一个类，数据和表现是不是混在一起，能配置的东西是不是写死了，是否重复造轮子，是否没验证。
+
+“复用现有实现”优先指复用稳定的业务拥有者、统一后端、公开契约和成熟工具，不是机械复制目标目录里的历史旁路。项目文档和旧代码是重要证据，但如果它们与现有 API、其他客户端、唯一真源或用户明确的设计风格冲突，应先把矛盾讲清楚，再决定迁移或兼容方式。
 
 ## 复杂问题的工作方式
 
@@ -42,6 +44,7 @@ description: "Apply the user's general programming and engineering design style 
 - 涉及哪些模块、文件，分别管什么事。
 - 现在到底哪里难改、哪里绕、哪里容易出错。
 - 准备把哪些事收拢到一起，哪些事拆出去，模块之间怎么换一种配合方式。
+- 现有后端、领域模块、API、共享契约和其他客户端中有哪些能力可以直接复用；如果不能复用，缺口具体在哪里。
 - 对数据和表现分离、动作列表、配置外置、事件/消息配合有什么影响。
 - 验证会变简单还是更复杂。
 - 推荐程度：强烈建议、可以试试、先放一放。
@@ -132,6 +135,14 @@ description: "Apply the user's general programming and engineering design style 
 
 不要在业务流程中零散直接调用具体动画、特效或 UI 细节；需要表现反馈时，优先产出动作描述或表现命令，再交给表现层调度。
 
+### 前后端职责和统一业务入口
+
+数据和表现分离，不等于让表现端再实现一套业务逻辑。业务模块或统一后端拥有业务事实、规则、查询命令、持久化、权限和校验；前端拥有布局、组件、动画、格式和短暂交互状态。这里的“后端”是逻辑拥有者，也可以是同进程领域模块、共享库、Manager 或 Service，不要求必须是远程服务器。
+
+新增 Web、桌面、托盘、移动端或编辑器前，先完成能力复用清单。已有统一入口时只新增薄适配、可重建的 presentation model 和渲染；接口不足时先扩展业务拥有者和共享契约。禁止前端直读后端管理的文件/数据库、复制领域规则，或在后端失败后静默切换本地旁路。
+
+多端边界的归类方法、复用清单模板、离线规则和架构门禁见 `references/frontend-backend-boundaries.md`。
+
 ### 配置和表现外置
 
 动效、渲染、特效、数值、关卡参数、行为节点、UI 文案和可调节体验，优先设计成外部可编辑或工具可维护。不要把策划、美术、运营需要调整的内容写死在程序里。
@@ -160,6 +171,8 @@ description: "Apply the user's general programming and engineering design style 
 
 代码应放在最适合的位置。通用工具不要反向依赖具体业务；业务代码不要污染底层框架；UI 不要负责保存最终业务状态。
 
+存在多个前端时，还要检查它们是否通过同一业务入口协作。代码物理上分在不同目录、进程或语言里，不代表职责已经正确分离；如果每个前端都有自己的业务读取、规则和持久化实现，仍然是重复业务层。
+
 ### 工具优先
 
 重复、易错、需要非程序角色参与、需要批量处理或需要稳定验收的工作，优先做成工具、配置流程或编辑器扩展。
@@ -178,6 +191,8 @@ description: "Apply the user's general programming and engineering design style 
 
 让 AI 先读现有实现和真实 API，再设计和修改。要求 AI 明确哪些地方复用、改哪些地方、不改哪些地方、数据怎么走、表现怎么刷新、怎么验证。
 
+涉及新增客户端、UI、托盘、移动端、编辑器或其他表现入口时，开工前先输出“能力复用清单”：需求能力、业务事实拥有者、现有后端/API/共享模块、其他客户端调用方式、本次只需新增的适配或表现代码。若计划新建前端仓储、业务 Service、文件/数据库读取或状态规则，必须逐项说明为什么现有统一入口无法扩展；没有证据时不得另起一套逻辑。
+
 当 AI 给方案时，先输出可核验的设计结构：模块职责、流程图、状态变化、模块关系、配置字段、事件列表或验证清单。不要只让 AI 直接堆代码。
 
 当代码或方案偏离这些设计习惯时，问题标签固定为“设计矛盾”。不要另造近义标签。
@@ -189,6 +204,8 @@ description: "Apply the user's general programming and engineering design style 
 - 模块分工表：每个模块负责什么、不负责什么。
 - 数据流：数据从哪里来、如何变化、谁持有最终状态。
 - 表现流：UI、动画、特效如何通过动作列表响应数据变化。
+- 前后端边界：哪些能力归业务模块或统一后端，前端只保留哪些适配、view model、渲染和交互状态；新增表现端是否复用了同一查询/命令入口。
+- 能力复用清单：需求能力、现有业务拥有者、后端/API/共享契约、其他客户端用法、本次新增代码及无法复用的证据。
 - 配置入口：哪些内容需要配置、由谁维护、如何校验。
 - 数据从属：配置数据、存档数据、运行时状态、服务端状态、资源索引和表现配置分别归哪个管理器；业务模块通过什么身份或接口访问。
 - 身份字段：哪些对象不需要 UID、哪些配置子项或运行时实例需要 UID、UID 由 GUID/UUID 库还是自定义分配器自动生成、通过什么索引或注册表查询。
@@ -202,6 +219,9 @@ description: "Apply the user's general programming and engineering design style 
 ## 自查清单
 
 - 是否把数据状态和表现反馈混在一起了？
+- 是否把“数据表现分离”误解成“每个前端各自实现一套业务数据逻辑”？
+- 新增前端前是否完成能力复用清单，并通过统一入口读取、修改业务事实？
+- 前端是否直读后端数据源、复制领域规则或保留静默旁路？presentation model 是否仅包含可重建的展示派生？
 - 是否区分了配置文件路径身份、配置内部子项身份和运行时实例身份？
 - 是否明确了配置数据、存档数据、运行时状态和表现配置各自归哪个管理器，而不是散落在使用方对象里？
 - 是否把需要长期追踪的运行时实例设计成通过自动生成的实例 UID 获取、引用和更新，而不是依赖名字、数组位置或非受控递增值？
