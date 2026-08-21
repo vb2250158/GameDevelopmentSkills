@@ -14,6 +14,7 @@
 | [`github-pull-workflow`](github-pull-workflow/) | 通用 GitHub 拉取流程，包含版本日志阅读、备份、拉取合并、冲突处理和配置/逻辑迁移。 |
 | [`programming-design-style`](programming-design-style/) | 按用户通用工程设计风格协助做模块拆分、数据表现分离、配置外置、事件解耦和工具优先的实现/评审。 |
 | [`programming-design-review`](programming-design-review/) | 按用户编程设计风格巡检代码库或目标模块，并输出可视化设计矛盾报告和改进候选。 |
+| [`clear-science-writing`](clear-science-writing/) | 撰写、改写和审阅中文说明、科普、技术介绍与项目叙述，让非专业读者能理解内容，同时保留事实和证据边界。 |
 
 ## 目录结构
 

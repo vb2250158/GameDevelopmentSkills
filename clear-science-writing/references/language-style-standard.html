@@ -1,0 +1,1125 @@
+<!doctype html>
+<html lang="zh-CN" data-language-style-standard="generated">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="language-style-standard-source-hash" content="af883c3894f89f3bc52e63df42522a811759936dc8e9033a2ec42a3e8f99fe06">
+  <title>语言风格提取与生成通用规范</title>
+  <style>
+    :root{color-scheme:light;--bg:#f4f1e9;--panel:#fffdf7;--panel2:#ebe5d8;--text:#1f2722;--muted:#657067;--line:#d5cec0;--accent:#245f4b;--soft:#dce9e1;--code:#17231e;--shadow:0 14px 40px rgba(49,45,35,.08)}html[data-theme="dark"]{color-scheme:dark;--bg:#151a17;--panel:#1d241f;--panel2:#283029;--text:#eef3ee;--muted:#aab6ac;--line:#3c463e;--accent:#86c9aa;--soft:#243e32;--code:#0e1411;--shadow:0 14px 40px rgba(0,0,0,.25)}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.75 system-ui,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}a{color:var(--accent)}.layout{display:grid;grid-template-columns:280px minmax(0,1fr);min-height:100vh}aside{position:sticky;top:0;height:100vh;padding:28px 22px;border-right:1px solid var(--line);overflow:auto}aside h1{font-size:1.1rem;line-height:1.35}aside nav{display:grid;gap:6px;margin-top:20px}aside nav a{padding:6px 8px;border-radius:7px;text-decoration:none}aside nav a:hover{background:var(--soft)}main{width:min(1180px,100%);padding:52px clamp(24px,5vw,72px) 90px}.hero{padding:32px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(145deg,var(--panel),var(--soft));box-shadow:var(--shadow)}.hero h1{font-size:clamp(2rem,5vw,4rem);line-height:1.08;margin:8px 0 15px}.hero p{max-width:850px;color:var(--muted)}.eyebrow{color:var(--accent);font-weight:750;font-size:.75rem;letter-spacing:.08em}.controls{display:grid;grid-template-columns:minmax(220px,1fr) repeat(4,auto);gap:10px;margin:22px 0}.controls input,.controls button{border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--text);padding:10px 13px}.controls button{cursor:pointer}.standard-section{margin:26px 0;border:1px solid var(--line);border-radius:18px;background:var(--panel);box-shadow:var(--shadow);overflow:hidden;scroll-margin-top:20px}.standard-section[hidden]{display:none}.section-heading{display:grid;grid-template-columns:auto 1fr;gap:16px;padding:24px 28px;background:linear-gradient(135deg,var(--panel2),var(--soft))}.section-heading h2{margin:0;font-size:1.7rem}.section-heading p{margin:5px 0 0;color:var(--muted);max-width:78ch}.step-badge{display:grid;place-items:center;width:46px;height:46px;border-radius:13px;background:var(--accent);color:var(--panel);font-weight:800}.section-body{padding:10px clamp(20px,4vw,44px) 42px}.section-body>h2{font-size:1.35rem;margin-top:2.2em;border-bottom:1px solid var(--line);padding-bottom:.35em}.section-body h3{font-size:1.12rem;margin-top:1.8em}.section-body p,.section-body li{max-width:88ch}blockquote{border-left:4px solid var(--accent);padding:.5em 1em;background:var(--soft)}code{font-family:"Cascadia Code",Consolas,monospace;font-size:.9em;background:var(--panel2);padding:.14em .35em;border-radius:5px}pre{overflow:auto;background:var(--code);color:#eef7f1;padding:18px;border-radius:11px}pre code{background:none;padding:0}.table-wrap{overflow:auto;margin:1.2em 0;border:1px solid var(--line);border-radius:10px}table{border-collapse:collapse;width:100%;min-width:680px;font-size:.9rem}th,td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--line)}th{background:var(--panel2)}.source-review{margin:26px 0;border:1px solid var(--line);border-radius:14px;padding:0 18px;background:var(--panel)}.source-review summary{cursor:pointer;font-weight:750;padding:15px 0}.empty{display:none;padding:30px;text-align:center;color:var(--muted)}.empty.visible{display:block}@media(max-width:900px){.layout{display:block}aside{position:relative;height:auto;border-right:0;border-bottom:1px solid var(--line)}main{padding-top:28px}.controls{grid-template-columns:1fr 1fr}.controls input{grid-column:1/-1}}@media print{aside,.controls{display:none}.layout{display:block}main{width:100%;padding:0}.hero,.standard-section{box-shadow:none}.standard-section[hidden]{display:block}body{background:#fff;color:#111}}
+    
+:root{color-scheme:light;--bg:#f6f7f5;--surface:#fff;--surface-2:#f0f3f0;--surface-3:#e6eee9;--text:#17221d;--muted:#5f6c65;--line:#d6ded9;--line-strong:#b8c7bf;--accent:#17664f;--accent-strong:#0d503c;--accent-soft:#e1f0e9;--code:#13231d;--danger-bg:#fff0ef;--danger-text:#8a2924;--shadow:0 10px 30px rgba(24,45,35,.07);--focus:#1677ff;--radius:12px;--sidebar:272px}
+html[data-theme="dark"]{color-scheme:dark;--bg:#111713;--surface:#19211c;--surface-2:#202b24;--surface-3:#273a30;--text:#eef4f0;--muted:#a9b6ae;--line:#35423a;--line-strong:#52635a;--accent:#89d5b5;--accent-strong:#a8e4ca;--accent-soft:#203d31;--code:#0b100d;--danger-bg:#3c211f;--danger-text:#ffb5ae;--shadow:0 12px 32px rgba(0,0,0,.28);--focus:#72a7ff}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:96px}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.72 system-ui,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;text-rendering:optimizeLegibility}a{color:var(--accent);text-decoration-thickness:.08em;text-underline-offset:.2em}button,input,select,textarea{font:inherit}button,a,input,select,summary{touch-action:manipulation}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}.skip-link{position:fixed;z-index:1000;top:12px;left:12px;transform:translateY(-180%);padding:10px 14px;border-radius:8px;background:var(--accent);color:#fff;text-decoration:none}.skip-link:focus{transform:translateY(0)}:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.layout{display:grid;grid-template-columns:var(--sidebar) minmax(0,1fr);min-height:100vh}aside{position:sticky;top:0;height:100vh;padding:28px 20px;border-right:1px solid var(--line);overflow:auto;background:var(--surface)}aside h1{font-size:1.08rem;line-height:1.42;margin:7px 0 0}.eyebrow{color:var(--accent);font-weight:800;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase}.layer-nav,aside nav{display:grid;gap:4px;margin-top:28px}.layer-nav a,aside nav a{position:relative;min-height:44px;display:flex;align-items:center;padding:9px 12px;border-radius:8px;color:var(--muted);text-decoration:none;font-size:.92rem;font-weight:600}.layer-nav a:hover,aside nav a:hover{background:var(--surface-2);color:var(--text)}.layer-nav a[aria-current="true"],aside nav a[aria-current="true"]{background:var(--accent-soft);color:var(--accent-strong)}.layer-nav a[aria-current="true"]::before,aside nav a[aria-current="true"]::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:3px;border-radius:3px;background:var(--accent)}
+main{width:min(1540px,100%);padding:36px clamp(24px,3.5vw,56px) 96px}.hero{padding:30px clamp(26px,4vw,48px);border:1px solid var(--line);border-radius:var(--radius);background:linear-gradient(135deg,var(--surface),var(--accent-soft));box-shadow:var(--shadow)}.hero h1{max-width:19ch;font-size:clamp(2rem,3.6vw,3.35rem);line-height:1.12;letter-spacing:-.035em;margin:8px 0 14px}.hero p{max-width:78ch;margin:0;color:var(--muted)}.hero p+p{margin-top:10px}.summary-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:22px}.summary-strip span{min-height:44px;display:flex;align-items:center;padding:8px 12px;border:1px solid color-mix(in srgb,var(--accent) 18%,var(--line));border-radius:8px;background:color-mix(in srgb,var(--surface) 78%,transparent);color:var(--text);font-size:.88rem;font-weight:650}
+.controls{position:static;display:grid;grid-template-columns:minmax(260px,1fr) repeat(4,auto);gap:8px;margin:18px 0;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}.controls input,.controls button{min-height:44px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--text);padding:9px 12px}.controls button{cursor:pointer;font-weight:600}.controls button:hover{border-color:var(--accent);background:var(--accent-soft)}
+.layer-section,.standard-section{margin:32px 0;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);box-shadow:var(--shadow);overflow:clip;scroll-margin-top:92px}.layer-section[hidden],.standard-section[hidden]{display:none}.layer-heading,.section-heading{display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px;padding:24px clamp(22px,3vw,36px);border-bottom:1px solid var(--line);background:var(--surface-2);align-items:start}.layer-heading h2,.section-heading h2{margin:0;font-size:clamp(1.42rem,2vw,1.75rem);line-height:1.28}.layer-heading p,.section-heading p{margin:6px 0 0;color:var(--muted);max-width:78ch}.step-badge{display:grid;place-items:center;width:44px;height:44px;border-radius:8px;background:var(--accent);color:#fff;font-weight:800;font-variant-numeric:tabular-nums}.layer-body,.section-body{padding:14px clamp(22px,3.5vw,48px) 48px}.layer-body>h2,.section-body>h2{font-size:1.36rem;line-height:1.35;margin-top:2.3em;padding-bottom:.45em;border-bottom:1px solid var(--line)}.layer-body>h3,.section-body>h3{font-size:1.12rem;margin-top:1.9em}.layer-body p,.layer-body li,.section-body p,.section-body li{max-width:80ch}.layer-body li+li,.section-body li+li{margin-top:.3em}.layer-body details,.section-body details{margin:18px 0;border:1px solid var(--line);border-radius:10px;padding:0 16px;background:var(--surface)}.layer-body details>summary,.section-body details>summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font-weight:700;padding:12px 0}.layer-body details[open]>summary,.section-body details[open]>summary{border-bottom:1px solid var(--line)}.evidence-block{margin-top:34px!important;border-color:var(--line-strong)!important;background:var(--surface-2)!important}.evidence-block>summary{display:flex!important;align-items:flex-start!important;flex-direction:column;justify-content:center;gap:2px}.evidence-block>summary small{font-weight:400;color:var(--muted)}.evidence-block>div{padding-bottom:18px}.adapter-block+.adapter-block{border-top:1px solid var(--line);margin-top:34px;padding-top:16px}.review-section{background:var(--surface-2)}blockquote{max-width:78ch;border-left:4px solid var(--accent);margin:1.5em 0;padding:.7em 1em;background:var(--accent-soft)}
+code{font-family:"Cascadia Code",Consolas,monospace;font-size:.9em;background:var(--surface-2);padding:.14em .35em;border-radius:4px;overflow-wrap:anywhere}pre{max-width:100%;overflow:auto;background:var(--code);color:#eef7f1;padding:18px;border-radius:9px}pre code{background:none;padding:0;color:inherit}.table-wrap{position:relative;max-width:100%;overflow:auto;margin:1.35em 0;border:1px solid var(--line);border-radius:9px;overscroll-behavior-inline:contain;scrollbar-gutter:stable;background:var(--surface)}table{border-collapse:separate;border-spacing:0;width:100%;min-width:720px;font-size:.875rem;line-height:1.55}th,td{text-align:left;vertical-align:top;padding:11px 13px;border-bottom:1px solid var(--line);overflow-wrap:break-word;word-break:normal}th{position:sticky;z-index:3;top:0;background:var(--surface-2);color:var(--text);font-size:.82rem;letter-spacing:.02em}tbody tr:nth-child(even) td{background:color-mix(in srgb,var(--surface-2) 50%,var(--surface))}tbody tr:hover td{background:var(--accent-soft)}tbody tr:last-child td{border-bottom:0}.wide-table-wrap{box-shadow:inset -18px 0 18px -22px rgba(0,0,0,.55)}.wide-table-wrap::after{content:"横向滚动查看完整字段";position:sticky;left:12px;bottom:8px;display:inline-block;margin:0 0 8px;padding:4px 8px;border-radius:5px;background:var(--text);color:var(--surface);font-size:.72rem;pointer-events:none;opacity:.72}.wide-data-table{width:100%;min-width:1500px;table-layout:auto}.wide-data-table th:nth-child(1),.wide-data-table td:nth-child(1){position:sticky;z-index:2;left:0;min-width:48px;width:48px;white-space:nowrap;background:var(--surface)}.wide-data-table th:nth-child(1){z-index:5;background:var(--surface-2)}.wide-data-table th:nth-child(2),.wide-data-table td:nth-child(2){position:sticky;z-index:2;left:48px;min-width:210px;background:var(--surface);box-shadow:1px 0 0 var(--line),8px 0 14px -14px rgba(0,0,0,.8)}.wide-data-table th:nth-child(2){z-index:5;background:var(--surface-2)}.wide-data-table tbody tr:nth-child(even) td:nth-child(-n+2){background:color-mix(in srgb,var(--surface-2) 50%,var(--surface))}.wide-data-table tbody tr:hover td:nth-child(-n+2){background:var(--accent-soft)}.wide-data-table th:nth-child(3),.wide-data-table td:nth-child(3){min-width:290px}.wide-data-table th:nth-child(4),.wide-data-table td:nth-child(4),.wide-data-table th:nth-child(5),.wide-data-table td:nth-child(5),.wide-data-table th:nth-child(6),.wide-data-table td:nth-child(6),.wide-data-table th:nth-child(9),.wide-data-table td:nth-child(9),.wide-data-table th:nth-child(10),.wide-data-table td:nth-child(10){min-width:92px;white-space:nowrap;font-variant-numeric:tabular-nums}.wide-data-table th:nth-child(7),.wide-data-table td:nth-child(7){min-width:220px}.wide-data-table th:nth-child(8),.wide-data-table td:nth-child(8){min-width:280px}
+.data-overview{margin:26px 0 36px}.data-overview>h2{margin-bottom:.35em}.notice{max-width:84ch;color:var(--muted)}.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:18px 0}.metric{display:grid;align-content:center;min-height:92px;padding:14px 16px;border:1px solid var(--line);border-radius:9px;background:var(--surface-2)}.metric strong{font-size:1.65rem;line-height:1.15;font-variant-numeric:tabular-nums}.metric span{margin-top:5px;color:var(--muted);font-size:.83rem}.context-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}.context-grid div{padding:13px;border:1px solid var(--line);border-radius:8px;background:var(--surface-2)}.context-grid dt{font-size:.78rem;color:var(--muted)}.context-grid dd{margin:3px 0 0;overflow-wrap:anywhere}.status{display:inline-block;padding:2px 8px;border-radius:999px;background:var(--surface-2)}.status.passed{background:#dff2e6;color:#155c31}.notice.error{padding:12px;border-radius:8px;background:var(--danger-bg);color:var(--danger-text)}.empty{display:none;padding:36px;text-align:center;color:var(--muted)}.empty.visible{display:block}
+.dictionary-controls{position:static;display:grid;gap:16px;margin:18px 0 22px;padding:16px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2)}.dictionary-filter-row{display:grid;grid-template-columns:minmax(320px,1fr) minmax(170px,220px) minmax(170px,220px);gap:12px;align-items:end}.dictionary-filter-row>.control-caption{grid-column:1/-1}.dictionary-option-row{display:grid;grid-template-columns:minmax(220px,280px) minmax(210px,260px) minmax(0,1fr);gap:16px;align-items:end;padding-top:16px;border-top:1px solid var(--line)}.control-caption{display:block;color:var(--muted);font-size:.78rem;font-weight:750;letter-spacing:.04em;line-height:1.3}.dictionary-view-switch{display:block;min-width:0;margin:0;padding:0;border:0}.dictionary-view-switch legend{margin-bottom:7px;color:var(--muted);font-size:.78rem;font-weight:750}.segmented-control{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:8px;overflow:hidden}.segmented-control button{width:100%;border:0!important;border-radius:0!important}.segmented-control button+button{border-left:1px solid var(--line)!important}.dictionary-sort{display:grid!important;grid-template-columns:1fr!important;align-items:stretch!important;gap:7px!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;color:var(--muted);font-size:.78rem;font-weight:750;white-space:normal!important}.dictionary-sort select{width:100%}.dictionary-extra{display:grid;grid-template-columns:auto minmax(0,1fr);gap:7px 10px;align-items:end;min-width:0}.dictionary-extra>.control-caption{grid-column:1/-1}.dictionary-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.filter-toggle{min-height:44px;display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--line);border-radius:7px;white-space:nowrap;background:var(--surface);font-size:.88rem}.dictionary-controls input[type="search"],.dictionary-controls select,.dictionary-controls button,.dictionary-data-actions button{width:100%;min-width:0;min-height:44px;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--text);padding:8px 11px}.dictionary-controls button,.dictionary-data-actions button{cursor:pointer;white-space:nowrap;font-weight:600}.dictionary-controls button:hover,.dictionary-data-actions button:hover,.word-chip:hover,.type-tag:hover{border-color:var(--accent);background:var(--accent-soft)}.dictionary-controls button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}.dictionary-controls input[type="checkbox"]{flex:0 0 auto;width:18px;height:18px;min-height:0;padding:0;accent-color:var(--accent)}.dictionary-results{display:grid;gap:22px}.dictionary-group{border:1px solid var(--line);border-radius:10px;overflow:clip;background:var(--surface)}.dictionary-group>header{padding:17px 20px;border-bottom:1px solid var(--line);background:var(--surface-2)}.dictionary-group>header h3{margin:0;font-size:1.12rem}.dictionary-group>header p{margin:5px 0 0;color:var(--muted);max-width:84ch}.dictionary-group-body{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr));gap:14px;padding:16px}.dictionary-card{border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:0 17px;min-width:0}.dictionary-card summary{min-height:48px;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;padding:13px 0;font-weight:750;overflow-wrap:normal;word-break:keep-all}.dictionary-card[open]{border-color:var(--line-strong)}.dictionary-card-body{padding:2px 0 18px}.dictionary-card p{margin:.7em 0;line-height:1.72}.dictionary-meta{color:var(--muted);font-size:.81rem;font-weight:500}.dictionary-statline{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0}.dictionary-statline span,.type-tag,.signal-tag{display:inline-flex;align-items:center;min-height:30px;border:1px solid transparent;border-radius:6px;padding:4px 8px;background:var(--accent-soft);color:var(--text);font-size:.78rem}.type-tag{cursor:pointer}.word-list{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0}.word-chip{min-height:34px;border:1px solid var(--line);border-radius:6px;background:var(--surface-2);color:var(--text);padding:5px 9px;cursor:pointer;white-space:nowrap}.word-chip[data-overlap="true"]{border-color:var(--accent);box-shadow:inset 3px 0 0 var(--accent)}.word-chip small{color:var(--muted)}.word-card{border:1px solid var(--line);border-radius:8px;padding:18px;min-width:0}.word-card h3{margin:0 0 9px}.word-card p{margin:.62em 0;line-height:1.72}.word-types{display:flex;flex-wrap:wrap;gap:7px}.dictionary-data-region textarea{width:100%;min-height:440px;resize:vertical;border:1px solid var(--line);border-radius:8px;background:var(--code);color:#eef7f1;padding:14px;font:13px/1.55 "Cascadia Code",Consolas,monospace}.dictionary-data-actions{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.vocabulary-empty.visible{display:block}.vocabulary-dictionary mark{background:#ffe69a;color:#2e260c;border-radius:3px;padding:0 .08em}.source-review{margin:32px 0;border:1px solid var(--line);border-radius:10px;padding:0 18px;background:var(--surface)}.source-review summary{min-height:48px;display:flex;align-items:center;cursor:pointer;font-weight:700}.frequency-ranking{margin:22px 0 30px;padding:18px;border:1px solid var(--line);border-radius:10px;background:var(--accent-soft)}.frequency-ranking h3{margin:0 0 4px;font-size:1.12rem}.frequency-ranking>p{margin:0 0 14px;color:var(--muted)}.ranking-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;margin:0;padding:0;list-style:none}.ranking-list li{display:grid;grid-template-columns:32px minmax(0,1fr) auto;gap:9px;align-items:center;min-height:52px;padding:9px 11px;border:1px solid color-mix(in srgb,var(--accent) 18%,var(--line));border-radius:8px;background:var(--surface)}.ranking-index{display:grid;place-items:center;width:28px;height:28px;border-radius:6px;background:var(--accent);color:#fff;font-size:.78rem;font-weight:800;font-variant-numeric:tabular-nums}.ranking-name{min-width:0;font-weight:700;overflow-wrap:anywhere}.ranking-value{color:var(--accent-strong);font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}.ranking-detail{grid-column:2/-1;color:var(--muted);font-size:.78rem}
+.dictionary-actions button{width:auto!important}.sentence-controls .dictionary-filter-row,.structural-dictionary .dictionary-filter-row{grid-template-columns:minmax(320px,1fr) minmax(180px,240px)}
+.target-style-guide .controls,.target-style-guide .dictionary-data-region,.target-style-guide .dictionary-filter-row,.target-style-guide .dictionary-sort,.target-style-guide .dictionary-extra,.target-style-guide .data-overview>.metrics{display:none!important}.target-style-guide .dictionary-controls{display:block;margin:18px 0 22px;padding:0;border:0;background:transparent}.target-style-guide .dictionary-option-row{display:block;padding:0;border:0}.target-style-guide .dictionary-view-switch{width:min(320px,100%)}
+@media(max-width:1180px){:root{--sidebar:236px}.summary-strip{grid-template-columns:1fr 1fr}.dictionary-filter-row,.sentence-controls .dictionary-filter-row,.structural-dictionary .dictionary-filter-row{grid-template-columns:1fr 1fr}.dictionary-filter-row>.control-caption,.dictionary-filter-row input[type="search"]{grid-column:1/-1}.dictionary-option-row{grid-template-columns:1fr 1fr}.dictionary-extra{grid-column:1/-1}.dictionary-actions{justify-content:flex-start}.dictionary-group-body{grid-template-columns:1fr}}
+@media(max-width:900px){html{scroll-padding-top:16px}.layout{display:block}aside{position:relative;height:auto;padding:20px 18px;border-right:0;border-bottom:1px solid var(--line)}aside h1{max-width:none}.layer-nav,aside nav{display:flex;gap:6px;margin-top:16px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}.layer-nav a,aside nav a{flex:0 0 auto;background:var(--surface-2)}.layer-nav a[aria-current="true"]::before,aside nav a[aria-current="true"]::before{left:10px;right:10px;top:auto;bottom:4px;width:auto;height:3px}.controls{top:8px;grid-template-columns:1fr 1fr}.controls input{grid-column:1/-1}main{padding:24px clamp(16px,4vw,32px) 72px}.layer-section,.standard-section{scroll-margin-top:12px}.dictionary-controls{position:relative;top:auto}}
+@media(max-width:620px){body{font-size:16px}.hero{padding:24px 20px}.hero h1{font-size:2rem;max-width:none}.summary-strip{grid-template-columns:1fr}.controls{position:relative;top:auto;grid-template-columns:1fr}.controls input{grid-column:auto}.layer-heading,.section-heading{grid-template-columns:40px minmax(0,1fr);gap:12px;padding:20px 16px}.step-badge{width:40px;height:40px}.layer-body,.section-body{padding:10px 16px 36px}.dictionary-filter-row,.dictionary-option-row{grid-template-columns:1fr}.dictionary-filter-row .control-caption{display:none}.dictionary-filter-row select:last-child,.dictionary-extra{grid-column:auto}.dictionary-extra{display:grid;justify-content:stretch}.dictionary-actions{display:grid;grid-template-columns:1fr 1fr}.dictionary-actions button:last-child{grid-column:1/-1}.dictionary-controls>*{width:100%}.dictionary-group-body{padding:10px}.dictionary-card{padding-inline:13px}.wide-data-table th:nth-child(2),.wide-data-table td:nth-child(2),.wide-data-table th:nth-child(1),.wide-data-table td:nth-child(1){position:static;box-shadow:none}.wide-table-wrap::after{display:none}}
+.target-style-guide .dictionary-group-body{grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));align-items:stretch;gap:16px}.target-style-guide .dictionary-card,.target-style-guide .word-card{display:flex;flex-direction:column;width:100%;height:336px;min-height:336px;max-height:336px;padding:18px;overflow:auto;scrollbar-gutter:stable;border-color:var(--line-strong);box-shadow:0 8px 22px rgba(36,52,43,.06)}.target-style-guide .dictionary-card-body{display:block;padding:0}.target-style-guide .word-card h3{position:sticky;z-index:2;top:-18px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin:-18px -18px 12px;padding:16px 18px 12px;border-bottom:1px solid var(--line);background:var(--surface);line-height:1.42}.target-style-guide .word-card h3 .observed-headline{flex:0 0 auto;max-width:48%;color:var(--accent-strong);font-weight:750;text-align:right;font-variant-numeric:tabular-nums}.target-style-guide .dictionary-card summary{display:none}.target-style-guide .dictionary-card p,.target-style-guide .word-card p{line-height:1.68}.target-style-guide .dictionary-statline{margin:10px 0}.target-style-guide .word-types{margin-top:auto;padding-top:10px}@media(max-width:620px){.target-style-guide .dictionary-group-body{grid-template-columns:1fr}.target-style-guide .dictionary-card,.target-style-guide .word-card{height:360px;min-height:360px;max-height:360px}}
+.target-style-guide .vocabulary-dictionary>.dictionary-results{grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));align-items:stretch;gap:16px}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+@media print{aside,.controls,.skip-link{display:none}.layout{display:block}main{width:100%;padding:0}.hero,.layer-section,.standard-section{box-shadow:none}.layer-section[hidden],.standard-section[hidden]{display:block}body{background:#fff;color:#111}a{color:#111}.empty{display:none!important}.dictionary-controls{position:static;box-shadow:none}.wide-table-wrap::after{display:none}}
+
+  </style>
+</head>
+<body><a class="skip-link" href="#main-content">跳到正文</a><div class="layout">
+  <aside aria-label="页面章节"><div class="eyebrow">CLEAR-SCIENCE-WRITING</div><h1>语言风格提取与生成通用规范</h1><nav aria-label="页面章节"><a href="#standard-overview">先看整体</a><a href="#standard-lexical">第一层 · 词汇</a><a href="#standard-sentence">第二层 · 句式</a><a href="#standard-paragraph">第三层 · 段落结构</a><a href="#standard-composition">第四层 · 整篇编排</a><a href="#standard-combined">综合使用</a><a href="#standard-validation">提取与验证</a></nav></aside>
+  <main id="main-content" tabindex="-1">
+    <header class="hero"><div class="eyebrow">通用规范</div><h1>语言风格提取与生成通用规范</h1><p>这里统一说明词汇、句式、段落、整篇编排、命名、来源隔离、HTML 交付和验证要求。具体语言风格页面只填写自身参数，不重复复制这套方法。</p><p>源文件同步指纹：<code>af883c3894f8</code></p></header>
+    <div class="controls" role="search"><label class="sr-only" for="search">搜索通用规范</label><input id="search" type="search" placeholder="搜索通用规范"><button type="button" data-action="expand">全部展开</button><button type="button" data-action="collapse">全部折叠</button><button type="button" data-action="print">打印 / 导出 PDF</button><button type="button" data-action="theme">切换明暗</button></div>
+    <div id="empty" class="empty">没有找到匹配内容。</div><section class="standard-section search-unit" id="standard-overview" data-searchable>
+  <header class="section-heading"><div class="step-badge">00</div><div><h2>先看整体</h2><p>文风由词汇、句式、段落和整篇编排逐层形成；阅读效果与证据状态贯穿四层。</p></div></header>
+  <div class="section-body"><p>用它把材料写成读者能顺着逻辑读懂、又不丢失事实边界的文章。内容模型决定说什么、哪些事实不能改变；语言风格决定同一内容怎样被命名、成句、分段和编排。词汇首先形成语言身份、关系距离和语域，句式、段落、整篇顺序、声音和表现策略再形成稳定的“声音指纹”。先封闭内容边界，再逐层提取文风。</p>
+<h2 id="standard-overview-先分清两种层级">先分清两种层级</h2>
+<p>分析时同时使用两张地图，不能把它们混成一组形容词。</p>
+<p>第一张地图回答“写法出现在哪个文字层级”：</p>
+<pre><code class="language-text">词汇选择 → 句式构造 → 段落结构 → 整篇编排</code></pre>
+<p>第二张地图回答“怎样从证据得到文风结论”：</p>
+<pre><code class="language-text">可观察写法 → 推定阅读效果 → 跨样本稳定组合 → 场景适用性</code></pre>
+<p>“正式、亲近、强硬、克制、快速”属于阅读效果，不是与词汇、句式并列的写作层级。任何效果判断都要能回指实际用词、位置、句法、段落动作或顺序证据；任何稳定文风都要由多项共同出现的选择构成，不能由一个口癖、一个标点或一句典型文本定义。</p>
+<p>还要分开容易混淆的轴：礼貌不等于要求较弱，判断确定不等于要求对方执行，情绪正负不等于情绪强弱，具体不等于精确，句子长不等于信息密度。完整分析规则见 <a href="#nonlexical-style-extraction.md">references/nonlexical-style-extraction.md</a>。</p>
+<h2 id="standard-overview-二-文风">二、文风</h2>
+<h3 id="standard-overview-1-词汇是第一风格约束">1. 词汇是第一风格约束</h3>
+<p>提取文风时先完整阅读 <a href="#lexical-extraction.md">references/lexical-extraction.md</a>。其中的词类和例词只是搜索范围，不是提取答案。必须回到实际语料，逐类找出主要使用的词、较少使用的同义词、稳定搭配、常见位置和覆盖范围。语料没有出现的类别只留在通用候选检查结果中，不写入目标风格 Skill 的正式参数、字典或正文。</p>
+<p>统计不能停在“出现多少次”。至少同时记录词频、标准化频率、样本覆盖率、句中位置、稳定搭配、承担功能、同义替代比例和对照组差异。单词相同但位置和作用不同，产生的文风也不同；例如“可以”可能表示许可、能力或可能性，必须按上下文分别统计。</p>
+<p>语料较大时先运行词汇扫描；采样、匿名路径、JSONL、开放词汇和全文复核的完整规则只保存在 <a href="#lexical-extraction.md">references/lexical-extraction.md</a>，不要在两处分别维护：</p>
+<pre><code class="language-powershell">node scripts/analyze-lexicon.mjs &lt;文本文件或目录&gt; [输出 JSON] --sample-size 120 --sample-seed 42 --sample-strategy random --min-paragraph-chars 20</code></pre>
+<p>第一轮固定种子抽取 100–300 个有效段落，人工发现候选词后用同一词表复扫样本，再以 <code>--sample-size 0</code> 完成全文验证。所有原文样本保存在私人层；公开档案只保存匿名统计和可复核结论。</p>
+<h3 id="standard-overview-2-识别文风">2. 识别文风</h3>
+<p>文风不是“多用高级词”或“句子写得长”。它是同一说话者、作者、团队或文体长期稳定的选择：用什么词进入问题，句子怎样施加动作，段落怎样展开，整篇先让读者知道什么，以及这些选择在什么场景下改变。</p>
+<p>先记录可观察证据，再推定阅读效果：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>层级</th>
+<th>要记录什么</th>
+</tr></thead><tbody>
+<tr>
+<td>词汇</td>
+<td>人称、称呼、判断依据、确定程度、行动词、评价词、回应词、句首句末、语域、稳定搭配和禁用词</td>
+</tr>
+<tr>
+<td>句式</td>
+<td>言语行为、主语与责任、主动或被动、焦点位置、否定方式、逻辑骨架、句长、断句和重复</td>
+</tr>
+<tr>
+<td>段落</td>
+<td>段首功能、主要展开方式、段尾功能、常用骨架、拆段条件、过渡和列表使用方式</td>
+</tr>
+<tr>
+<td>整篇编排</td>
+<td>读者首要问题、答案位置、背景深度、证据与反例顺序、常用全文路线和结尾合同</td>
+</tr>
+</tbody></table></div>
+<p>再分开记录关系、判断与行动、情绪、信息和节奏等阅读效果。每项写清证据、可能的混淆因素、适用性和置信度；没有证据时标为“不适用”或“证据不足”，不能补造特征。</p>
+<h3 id="standard-overview-3-建立和迁移文风">3. 建立和迁移文风</h3>
+<p>只有同一文体、相近受众和相近目的的样本，才可放进同一文风比较组。不要把考场议论文的宏大抒情、文学散文的意象、技术说明的准确克制混成一种“高级文风”。</p>
+<p>需要从样本文本提取文风，或让某种文风实际约束 Codex 的本次输出时，先生成逐类词汇统计和 <code>LexicalProfile</code>，再完整读取 <a href="#nonlexical-style-extraction.md">references/nonlexical-style-extraction.md</a> 与 <a href="#style-extraction.md">references/style-extraction.md</a>，生成非词汇档案、完整 <code>StyleExtractionReport</code> 和供实际写作使用的最终 <code>StyleProfile</code>。所有档案都沿用语料语言，并直接采用目标风格书写。</p>
+<p>每个稳定维度记录一个主倾向、一个确有证据的次倾向，以及触发变化的场景。声音一致不等于每句话相同；普通场景与高风险场景可以使用不同强度，但变化必须发生在可预测的范围内。绑定时先让语料实际偏好的词、搭配、句首句末习惯和确定程度进入用户可见输出，再处理句式、段落、整篇编排、声音和表现策略；代码、标识符、日志、引用、事实和责任主体不因文风而改变。</p>
+<p>完成验证后再命名和生成 Skill。正式名称、五份档案、HTML 阅读版、规则字段、来源隔离、运行时加载和七项验证的唯一规范见 <a href="#style-extraction.md">references/style-extraction.md</a>，本页不再复制这些字段。</p>
+<p>创建新语言风格 Skill 时，先运行使用 <code>skill-creator</code> 的初始化脚本封装：</p>
+<pre><code class="language-powershell">node scripts/init-language-style-skill.mjs &lt;skill-name&gt; --path &lt;输出目录&gt; --display-name &lt;正式名称&gt; --language &lt;zh|en&gt; --description &lt;触发说明&gt;</code></pre>
+<p>完成提取、替换所有占位内容并生成界面 metadata 后，必须从当前正式档案同步生成 <code>references/style-guide.html</code>。HTML 使用目标语料语言和目标文风，集中展示五份档案、证据报告及已有任务适配器，并提供目录、搜索、折叠、明暗切换和打印；它是面向用户的主要查看入口，只供人阅读，不是新的规则事实源，也不参与 Agent 的普通运行时加载：</p>
+<pre><code class="language-powershell">node scripts/render-language-style-html.mjs &lt;目标 Skill 目录&gt;</code></pre>
+<p>向用户交付或现场查看时，必须用系统浏览器打开 HTML，不能用 Codex 的源码查看器或文件预览代替；文件预览通常不会执行搜索、折叠、主题切换等页面脚本。可以直接双击 <code>style-guide.html</code>，或运行：</p>
+<pre><code class="language-powershell">node scripts/render-language-style-html.mjs &lt;目标 Skill 目录&gt; --open</code></pre>
+<p>普通用户默认只需要 HTML。Markdown 和 JSON 供 Agent 加载、规则复核和数据审计使用；除非用户要求查看原始档案，不要把一组 Markdown 文件当作主要交付入口。具体风格 HTML 默认认为读者已经理解本 Skill 定义的四层通用规范，只展示该风格的实际词汇、句式、段落、整篇参数和验证结果；不要在每个页面复制通用方法。页面顶部必须提供返回 <code>clear-science-writing</code> 的通用规范链接。</p>
+<p>词汇层必须由 <a href="#four-layer-type-catalog.json">references/four-layer-type-catalog.json</a> 的8个大类、193种通用词汇类型与 <code>style-data.json</code> 中的目标统计联合生成数据驱动字典，不能再把词汇总表写死在 HTML。只自动映射同名唯一类型；通用类型把旧类别拆得更细时，不根据词条重合强行拆分目标统计，而是保留目标扩展。目标字典保存实际命中次数大于零的目标参数；零命中类型仍留在通用候选库和检查报告中，不进入具体语言风格 Skill。面向人的具体风格 HTML 只显示覆盖率不低于 1% 的参数，低于 1% 的统计仍保留在 JSON 中供复核。具体风格页面只保留“按类型归组”和“具体词条”两种查看方式；两种视图都使用默认展开的等尺寸卡片，并在卡片标题区显示命中次数与覆盖率，不提供搜索、筛选、排序、展开收起或复制操作。完整搜索和字典维护功能只属于通用规范页。类型数、类型内词条数、去重词条数和多重归类词数必须由当前数据实时计算。词条的通用定义、作用和注意项与目标语料的次数、覆盖、位置、组合、变化和对照属于不同字段；页面可以联合展示，但不能用通用分类说明伪造目标语料统计。生成 HTML 时同时生成 <code>references/vocabulary-dictionary.json</code>，并确保它与 HTML 内嵌数据一致。下载当前 HTML 时，应把用户已经应用的词汇数据重新嵌入下载文件。</p>
+<p>句式层必须同时加载 <a href="references/sentence-style-catalog.json">references/sentence-style-catalog.json</a> 的通用分类轴、句式类型和具体模板，并把 <code>style-data.json</code> 中已有的目标语料统计映射进去。完整字典维护界面提供搜索、分类筛选、排序、编辑、导入和导出 JSON；具体风格 HTML 只保留“按句式类型”和“按具体模板”两个卡片视图，默认显示具体模板，隐藏覆盖率低于 1% 的卡片。生成 HTML 时同时生成 <code>references/sentence-dictionary.json</code>，并确保它与 HTML 内嵌数据一致。通用字典中的分类轴、句式类型和模板只规定检查范围；未映射不得显示为零次，实际计数为零的目标项也不得保存到具体风格 Skill。目标语料出现而通用库尚无唯一对应的句式，保留在“目标文风扩展”中，不得丢弃或强行错配。</p>
+<p>段落层和整篇层使用 <a href="#four-layer-type-catalog.json">references/four-layer-type-catalog.json</a> 中的分类轴、类型和具体模板。段落层生成 <code>references/paragraph-dictionary.json</code>，至少包含8个分类轴、112种类型和65个通用模板；整篇层生成 <code>references/composition-dictionary.json</code>，至少包含9个分类轴、118种类型和60个通用模板。完整字典维护界面保留搜索、分类筛选、类型跳转和 JSON 操作；具体风格 HTML 只保留类型视图与具体结构视图，默认显示具体结构，隐藏覆盖率低于 1% 的卡片。无法唯一对应的目标段落或整篇结构进入目标扩展，不得按零次处理。</p>
+<p>字典随提取任务持续更新，不冻结在首次生成版本。每次 <code>style-data.json</code> 改变后重新生成目标词汇和句式字典；新发现的词或句式先进入目标扩展并保留来源、统计和验证状态。只有同一参数在多份独立语料中重复出现、边界清楚并完成人工语义复核后，才可用 <code>scripts/import-sentence-style-catalog.mjs</code> 或同等受控流程升级通用候选字典。单一作品、人物或任务中的偶然写法不得直接污染所有风格的通用分类。</p>
+<p>日常使用可以为后续迭代提供样本，但不能让 Skill 用自己的生成文本证明自己的规则。样本按来源分级：目标原文是来源证据；用户亲自改写的版本和用户明确接受的版本是适配证据；用户否决的版本是反向证据；未经用户确认的模型输出只能进入候选队列。日常任务不得静默改写全局 Skill；只有用户要求更新，或进入明确的维护任务时，才把最小必要记录写入 <code>references/style-learning-log.jsonl</code>，再重新统计、抽样复核并更新 <code>style-data.json</code>。不要保存无关对话、私人内容或整份任务历史，优先保存文本哈希、受控本地引用、差异摘要和候选参数。</p>
+<p>新一轮语料分析完成后运行：</p>
+<pre><code class="language-powershell">node scripts/update-language-style-dictionaries.mjs &lt;目标语言风格 Skill 目录&gt;</code></pre>
+<p>语料命中和对照统计完成后，使用统一权重脚本补充各层参数优先级：</p>
+<pre><code class="language-powershell">node scripts/update-language-style-weights.mjs &lt;目标语言风格 Skill 目录&gt;/references/style-data.json</code></pre>
+<p>权重只用于同层排序。它由覆盖率、对照差异和复核置信度计算，不能覆盖语义适用条件，也不能把低频但必要的安全、事实或责任规则降级。</p>
+<p>该命令重新生成 HTML、词汇、句式、段落、整篇字典和 <code>dictionary-update-report.json</code>。如果存在 <code>references/style-learning-log.jsonl</code>，报告还会区分可复核样本、反向样本、模型候选和待人工判断的参数。报告逐层列出目标参数规模、映射结果、歧义项、未映射项和通用字典升级候选。它只负责发现维护工作，不自动修改正式统计，也不自动把目标扩展升级为通用参数。学习记录格式见 <a href="references/style-learning-log-schema.json">references/style-learning-log-schema.json</a>。</p>
+<p>面向人的 HTML 必须按“先看整体 → 第一层词汇 → 第二层句式 → 第三层段落 → 第四层整篇编排 → 综合使用 → 复核”逐层递进，不能按 Markdown 文件名排列。四层采用同一展示合同，不能词汇层有词典和数据，句式、段落、整篇却只剩几条概括。每一层都依次展示：主要特征、具体类型或结构、常见组合、场景变化、正反样例、数据与文本依据、置信度和未验证项。</p>
+<p>生成和校验四层档案时，完整读取 <a href="#four-layer-writing-contract.md">references/four-layer-writing-contract.md</a>、<a href="#four-layer-style-data-schema.md">references/four-layer-style-data-schema.md</a>、<a href="#four-layer-feature-catalog.json">references/four-layer-feature-catalog.json</a> 与 <a href="#four-layer-type-catalog.json">references/four-layer-type-catalog.json</a>。严格继承其中的客观分析维度、候选字典和数据合同，不把参考材料中的任何候选写法直接当成目标技巧。候选库只规定必须检查的范围，不能冒充目标风格；候选句式、段落序列和内容路线必须保留名称、模板或序列及客观关系，便于逐项统计。所有维度都必须检查并在候选库、审计字段或独立报告中留下状态；目标档案只列语料实际命中的参数：词汇列实际词，句式列“……吗”“不是 A，而是 B”一类实际结构，段落列实际动作序列，整篇列实际信息路线。四层每个实际命中的参数统一记录类型、频率、位置、组合和变化范围，并写入 <code>references/style-data.json</code>；次数为零的参数不得写入目标 Skill。缺少其中任何一项时只能算部分完成。候选表里的例词、反问、排比、段落模板或“答案先行”等写法，没有语料证据时不得进入目标 <code>StyleProfile</code>。</p>
+<p>新增或修订四层类型库时，保留两份重要原始参考：<a href="#文风参数化方法论_四层类型字典版.html">文风参数化方法论_四层类型字典版.html</a> 供人阅读，<a href="#文风参数库_四层类型字典.json">文风参数库_四层类型字典.json</a> 供数据复核。运行时使用由下列命令增量合并生成的 <code>four-layer-type-catalog.json</code>，不要直接改写原始参考：</p>
+<pre><code class="language-powershell">node scripts/import-four-layer-style-catalog.mjs references/文风参数库_四层类型字典.json</code></pre>
+<p>递进只负责阅读顺序，不得隐藏证据。每层结论后面都要就近提供可展开的依据，至少说明可观察事实、样本和全文范围、频率或结构指标、对照差异、混淆因素、规则状态、验证结果，以及当前证据不能推出什么。证据不足时保留该层和相应类型，但标为候选、暂定或未验证；不能为了填满四层而补造稳定特征，也不能直接从词频跨层推断句式、段落或整篇结构。</p>
+<p>给人阅读的通用规范使用 <a href="#standard-overview">references/language-style-standard.html</a>。本 Skill 或词汇、非词汇、风格提取规范改变后，重新生成它：</p>
+<pre><code class="language-powershell">node scripts/render-language-style-standard-html.mjs &lt;clear-science-writing Skill 目录&gt;</code></pre>
+<p>随后同时运行系统基础校验和专用合规校验：</p>
+<pre><code class="language-powershell">python -X utf8 &lt;skill-creator&gt;/scripts/quick_validate.py &lt;目标 Skill 目录&gt;
+node scripts/validate-language-style-skill.mjs &lt;目标 Skill 目录&gt; [--forbid-source &lt;来源名称&gt;]
+node scripts/validate-language-style-skill.mjs &lt;目标 Skill 目录&gt; --require-complete [--forbid-source &lt;来源名称&gt;]</code></pre>
+<p>完整度不得由报告自报。<code>style-data.json</code> 中仍有未统计、证据不足，或只由宽松规则得到且未完成人工语义复核的参数时，对应层必须失败；段落与整篇还必须有人工复核证据。</p>
+<p>第一条检查文件、字段、链接、同步状态、运行时规则和来源隔离是否正确；第二条再检查词汇、句式、段落和整篇编排是否都达到“完整”成熟度。<code>--require-complete</code> 不只读取报告中的状态，还会独立核对各层档案是否有规定参数、正向单位数、对照证据、可执行来源规则和通过验证的 observation；段落与整篇还必须有人工复核证据。它同时校验正文文风记录：除标题、表格及表格数据、代码、JSON、导航和控件外，目标 <code>SKILL.md</code>、五份正式档案、已有任务适配器和 HTML 正文必须使用目标语料语言，并由独立任务按词汇、句式、段落和整篇四层复核；正文或 HTML 改动后，哈希不一致会使旧记录失效。最终交付目标语言风格必须通过该检查。如果某层只有候选、任务适配器或由其他层间接推断，结构校验可以通过，但成熟度只能是 <code>partial</code> 或 <code>insufficient</code>，不得称为已经完成的语言风格。</p>
+<p><code>style-extraction-report.json</code> 必须包含 <code>layerMaturity</code> 和 <code>bodyStyleValidation</code>。四层分别记录分析单位、单位数、已完成检查、仍缺检查和证据说明；<code>overall</code> 由四层状态自动核对。<code>bodyStyleValidation</code> 保存被复核正文的版本、语言、源文件哈希、Markdown 与 HTML 正文哈希、逐文件结果和独立复核记录。词汇层的词频不能替代句式统计，对白碎片不能替代段落边界，局部发言不能替代整篇编排；规则表完整也不能替代正文实际采用目标文风。校验器必须把“文件齐全”“证据齐全”和“正文文风通过”分开报告。</p>
+<p>改写时先保留目标文本的身份和任务，再选择两三项可迁移的文风特征，例如“短句为主 + 具体动词 + 先事实后判断”。不要逐句仿写，也不要为了模仿词频而牺牲事实边界。</p>
+<h3 id="standard-overview-4-用修辞控制语气和节奏">4. 用修辞控制语气和节奏</h3>
+<ul>
+<li><strong>对比</strong>：比较对象处在同一维度，并写出差异造成的结果。</li>
+<li><strong>比喻或类比</strong>：说明陌生机制与熟悉经验的对应关系；必要时说明类比在哪一点失效。</li>
+<li><strong>排比</strong>：并列项的语法和层级一致；过长时改为列表。</li>
+<li><strong>设问</strong>：提出读者真正会问的问题，紧接真实回答。</li>
+<li><strong>反复</strong>：固定主旨、术语或限制，不用近义词轮换制造文采。</li>
+<li><strong>举例</strong>：把抽象机制落到具体场景，不以个例冒充普遍结论。</li>
+</ul>
+<p>避免用口号、连续反问、堆叠形容词、过度拟人或戏剧化语气制造“力度”。它们不能弥补缺失的因果和证据。</p></div>
+</section>
+<section class="standard-section search-unit" id="standard-lexical" data-searchable>
+  <header class="section-heading"><div class="step-badge">01</div><div><h2>第一层 · 词汇</h2><p>先统计实际使用的词、位置、搭配、覆盖和对照差异，再判断哪些词真正具有风格区分度。</p></div></header>
+  <div class="section-body"><h2 id="standard-lexical-八大类与193种通用词汇类型">八大类与193种通用词汇类型</h2>
+<p>词汇层包含 8 个大类、193 种通用类型和 1030 个去重候选词条。通用类型只规定检查范围；目标语料的词频、位置、组合和对照必须另行映射。</p>
+<ul>
+<li>指称、身份与关系：记录文本怎样称呼说话者、听话者、第三方、群体和对象。</li>
+<li>判断、立场与情态：记录文本怎样表示肯定、否定、可能、必要、证据、意愿和保留。</li>
+<li>行动与言语行为：记录文本怎样作决定、提建议、请求、命令、拒绝、回应和修正。</li>
+<li>程度、范围、数量与时空：记录程度、数量、频率、时间、空间、比较和变化。</li>
+<li>评价、情绪与声音：记录评价、情绪、强调、感叹、拟声和委婉表达。</li>
+<li>疑问、句尾与对话标记：记录问什么、怎样问、怎样回应，以及句末如何收束。</li>
+<li>逻辑与篇章组织：记录句子和段落之间的并列、因果、转折、顺序、解释和总结。</li>
+<li>词义层级、语域与词形：记录词语的具体或抽象程度、口语或书面来源、专业范围和构词形式。</li>
+</ul>
+<h2 id="standard-lexical-第一层-词汇维度">第一层：词汇维度</h2>
+<p>逐类分析实际用词、同义选择、位置、搭配、功能、覆盖和对照差异。至少检查：</p>
+<ul>
+<li>人称系统；</li>
+<li>称呼系统；</li>
+<li>指示与回指系统；</li>
+<li>群体边界与身份指向；</li>
+<li>判断确定程度；</li>
+<li>判断依据与立场来源；</li>
+<li>决策与行动强度；</li>
+<li>命令、禁止、请求与许可；</li>
+<li>时间压力与阶段；</li>
+<li>程度；</li>
+<li>范围；</li>
+<li>频率；</li>
+<li>评价方向与评价对象；</li>
+<li>情绪方向、强度和显隐；</li>
+<li>强调、缓和与绝对化；</li>
+<li>否定；</li>
+<li>疑问；</li>
+<li>句末语气；</li>
+<li>回应与反馈；</li>
+<li>感叹、拟声与现场反应；</li>
+<li>逻辑连接；</li>
+<li>顺序组织；</li>
+<li>总结、修正与补充；</li>
+<li>句首习惯与填充；</li>
+<li>口语、书面和正式程度；</li>
+<li>网络、地域、时代、文言和圈层标记；</li>
+<li>专业词、外来语与缩略语；</li>
+<li>固定领域词和比喻来源；</li>
+<li>稳定搭配、固定位置、禁用词和稳定缺席项。</li>
+</ul>
+<p>词汇层必须产生逐类词典。当前通用目录包含8个大类、193种词汇类型和对应候选词条；它们用于下一轮冻结扫描和开放发现，不能覆盖已经存在的目标统计。通用候选词形必须标明扫描范围；目标词典只收录语料实际命中的词或经过开放词汇复核确认的同义表达，并默认按覆盖率或命中率从高到低排列。候选词零次不能推出整个语义类别不存在，也不能成为目标风格参数。</p>
+<h3 id="standard-lexical-人类阅读版的数据驱动词汇字典">人类阅读版的数据驱动词汇字典</h3>
+<p>词汇层的 HTML 只从统一词汇数据生成，不维护第二份手写词表。生成器同时输出 <code>vocabulary-dictionary.json</code>，供复核、导入和其他工具读取；该文件必须与 HTML 内嵌数据一致。字典把两类信息分开保存：</p>
+<ul>
+<li>通用分类信息：大类、类型名称、定义、作用、使用场景、注意项、信号和核心／扩展标记；</li>
+<li>目标语料信息：实际词形、次数、标准化频率、覆盖、位置、组合、变化、对照和验证状态。</li>
+</ul>
+<p>一个词可以进入多个类型。词条索引应按词形合并类型关系，但不能把不同类型中的次数或功能强行归并成单一语义。页面统计数字由当前 JSON 自动计算，并支持类型浏览、词条反查、多重归类筛选、数据编辑和 JSON 导入导出。修改通用分类不会自动产生目标语料计数；缺少统计的新增类型仍应明确显示为未测量。</p>
+<h3 id="standard-lexical-人类阅读版的数据驱动句式字典">人类阅读版的数据驱动句式字典</h3>
+<p>句式层先回答“一句话客观上属于哪些类型”，再回答“它使用了哪个具体模板”。通用字典因此分成分类轴、句式类型和具体模板。目标语料统计另行保存并映射到模板；类型统计只能由已映射模板汇总，不能把通用类型数量当成目标频率。</p>
+<p>目标语料中的新句式若尚未与通用模板建立唯一对应，必须保留为目标文风扩展。随着新语料进入，目标字典可以不断增加；升级通用字典则需要跨语料复现、人工确认边界和可复核的识别条件。</p>
+<h3 id="standard-lexical-人类阅读版的数据驱动段落与整篇字典">人类阅读版的数据驱动段落与整篇字典</h3>
+<p>段落层与整篇层采用和句式层相同的双层结构：先按多个客观分类轴判断类型，再查看完整的句子功能序列或全文模块序列。段落通用目录包含8个分类轴、112种类型和65个模板；整篇通用目录包含9个分类轴、118种类型和60个模板。</p>
+<p>通用类型和模板只回答“检查什么”。目标语料的次数、位置、组合、变化和验证状态单独映射。自动功能标签与通用模板无法唯一对应时，保留为目标扩展；人工标注完成前不能强行归类，也不能把未映射解释为未出现。</p>
+<h3 id="standard-lexical-日常样本与持续更新">日常样本与持续更新</h3>
+<p>日常写作产生的反馈可以补充目标风格，但进入正式统计前必须经过来源判断：</p>
+<ul>
+<li><code>source_corpus</code>：目标原文，可以参与来源规律统计；</li>
+<li><code>user_revision</code>：用户亲自修改后的文本，可以参与任务适配统计；</li>
+<li><code>user_accepted</code>：用户明确接受的生成文本，可以作为适配样本，不能反推原作品规律；</li>
+<li><code>user_rejected</code>：用户明确否决的文本，只作为反向样本；</li>
+<li><code>model_candidate</code>：未经确认的模型输出，只能提出候选，不计入正式频率。</li>
+</ul>
+<p>维护任务将最小必要记录写入 <code>style-learning-log.jsonl</code>。记录至少包含样本 ID、时间、语言、来源类型、决定、文本哈希或受控本地引用、涉及层级、候选参数和复核状态。更新时先去重，再分别统计来源语料和适配语料；两者不得合并成一个频率。用户没有要求维护 Skill 时，普通写作任务不得静默写入该日志。</p>
+<p>词汇是第一风格约束。人称、情态、程度、评价、语气词和句首句末习惯一旦改变，即使事实与句式不变，读者感受到的身份、距离和态度也会改变。</p>
+<h2 id="standard-lexical-两遍提取">两遍提取</h2>
+<p>第一遍按分类词表搜索，回答每个类别中实际出现了什么。第二遍做开放发现，寻找分类表没有预设但在语料中反复出现的词、短语、句首、句末和固定组合。</p>
+<p>如果只做第一遍，结果会被参考词表限制，语料中真正稳定的说法可能被漏掉。如果只做第二遍，高频题材词又会淹没人称、情态和语气词。因此两遍都必须完成。</p>
+<h2 id="standard-lexical-统计方法">统计方法</h2>
+<p>语料较大时先运行：</p>
+<pre><code class="language-powershell">node scripts/analyze-lexicon.mjs &lt;文本文件或目录&gt; sample-report.json --sample-size 120 --sample-seed 42 --sample-strategy random --min-paragraph-chars 20</code></pre>
+<p>脚本接受 <code>.txt</code>、<code>.md</code> 和 <code>.jsonl</code>，根据全部有效正文判断中文或英文，输出分类计数、每万字符或词的标准化频率、文档与段落覆盖、句首句末和段首段尾位置、左右搭配候选、开放词汇候选、词类组合和基础非词汇指标。句长变化只在同一段内部计算，词类共现也不会被直接解释成言语行为。Markdown 的围栏代码、行内代码、链接目标和裸 URL 不进入词频、句长、逻辑词或开放词汇统计；链接文字和去掉列表、引用、标题标记后的正文仍保留。普通正文软换行、连续引用行和列表续行会合并为一个分析段落，新的列表项与嵌套列表项仍各自成段。<code>corpus.sourceRecords</code> 记录解析器看见的正文与排除记录总数，<code>corpus.sourceParagraphs</code> 只记录可分析的真实段落，不能混用。<code>.txt</code> 与 <code>.md</code> 以文件为文档，<code>.jsonl</code> 以每条含文本记录为文档；JSONL 依次读取 <code>quote</code>、<code>text</code>、<code>content</code>、<code>paragraphText</code> 中第一个非空字符串，并在 <code>corpus.jsonlDiagnostics</code> 报告跳过或按原文使用的异常行。文件覆盖、段落覆盖和说话场景覆盖不能混写。混合语料仍须先按语言分组，不能把自动判断当成分组。默认不保存原文句子；只有显式使用 <code>--sample-output</code> 时才写出本地样本。报告默认把文件来源匿名化，不写本机绝对路径。任何统计都不能替代上下文判断。</p>
+<p><code>LexiconScanReport</code> 当前为 Schema v3。v3 新增 <code>sourceRecords</code>、段落层指标、词类组合与 <code>pathMode</code>，并把默认来源字段改成匿名标签；读取旧 v2 报告或维护下游脚本时，必须按版本分支处理，不能假定 <code>corpus.input</code>、<code>corpus.files</code> 和 <code>paragraphReferences.file</code> 一定是可访问路径。</p>
+<p>推荐流程：</p>
+<ol>
+<li>用 <code>--sample-size 100</code> 到 <code>300</code> 做初次随机样本，固定 <code>--sample-seed</code>。</li>
+<li>如果材料跨多个文件或前后差异明显，改用 <code>--sample-strategy stratified</code>。样本数不少于有效文档数时，脚本先保证每个文档至少一段，再把剩余名额分配到全文位置。</li>
+<li>需要阅读原段落时使用 <code>--sample-output &lt;private-sample.jsonl&gt;</code>；把它保存在输入语料目录之外，不要提交到仓库或公开 Skill。脚本会跳过自己生成且带标记的样本文件，但历史导出文件仍需人工隔离。</li>
+<li>默认保留 <code>--path-mode anonymous</code>。私人复核若需要识别来源文件，使用 <code>--path-mode relative</code>；<code>--path-mode absolute</code> 只用于本机排障，生成的报告不能公开或写入可分发 Skill。</li>
+<li>从样本中发现分类表未覆盖的词与短语，保存为 JSON，例如 <code>{ &quot;自定义判断词&quot;: [&quot;倾向于&quot;, &quot;更可能&quot;] }</code>。</li>
+<li>用 <code>--terms-file &lt;词表.json&gt;</code> 重新执行；<code>--terms-mode merge</code> 合并内置分类，<code>only</code> 只统计自定义词表。</li>
+<li>样本结论稳定后，再用 <code>--sample-size 0</code> 扫描全部非空段落，验证频率和分布是否仍然成立；如果仍需排除短行，再显式传入 <code>--min-paragraph-chars</code>。</li>
+</ol>
+<p><code>--sample-size</code> 只限制进入统计和人工样本的段落数。脚本仍须先读取、解码并切分全部输入，以便判断语言和建立抽样总体，因此它不是内存限制。超大单文件或大量 JSONL 记录应先在私人目录按语言、章节、场景或来源拆分，再分批运行并保存各批分母；不能把几批覆盖率直接相加当成全局覆盖率。</p>
+<p>还可以使用 <code>--min-paragraph-chars</code> 排除过短正文，使用 <code>--open-top</code> 控制开放词汇候选数量，使用 <code>--min-count</code> 隐藏低于指定次数的参考词。被隐藏但实际出现的词进入 <code>belowMinimumForms</code>，不会混入 <code>absentReferenceForms</code>。</p>
+<p>类别可以重叠，短语也可能包含单词，例如“这是什么”会同时命中短语和“什么”。因此分类总数不能相加当作唯一词数；它们只用于比较同一类别中的偏好。词类组合要求同一句或同一段至少出现两个不同词形；“可能”同时属于“确定程度”和“缓和”时，单独一个“可能”不会生成这两个类别的组合。即使出现了两个不同词形，共现仍不是言语行为结论，必须回看上下文。中文单字只把分词器识别出的独立单字记入确认次数；“不走、我去、别人、去年、没收”中的单字子串都进入 <code>ambiguousReferenceForms</code>，不会自动算成对应功能词，也不能写成“未出现”。Agent 必须回看上下文，再决定是否把候选加入自定义短语或人工结论。</p>
+<p>不要只输出词频表。每个候选词或短语至少记录：</p>
+<pre><code class="language-text">词或短语：
+功能类别：
+总次数与标准化频率：
+覆盖了多少篇、章节或说话场景：
+覆盖了多少段和多少句：
+常见搭配：
+常见位置：句首／句中／转折／结尾／单独成句
+实际作用：提问／保留／强调／否定／评价／行动等
+可能混淆的其他作用：
+对照组差异：
+是否可迁移：</code></pre>
+<p>中文同时统计单词、二至六字短语和句末组合。例如“什么”“这是啥”“这是什么”“什么意思”不能只合并成一个“疑问词”数字。英文需要统计词形变化、缩写、情态动词、短语动词和句末附加问句。</p>
+<p>频率必须标准化，例如每万字、每千词或每百段出现次数。再检查分布：一个词出现一百次但集中在单章，不如一个词在二十篇材料中都稳定出现更能说明文风。</p>
+<p>一本书或一份长记录若只放在单个 <code>.txt</code> 文件中，文档覆盖率几乎只能是零或一。此时优先查看脚本新增的段落覆盖率，并在私人预处理层把章节、说话场景或文章拆成独立 JSONL 记录，再把记录覆盖解释为对应逻辑单元覆盖。报告必须写清覆盖分母究竟是文件、记录、段落、章节还是场景，不能互换名称。</p>
+<h2 id="standard-lexical-逐类回答-主要用什么">逐类回答“主要用什么”</h2>
+<p>每个词类都要生成一条实际分析，不允许只复制分类说明：</p>
+<pre><code class="language-text">类别：疑问词与疑问短语
+语料实际出现：什么 42、怎么 18、为什么 9、啥 0、何种 0
+主要偏好：以“什么、怎么”为主，不使用“啥”，书面疑问“何种”也未出现
+位置：多数位于直接问句中；少量“什么”出现在反问句
+稳定组合：这是什么、什么意思、怎么可能
+作用：索取信息为主，反问为辅
+覆盖：分布于 11/14 个样本，不是单篇集中
+置信度：较高</code></pre>
+<p>数字只是格式示例，不能写入其他语料的结果。没有对应词时写“未观察到”，不要从参考表补一个看起来合理的答案。</p>
+<p>同义词必须放在同一组比较。例如：</p>
+<ul>
+<li>什么／啥／何种；</li>
+<li>怎么／咋／如何；</li>
+<li>为什么／为啥／缘何；</li>
+<li>但是／不过／然而；</li>
+<li>应该／必须／建议／可以；</li>
+<li>很／挺／非常／极其；</li>
+<li>其实／问题是／严格来说；</li>
+<li>吧／呢／啊／啦／哦。</li>
+</ul>
+<p>文风往往来自“选择了哪个，没有选择哪个”。因此零次出现也可能有意义，但只有语料规模足以支持时才能解释。</p>
+<h2 id="standard-lexical-必须覆盖的词类">必须覆盖的词类</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>类型</th>
+<th>中文例子</th>
+<th>主要影响</th>
+</tr></thead><tbody>
+<tr>
+<td>人称词</td>
+<td>我、咱、我们、你、您、他、大家</td>
+<td>叙述视角、亲疏和责任距离</td>
+</tr>
+<tr>
+<td>称呼词</td>
+<td>朋友、老师、老板、用户、阁下</td>
+<td>关系、身份和礼貌层级</td>
+</tr>
+<tr>
+<td>群体与阵营词</td>
+<td>咱们、我们、你们、他们、自己人、外人、双方</td>
+<td>共同体边界、责任归属和对立感</td>
+</tr>
+<tr>
+<td>指示词</td>
+<td>这、那、这里、这种、那个</td>
+<td>对话现场感、指代距离和口语密度</td>
+</tr>
+<tr>
+<td>疑问词与疑问短语</td>
+<td>什么、啥、怎么、为何、是否、难道、这是什么</td>
+<td>好奇、审问、确认、反问或教学方式</td>
+</tr>
+<tr>
+<td>条件与假设词</td>
+<td>如果、若、假如、只要、除非、倘若</td>
+<td>条件推演和分支习惯</td>
+</tr>
+<tr>
+<td>确定程度词</td>
+<td>可能、或许、大概、似乎、倾向、肯定、必然、显然</td>
+<td>谨慎、自信和结论强度</td>
+</tr>
+<tr>
+<td>判断依据与立场短语</td>
+<td>我觉得、我认为、从目前看、据观察、数据显示、一般认为</td>
+<td>判断归属、证据姿态和主观显化程度</td>
+</tr>
+<tr>
+<td>决策与义务词</td>
+<td>应该、必须、需要、建议、可以、不得、务必</td>
+<td>建议、许可、能力、义务和命令强度</td>
+</tr>
+<tr>
+<td>否定与禁止词</td>
+<td>不、没、别、并非、未必、不能、不要、不是……而是</td>
+<td>批判方式、拒绝方式和边界</td>
+</tr>
+<tr>
+<td>因果与推导词</td>
+<td>因为、所以、因此、由此、既然、意味着</td>
+<td>逻辑显性程度和解释方式</td>
+</tr>
+<tr>
+<td>转折与修正词</td>
+<td>但、但是、不过、然而、其实、反而、事实上、问题是</td>
+<td>反驳、补充和修正习惯</td>
+</tr>
+<tr>
+<td>比较与选择词</td>
+<td>比、相比、而不是、或者、还是、优先、取决于</td>
+<td>取舍方式和决策结构</td>
+</tr>
+<tr>
+<td>顺序与时间词</td>
+<td>首先、其次、先、然后、接着、现在、之后、最终</td>
+<td>教程感、叙事感和紧迫程度</td>
+</tr>
+<tr>
+<td>频率词</td>
+<td>总是、经常、通常、一般、偶尔、几乎不、从不</td>
+<td>经验判断的严谨程度</td>
+</tr>
+<tr>
+<td>范围与数量词</td>
+<td>都、只、仅、至少、最多、大部分、个别、唯一、任何</td>
+<td>结论范围和绝对程度</td>
+</tr>
+<tr>
+<td>程度词</td>
+<td>很、挺、蛮、特别、非常、极其、稍微、有点</td>
+<td>情绪和评价强度</td>
+</tr>
+<tr>
+<td>评价词</td>
+<td>好、差、合理、粗暴、靠谱、离谱、优雅、恶心</td>
+<td>立场、偏好和攻击性</td>
+</tr>
+<tr>
+<td>强调与聚焦词</td>
+<td>就是、确实、尤其、重点是、关键是、本质上</td>
+<td>强势程度和注意力位置</td>
+</tr>
+<tr>
+<td>缓和词</td>
+<td>有点、不太、相对、某种程度上、未必、尽量</td>
+<td>降低冲突和绝对感</td>
+</tr>
+<tr>
+<td>绝对化词</td>
+<td>一定、完全、根本、绝对、全部、从来、永远</td>
+<td>判断边界、煽动性和误判成本</td>
+</tr>
+<tr>
+<td>总结与重述词</td>
+<td>总之、简单说、说白了、归根结底、换句话说</td>
+<td>结论位置、解释感和口语强度</td>
+</tr>
+<tr>
+<td>请求与礼貌词</td>
+<td>请、麻烦、能不能、方便的话、最好、谢谢</td>
+<td>权力距离、礼貌和协商程度</td>
+</tr>
+<tr>
+<td>命令与动作词</td>
+<td>去、做、检查、停止、记得、注意、直接</td>
+<td>行动力、指导强度和节奏</td>
+</tr>
+<tr>
+<td>语气词与句末词</td>
+<td>啊、呀、呢、吧、嘛、呗、啦、哦、哈</td>
+<td>口语感、亲密度、试探和情绪</td>
+</tr>
+<tr>
+<td>感叹、拟声与停顿词</td>
+<td>哈哈、哎、啧、唉、嗯、呃</td>
+<td>即时情绪、迟疑和真人感</td>
+</tr>
+<tr>
+<td>回应与确认词</td>
+<td>嗯、哦、好、行、明白、收到、知道了</td>
+<td>对话温度、承诺程度和是否给出后续动作</td>
+</tr>
+<tr>
+<td>语域词</td>
+<td>啥／什么／何种，咋办／怎么办／应如何处理</td>
+<td>口语、中性、正式或古典程度</td>
+</tr>
+<tr>
+<td>网络、方言和圈层词</td>
+<td>离谱、稳了、整、搞、这玩意</td>
+<td>年龄感、地域感和群体身份</td>
+</tr>
+<tr>
+<td>外来语与缩略语</td>
+<td>OK、NG、UI、KPI、deadline</td>
+<td>行业、代际、跨文化语感和读者门槛</td>
+</tr>
+<tr>
+<td>专业术语</td>
+<td>架构、耦合、留存率、帧同步</td>
+<td>专业身份和读者门槛</td>
+</tr>
+<tr>
+<td>带评价的名词与动词</td>
+<td>砍掉、阉割、塞、拍脑袋、鸡肋</td>
+<td>不通过形容词也能表达褒贬和攻击性</td>
+</tr>
+</tbody></table></div>
+<p>类别不是固定词典。“可能”主要表示确定程度，不应因为常出现在条件句里就统一算作条件词；“别”是禁止词；“直接”通常描述行动方式；“可以”要根据上下文区分许可、能力和可能性；“应该”要区分义务、建议和推断；“其实”可能是修正词，也可能只是无意义起手词。</p>
+<p>礼貌程度、行动压力和判断确定性必须分开标注。“请务必停止”很礼貌，但仍是强制要求；“我不确定原因，但必须先停机”判断保留，却不降低行动压力。不要把它们压成一个“语气强弱”数字。</p>
+<h2 id="standard-lexical-句首-句末与组合">句首、句末与组合</h2>
+<p>单词频率不足以解释个人风格，还要统计位置：</p>
+<ul>
+<li>句首：其实、问题是、简单说、说白了、严格来说、老实说、首先、那么、你看；</li>
+<li>句末：吧、呢、啊、啦、呗、哦、哈、对吧、是不是；</li>
+<li>否定组合：并不是……而是、不能说……只能说、不是因为……而是因为；</li>
+<li>条件组合：如果……那么、只要……就、除非……否则；</li>
+<li>不确定组合：可能是……也可能是、目前更倾向于、还不能排除；</li>
+<li>决策组合：应该先……再、必须在……之前、可以……但是；</li>
+<li>重复组合：真的很、不是……不是、不能……不能。</li>
+</ul>
+<p>句首词决定说话者怎样进入问题，句末词决定他怎样退出一句话。两者通常比正文中的主题名词更容易形成稳定辨识度。</p>
+<h2 id="standard-lexical-多类词怎样共同出现">多类词怎样共同出现</h2>
+<p>单个词只能说明一个局部选择，稳定声音通常来自多类词在同一句或同一段中的组合。至少检查：</p>
+<ul>
+<li>人称或称呼 + 确定程度 + 行动词；</li>
+<li>判断依据 + 因果或修正词 + 范围限定；</li>
+<li>程度词 + 评价词 + 句末语气词；</li>
+<li>请求或礼貌词 + 命令或禁止词；</li>
+<li>句首进入方式 + 句末退出方式；</li>
+<li>口语、书面、专业、方言和缩略语是否处在同一语域。</li>
+</ul>
+<p>报告组合时记录共同出现的句数、段数、覆盖率和相对独立出现的比例。组合类别可能重叠，不能把共现直接解释为因果；它只说明哪些选择经常一起出现。再回看原句，判断组合实际形成的是协商、说明、试探、命令、吐槽还是别的言语行为。</p>
+<p>需要检验某个词是否真的造成某种阅读效果时，制作单变量对照：保持事实、句法和上下文不变，只替换该词或句尾，再检查效果是否随之变化。如果必须同时改动人称、句长和段落顺序，不能把变化只归因于这个词。</p>
+<h2 id="standard-lexical-开放发现">开放发现</h2>
+<p>分类表之外继续检查：</p>
+<ul>
+<li>高频实词：最常使用的动作词、评价词、抽象名词和具体名词；</li>
+<li>二至六词或二至十二字的高频组合；</li>
+<li>重复出现的句首三至八字和句末二至六字；</li>
+<li>某个词前后最常共现的词；</li>
+<li>只在目标作者、说话者、团队或文体中明显偏高的词；</li>
+<li>高频但只属于主题、情节、产品或行业的词。</li>
+</ul>
+<p>开放发现得到的词仍要回到上下文判断功能。不能因为“系统”出现最多，就把文风命名为“系统式”；也不能因为某个说话者总在特定场景里说“计划”，就直接认定所有输出都应反复使用“计划”。</p>
+<h2 id="standard-lexical-区分来源词与内容词">区分来源词与内容词</h2>
+<p>将候选词分为四层：</p>
+<ol>
+<li><strong>稳定来源词</strong>：跨主题、跨位置、跨样本承担相同作用。</li>
+<li><strong>低频来源词</strong>：有特征，但证据不足，只在匹配情境中使用。</li>
+<li><strong>内容与题材词</strong>：人物名、产品名、世界观、事件对象和行业对象，不作为通用风格迁移。</li>
+<li><strong>任务工作词</strong>：目标任务必须保留的术语、风险词和责任词，可以使用，但不冒充来源风格。</li>
+</ol>
+<p>词频高不等于可迁移。只有位置、搭配、功能和跨样本分布同时稳定，才能写入来源词汇档案。</p>
+<h2 id="standard-lexical-生成-lexicalprofile">生成 LexicalProfile</h2>
+<p>使用语料本身的语言，并让档案本身采用目标词汇：</p>
+<pre><code class="language-text">LexicalProfile
+目标语言：
+样本范围与对照组：
+语料规模与统计单位：
+逐类统计报告：
+人称与称呼：
+群体边界与责任：
+疑问方式：
+条件与确定程度：
+判断依据与立场归属：
+决策、请求与禁止：
+因果、转折与总结：
+程度、评价与情绪：
+句首习惯：
+句末与语气词：
+回应与确认方式：
+口语／书面／圈层用词：
+核心搭配与重复方式：
+稳定的多类词组合：
+开放发现词与短语：
+来源高频词：
+来源低频词：
+内容与题材词：
+任务工作词：
+禁止项：</code></pre>
+<p>逐类统计报告保留完整证据，<code>LexicalProfile</code> 只压缩稳定结论。不要把几百个词全部塞进最终提示词；按类别保存统计，在写作时选择与当前句子功能匹配的来源词。</p>
+<p><code>LexicalProfile</code> 先约束词汇，<code>StyleProfile</code> 再约束句式、段落和语气。生成正文后检查来源词是否真的进入用户可见输出；如果存在对应功能却完全没有来源词，说明绑定没有执行。如果词删掉后意义不变，说明它只是模仿痕迹。</p></div>
+</section>
+<section class="standard-section search-unit" id="standard-sentence" data-searchable>
+  <header class="section-heading"><div class="step-badge">02</div><div><h2>第二层 · 句式</h2><p>分析词语怎样组成言语行为、主语与责任、焦点、条件因果、否定、问句、命令、句长和标点。</p></div></header>
+  <div class="section-body"><h2 id="standard-sentence-句式分类轴与具体模板">句式分类轴与具体模板</h2>
+<p>句式层包含 9 个分类轴、129 种类型和 286 个具体模板。同一句可以同时命中多个分类轴；未建立目标统计映射时不能显示为零次。</p>
+<ul>
+<li>句子用途（句类）：按句子的表面用途分类：陈述信息、提出问题、要求行动或表达感叹。</li>
+<li>结构层级与完整度：记录句子由一个还是多个分句组成，以及成分是否完整、省略或片段化。</li>
+<li>主干骨架：按主语、谓语、宾语、补语以及“把、被、有”等结构标记分类。</li>
+<li>疑问形式：按问句要求的答案形式和固定标记分类。</li>
+<li>要求、请求与回应形式：按句子直接完成的交际动作分类，例如命令、请求、建议、拒绝和确认。</li>
+<li>分句逻辑关系：记录两个或多个分句之间的因果、条件、转折、并列、选择等关系。</li>
+<li>信息顺序与重点：记录结论、原因、条件、时间、地点、对象、来源等信息放在句子的什么位置。</li>
+<li>叙事、描写与引语：记录动作、感知、想法、环境、对白和情绪怎样组合成句。</li>
+<li>修辞、重复与节奏：记录比喻、拟人、排比、反复，以及长短句、停顿和重复位置。</li>
+</ul>
+<h2 id="standard-sentence-第二层-句式维度">第二层：句式维度</h2>
+<p>分析词汇怎样组成一句话。至少检查：</p>
+<ul>
+<li>句类分布；</li>
+<li>言语行为分布；</li>
+<li>主语类型；</li>
+<li>主语出现、省略与恢复；</li>
+<li>责任主体的明确程度；</li>
+<li>主动、被动、状态和无人称表达的分布；</li>
+<li>视角与判断归属；</li>
+<li>语序；</li>
+<li>话题和焦点位置；</li>
+<li>句首与句尾的信息落点；</li>
+<li>插入信息的位置与形式；</li>
+<li>肯定方式；</li>
+<li>否定方式；</li>
+<li>限定方式；</li>
+<li>纠正方式；</li>
+<li>逻辑关系类型及其显化程度；</li>
+<li>关系组合数量和层级；</li>
+<li>简单句、并列句、主从句和省略句的分布；</li>
+<li>分句数、嵌套深度、指代负担和关系链长度；</li>
+<li>句长分布与离散程度；</li>
+<li>相邻句长变化和长短组合；</li>
+<li>完整句、碎片句和故意断裂的分布；</li>
+<li>重复方式；</li>
+<li>平行与递进方式；</li>
+<li>标点分布；</li>
+<li>断句位置与语义边界；</li>
+<li>不同场景下句式参数怎样变化。</li>
+</ul>
+<p>句式档案必须建立完整候选模板库，并分别回答这些维度的实际取值、功能和证据。每种句式至少记录名称、模板、语法或逻辑关系、识别标记、每百句次数、覆盖率、位置、组合、变化范围、对照差异和验证状态。不能把词频当作句法证据，也不能把候选模板直接当作目标风格。</p>
+<p>句式参数必须尽量写成可识别形式，例如抽象槽位、标记词、语序关系或标点结构。只写“偏理性、逻辑较强、常用转折”不算参数。</p>
+<h2 id="standard-sentence-句式档案">句式档案</h2>
+<h3 id="standard-sentence-句法和焦点">句法和焦点</h3>
+<p>至少检查：</p>
+<ul>
+<li>主语是否出现；出现时放在句首、句中还是判断之后；</li>
+<li>责任主体是否清楚，还是被无主句、被动句或抽象名词隐藏；</li>
+<li>主动、被动、判断、定义、把字、祈使、省略和碎片句怎样分布；</li>
+<li>条件、时间、风险、对象、原因或结论是否经常提前；</li>
+<li>重点落在句首、句尾、插入语、括号、破折号还是独立短句；</li>
+<li>并列、从属、让步、因果、比较和纠正结构怎样组合；</li>
+<li>完整句与省略句分别在什么场景出现。</li>
+</ul>
+<p>不要用“短句就是口语、长句就是专业、被动句就是正式”这类固定映射。相同句长可以承担命令、结论、笑点或文学停顿，必须记录功能。</p>
+<h3 id="standard-sentence-言语行为与关系">言语行为与关系</h3>
+<p>句式还要回答“这句话正在做什么”。标注：</p>
+<ul>
+<li>告知、询问、确认、建议、请求、要求、禁止、拒绝、承诺、道歉、安抚或邀请行动；</li>
+<li>开放疑问、一般疑问、选择问、确认问和反问；</li>
+<li>直接说出意图，还是理由前置、暗示、让步后转向或通过反问施压；</li>
+<li>是否解释原因，是否给对方选择，是否写出安全替代；</li>
+<li>如何处理异议：承认一部分、重设范围、给证据、否定、回避或攻击；</li>
+<li>高风险或不可逆场景中，行动压力怎样升级。</li>
+</ul>
+<p>礼貌、判断确定性和行动压力是三个轴。“请务必停止”有礼貌但行动压力很高；“原因还不能确定，但必须先停机”判断保留却仍是明确命令。</p>
+<h3 id="standard-sentence-长度-节奏和停顿">长度、节奏和停顿</h3>
+<p>报告平均句长之外，还要给出中位数、P75、P90、标准差或变异程度，并在段落内部观察相邻句长变化。检查：</p>
+<ul>
+<li>连续短句通常承担结论、命令、紧张、反转还是笑点；</li>
+<li>长句承担条件链、背景、机制还是情绪累积；</li>
+<li>是否存在稳定的“长分析—短结论”“短行动—长解释”或其他交替；</li>
+<li>逗号、句号、分号、省略号、破折号和括号怎样分配停顿；</li>
+<li>重复、平行和故意断裂是在强调、安抚、推进还是制造反差。</li>
+</ul></div>
+</section>
+<section class="standard-section search-unit" id="standard-paragraph" data-searchable>
+  <header class="section-heading"><div class="step-badge">03</div><div><h2>第三层 · 段落结构</h2><p>分析段首怎样进入、中段怎样展开、段尾怎样退出，以及骨架、拆段、过渡和列表的稳定选择。</p></div></header>
+  <div class="section-body"><h2 id="standard-paragraph-段落分类轴与具体模板">段落分类轴与具体模板</h2>
+<p>段落层包含 8 个分类轴、112 种类型和 65 个具体模板。类型用于多轴分类，模板记录完整的句子功能序列。</p>
+<ul>
+<li>段落主要任务：记录一个段落在局部主要完成什么任务，例如定义、分析、叙事、说明步骤或完成一轮对话。</li>
+<li>内容展开关系：记录段内信息怎样展开，例如定义—例子、原因—结果、问题—解决、证据—结论。</li>
+<li>中心信息位置：记录本段最主要的判断、答案、结果或行动安排位于段首、段中还是段尾。</li>
+<li>句子连接方式：记录句子之间采用链式、并列、总分、分总、对照、分支或轮次等连接方式。</li>
+<li>时间与空间顺序：记录叙事或描写是否按时间、回忆、场景切换、并行人物线或空间方位组织。</li>
+<li>段首功能：记录段落第一句承担的功能，例如定义、观点、问题、背景、动作、对白或规则。</li>
+<li>段尾功能：记录段落最后一句承担的功能，例如结论、结果、感受、解决办法、例外、确认或转场。</li>
+<li>表面组织形式：记录段落在页面或对话中的可见组织形式，例如连续正文、列表、问答、对话轮次、步骤或条件分支。</li>
+</ul>
+<h2 id="standard-paragraph-第三层-段落维度">第三层：段落维度</h2>
+<p>分析若干句子怎样完成一个局部任务。至少检查：</p>
+<ul>
+<li>段落的中心任务；</li>
+<li>段首功能；</li>
+<li>中段展开功能；</li>
+<li>段尾功能；</li>
+<li>段内动作序列；</li>
+<li>主干信息与辅助信息的关系；</li>
+<li>事实、判断、原因、证据、例子、条件、反例、步骤和行动在段内的位置；</li>
+<li>段落长度分布；</li>
+<li>单句段与多句段的比例和功能；</li>
+<li>拆段触发条件；</li>
+<li>合段条件；</li>
+<li>相邻段落的承接方式；</li>
+<li>过渡的显式程度；</li>
+<li>自然段、列表、表格、引用和提示块各自承担的功能；</li>
+<li>不同场景下段落参数怎样变化。</li>
+</ul>
+<p>段落层必须建立句子功能序列候选库，例如“问题 → 原因 → 解决办法”这一类可检查结构；它只规定检查范围，不规定目标语料必然采用。目标段落骨架必须从完整段落的人工标注中归纳，不得用单句对白或自动功能标签替代人工边界判断。</p>
+<h2 id="standard-paragraph-段落档案">段落档案</h2>
+<p>段落是一个主要任务加完成该任务所需的辅助材料，不是固定三句模板。逐段标注：</p>
+<ol>
+<li><strong>段首怎样进入</strong>：结论、问题、事实、场景、定义或承接前文；</li>
+<li><strong>中间怎样展开</strong>：原因、证据、例子、步骤、对比、分类、条件、反例或回应异议；</li>
+<li><strong>段尾怎样退出</strong>：小结、判断、行动、限制、悬念或转向；</li>
+<li><strong>整体骨架</strong>：例如结论—原因—行动、观点—解释—例子、问题—原因—方案、事实—影响—判断、场景—变化—含义；</li>
+<li><strong>怎样拆段</strong>：按话题、行动阶段、时间、说话者、场景或重点变化；</li>
+<li><strong>怎样过渡</strong>：依靠内容复现、因果、对比或问题承接，还是机械插入“首先、其次、总之”；</li>
+<li><strong>怎样排版</strong>：自然段、单句段、列表、表格、引用和提示框分别承担什么关系。</li>
+</ol>
+<p>每段只统计长度还不够。要说明段首、展开和段尾各自做了什么，以及这种骨架是否跨样本重复。列表只能证明信息被分行，不能自动证明逻辑清楚。</p></div>
+</section>
+<section class="standard-section search-unit" id="standard-composition" data-searchable>
+  <header class="section-heading"><div class="step-badge">04</div><div><h2>第四层 · 整篇编排</h2><p>分析答案、背景、证据、反例、分支、行动和结尾在全文中的位置与顺序。</p></div></header>
+  <div class="section-body"><h2 id="standard-composition-内容编排分类轴与具体模板">内容编排分类轴与具体模板</h2>
+<p>整篇层包含 9 个分类轴、118 种类型和 60 个具体模板。类型用于说明整篇怎样编排，模板记录完整模块顺序。</p>
+<ul>
+<li>整篇主要任务：记录全文主要要完成什么任务，例如叙述事件、解释知识、分析问题、指导操作或组织游戏文本。</li>
+<li>主要编排顺序：记录模块主要按时间、空间、分类、因果、问题、证据、步骤、线索或分支排列。</li>
+<li>开篇模块：记录全文最先公开什么，例如结论、背景、问题、定义、目标、触发条件或数据范围。</li>
+<li>主体组织方式：记录正文是线性推进、并列分节、层级树、问答单元、步骤序列、证据链、时间线还是分支树。</li>
+<li>结尾模块：记录全文最后用结果、感受、结论、决定、下一步、反馈入口、揭示或关联条目收束。</li>
+<li>信息公开方式：记录信息是一次公开、逐步公开、延迟揭示、按角色知识限制、按状态解锁还是按分支分别公开。</li>
+<li>阅读与交互路径：记录读者按线性顺序、目录检索、问答跳转、条件树、玩家选项或状态入口访问内容。</li>
+<li>模块重复方式：记录整篇是否重复使用同一种模块单元，例如多个问答、多个词条、多个步骤、多个标准或多个分支。</li>
+<li>信息来源与知识范围：记录全文信息来自个人经历、组织声明、数据证据、教学者、角色有限知识、系统数据库或多个来源。</li>
+</ul>
+<h2 id="standard-composition-第四层-整篇编排维度">第四层：整篇编排维度</h2>
+<p>分析各段怎样安排读者的理解顺序。至少检查：</p>
+<ul>
+<li>文本目的；</li>
+<li>主要读者；</li>
+<li>读者已有信息；</li>
+<li>读者首要问题；</li>
+<li>开头最先释放的信息类型；</li>
+<li>核心答案或判断的位置；</li>
+<li>背景的位置和深度；</li>
+<li>原因与机制的位置；</li>
+<li>证据的位置和次序；</li>
+<li>例子的位置和次序；</li>
+<li>反例、异议和限制的位置；</li>
+<li>方案、比较和选择的位置；</li>
+<li>行动、责任主体和时间的位置；</li>
+<li>成功标志、失败处理和恢复信息的位置；</li>
+<li>信息排序依据；</li>
+<li>全文推进路线；</li>
+<li>展开深度；</li>
+<li>结尾功能；</li>
+<li>媒介、用途、读者和风险变化怎样改变编排；</li>
+<li>哪些编排属于来源风格，哪些只是任务格式或文体惯例。</li>
+</ul>
+<p>整篇层必须建立内容模块及其顺序候选库，记录模块类型、出现频率、常见位置、前后组合和场景变化。目标整篇路线必须从足量完整文本中归纳；候选库不预设答案先行、时间顺序、问题解决、悬念推进或任何其他路线是目标风格。</p>
+<h2 id="standard-composition-整篇编排档案">整篇编排档案</h2>
+<p>整篇编排回答读者先知道什么、后知道什么。它与内容模型不同：内容模型规定必须保留哪些事实，编排档案记录相近任务中稳定偏好的呈现顺序。</p>
+<p>逐篇标注：</p>
+<ul>
+<li>文本用途、主要读者和读者打开文本后的首要问题；</li>
+<li>答案、结论、异常、场景或背景最先出现；</li>
+<li>背景放在开头、解释段、需要时插入还是附录；</li>
+<li>证据、例子、反例、限制和行动分别放在什么位置；</li>
+<li>使用答案先行、问题解决、教程流程、比较选择、观点论证、案例归纳、总分、时间顺序或悬念推进中的哪一类路线；</li>
+<li>解释下钻到结论、原因、机制、例子、边界、反例和步骤中的哪一层；</li>
+<li>结尾交付结论、行动、责任主体、成功标志、失败恢复、余味还是新问题。</li>
+</ul>
+<p>只有相近文体、读者和目的的文本可以比较整篇顺序。小说的悬念后置不能直接迁移到安全说明；技术文档的答案先行也不能证明叙事文本缺少风格。</p></div>
+</section>
+<section class="standard-section search-unit" id="standard-combined" data-searchable>
+  <header class="section-heading"><div class="step-badge">05</div><div><h2>综合使用</h2><p>四层必须共同出现，并保留阅读效果、声音指纹、场景变化和不可迁移内容。</p></div></header>
+  <div class="section-body"><h2 id="standard-combined-基本规则">基本规则</h2>
+<ol>
+<li>按词汇、句式、段落、整篇编排四层分析。阅读效果是四层共同产生的结果，不是第五层。</li>
+<li>每个维度都必须留下状态：稳定、场景限定、暂定、否决、未观察到、不适用或证据不足。</li>
+<li>每个成立的取值都必须记录分析单位、数量或比例、分布、位置、组合、同类对照、场景变化、混淆因素、验证结果和置信度。某项指标不适用时明确说明原因。</li>
+<li>维度用于提出问题，不能预先给出答案。分析者不得因为参考材料列出过某种写法，就把它写成目标风格。</li>
+<li>每层使用本层证据。词汇证据不能替代句式证据，句式证据不能替代段落证据，局部文本不能替代整篇证据。</li>
+<li>四层统一记录类型、频率、位置、组合和变化范围。完整字段及 JSON 合同见 <a href="#four-layer-style-data-schema.md">four-layer-style-data-schema.md</a>。</li>
+<li>“冷静、专业、温和、强硬、成熟”等只能作为数据解释后的阅读效果，不能成为一级分类，也不能替代客观参数。</li>
+<li>候选库和目标参数必须分离保存：候选库回答“检查过什么”，目标参数回答“语料实际用了什么”。候选项即使零次或暂时无法可靠识别，也必须在候选库、审计字段或独立检查报告中留下状态；零命中项不得写入具体语言风格 Skill 的正式参数、目标字典或正文。</li>
+<li>每个参数统一记录五项共同属性：类型、频率、位置、组合、变化范围。词汇、句式、段落和整篇不能使用不同的完成标准。</li>
+<li>完成度由数据反推。存在 <code>not_measured</code>、<code>insufficient_evidence</code> 或未经语义复核的自动候选时，相应层不得标为 <code>complete</code>。</li>
+<li>目标风格字典允许随新语料和真实使用反馈迭代，但生成结果不能成为自证数据。目标原文、用户修订、用户明确接受、用户否决和未经确认的模型输出必须分开记录。</li>
+</ol>
+<h2 id="standard-combined-维度检查矩阵">维度检查矩阵</h2>
+<p>四份分层档案都必须包含维度检查矩阵。每行至少记录：</p>
+<pre><code class="language-text">维度：
+状态：
+目标语料的实际取值：
+分析单位与样本范围：
+数量、比例或结构指标：
+位置与组合：
+实际功能：
+同类对照：
+场景变化：
+混淆因素：
+验证结果：
+置信度：
+能推出什么：
+不能推出什么：</code></pre>
+<p>矩阵负责证明所有维度都已检查。稳定和场景限定的取值才可以进入规则表；暂定、否决、未观察到、不适用和证据不足项保留在矩阵中，但不得进入运行时规则。</p>
+<h2 id="standard-combined-四层校验">四层校验</h2>
+<p>使用同一组中性事实分别检查词汇、句式、段落和整篇参数。校验只改变被测试的层，其他事实和表达条件保持不变。正向样例必须由目标参数生成；反向样例要指出失真发生在哪一层。任何校准都不得引入参考材料中的固定技巧，也不得改变事实、责任、安全或审批边界。</p>
+<h2 id="standard-combined-两张分析地图">两张分析地图</h2>
+<p>第一张地图按文字大小分层：</p>
+<pre><code class="language-text">词汇选择 → 句式构造 → 段落结构 → 整篇编排</code></pre>
+<p>词汇由 <code>lexical-extraction.md</code> 处理。本页分别提取后面三层。节奏、叙述声音、情绪、具体程度、修辞、标点和排版不是第五种文字大小，而是横跨句子、段落和整篇的观察维度。</p>
+<p>第二张地图按判断过程分层：</p>
+<pre><code class="language-text">可观察写法 → 推定阅读效果 → 稳定组合 → 场景适用性</code></pre>
+<p>“短句”“第二人称”“段首先给结论”属于可观察写法；“快速、亲近、直接”属于推定效果；“中句解释 + 短句收束 + 普通场景协商、高风险场景禁止”才可能构成稳定声音。不能从一个词、一个标点或一句典型文本直接跳到文风名称。</p>
+<h2 id="standard-combined-先记录证据再判断效果">先记录证据再判断效果</h2>
+<p>每个维度使用同一记录格式：</p>
+<pre><code class="language-text">维度：
+适用性：适用／不适用／证据不足
+主倾向：
+次倾向：
+可观察证据：次数、比例、长度、位置、覆盖、原文上下文
+实际功能：
+推定阅读效果：
+可能混淆因素：题材、场景、媒介、文体默认、单章集中等
+对照差异：
+场景变化：
+可迁移性：
+置信度：</code></pre>
+<p>适用性必须显式记录。纯对白可能没有页面排版证据，操作说明可能没有叙事距离，短消息可能无法证明整篇结构。没有证据时标为“不适用”或“证据不足”，不能补一个看起来完整的答案。</p>
+<p>统计值只描述表面分布。反问是否施压、主语省略是否隐藏责任、留白是否仍能理解、幽默来自哪里，都必须回看固定样本。</p>
+<h2 id="standard-combined-阅读效果轴">阅读效果轴</h2>
+<p>完成可观察标注后，再推定读者可能感受到什么。下面各轴互相独立，不能压成一个“语气”或一个一到五分总分。</p>
+<div class="table-wrap"><table><thead><tr>
+<th>组</th>
+<th>必须分开的轴</th>
+<th>主要证据</th>
+</tr></thead><tbody>
+<tr>
+<td>关系</td>
+<td>正式程度、关系距离、权力位置</td>
+<td>人称、称呼、语域、句子完整度、命令方式、是否解释原因</td>
+</tr>
+<tr>
+<td>判断与行动</td>
+<td>确定程度、行动压力、直接程度、判断归属</td>
+<td>情态词、证据来源、祈使和禁止、理由位置、主语与责任</td>
+</tr>
+<tr>
+<td>情绪</td>
+<td>正负方向、情绪强度、对读者的冷暖、情绪是否直说</td>
+<td>评价词、程度词、动作、停顿、感叹、安抚和留白</td>
+</tr>
+<tr>
+<td>信息</td>
+<td>抽象或具体、模糊或精确、信息密度、逻辑显化、展开深度</td>
+<td>场景、数字、范围、术语、因果、例子、步骤和边界</td>
+</tr>
+<tr>
+<td>节奏与表现</td>
+<td>阅读速度、停顿强度、互动程度、修辞密度</td>
+<td>句长变化、标点、换行、第二人称、设问、比喻和重复</td>
+</tr>
+</tbody></table></div>
+<p>每个效果判断写出支持证据和反证。例如“使用您”可能提高正式度，却不能单独证明温暖；短句可能加快速度，也可能形成冷淡、命令或文学停顿。需要验证单个特征时，保持事实和其他写法不变，只改变一个变量，再检查效果是否随之改变。</p>
+<h2 id="standard-combined-声音与表现策略">声音与表现策略</h2>
+<p>除四层结构外，还要检查横跨全文的选择：</p>
+<ul>
+<li>叙述视角和距离：谁在说、谁知道、离人物意识或读者多近；</li>
+<li>具体程度和精确程度：是否从抽象判断落到动作、物件、数字、范围和感官；</li>
+<li>信息密度和留白：单位长度有多少新信息，省略后是否仍留下推断依据；</li>
+<li>重复和修辞：关键词、句首、回环、对比、比喻、排比、反转和反讽承担什么作用；</li>
+<li>标点和排版：句号、问号、感叹号、省略号、破折号、括号、标题、列表和表格怎样组织阅读；</li>
+<li>互动与幽默：是否预判疑问、邀请行动；笑点来自反差、降格、延迟、三段式还是回调；</li>
+<li>叙事时间：顺叙、倒叙、压缩、延展、现在时或回顾怎样改变信息释放。</li>
+</ul>
+<p>文学文本可以使用留白和叙事距离；工作文档通常需要降低歧义。不要把适合来源场景的省略、错误、价值立场或人物选择直接迁移到事实说明、代码和安全边界。</p>
+<h2 id="standard-combined-一致性与场景变化">一致性与场景变化</h2>
+<p>声音一致不等于每句话相同。每个稳定维度记录：</p>
+<ul>
+<li><strong>主倾向</strong>：最常见、跨样本稳定的选择；</li>
+<li><strong>次倾向</strong>：真实存在但使用较少的备用方式；</li>
+<li><strong>变化触发条件</strong>：风险、关系、媒介、情绪、文本用途或叙事阶段怎样触发变化；</li>
+<li><strong>保持不变的组合</strong>：即使场景变化，哪些词汇关系、节奏或信息习惯仍在；</li>
+<li><strong>禁用项</strong>：哪些词、标点、结构和情绪方式稳定缺席；</li>
+<li><strong>不可迁移项</strong>：来源人物的价值立场、世界观、事实错误、情节选择和题材内容。</li>
+</ul>
+<p>真正的声音指纹通常只需要三到五组稳定组合。孤立特征、文体默认结构、单场景爆发和题材专词不能进入核心指纹。</p></div>
+</section>
+<section class="standard-section search-unit" id="standard-validation" data-searchable>
+  <header class="section-heading"><div class="step-badge">06</div><div><h2>提取与验证</h2><p>所有结论必须可追溯、可复算、可对照、可证伪；证据不足时保留候选，不把空位补成稳定风格。</p></div></header>
+  <div class="section-body"><h2 id="standard-validation-选对样本">选对样本</h2>
+<p>只把文体、读者和目的相近的完整文章放在同一组。例如，技术说明、公众科普、观点文章和文学散文应分开。每组优先收集来源、作者和用途清楚的多篇文本；网页自称“满分”或“爆款”只是标签，不是质量证明。</p>
+<p>不整篇复制受版权保护的样本。保留链接、来源、用途和分析笔记即可。</p>
+<p>语料过大时先固定种子抽取 100–300 个有效段落，完成词类发现和上下文判断；如果前中后段、不同文档或不同说话场景差异明显，使用分层采样。样本用于发现候选规则，全文统计用于验证规则，二者不能互相替代。</p>
+<h2 id="standard-validation-先提取词汇">先提取词汇</h2>
+<p>完整读取 <a href="#lexical-extraction.md">lexical-extraction.md</a>，先完成逐类词汇统计，再生成 <code>LexicalProfile</code>。分类表只是搜索参考；输出必须具体说明实际语料在每一类主要使用什么、较少使用什么、常放在哪里、怎样搭配，以及哪些类别没有观察到稳定词汇。</p>
+<p>词频之外还要记录标准化频率、样本覆盖率、位置、搭配、功能、同义替代比例和对照组差异。再做一次开放词汇发现，寻找参考分类没有预设的高频短语与句首句末习惯。词汇在特定主题中集中出现，只能说明内容；它在多个主题中持续承担同一种作用，才可能说明文风。</p>
+<h2 id="standard-validation-从样本提取文风卡">从样本提取文风卡</h2>
+<p>先完整读取 <a href="#nonlexical-style-extraction.md">nonlexical-style-extraction.md</a>，生成 <code>NonLexicalStyleProfile</code>，再压缩为最终 <code>StyleProfile</code>。</p>
+<p>逐篇标注，再找跨文本重复出现的选择。先按词汇、句式、段落和整篇编排记录证据；关系、确定、情绪、速度等阅读效果放在第二层判断：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>维度</th>
+<th>提取问题</th>
+</tr></thead><tbody>
+<tr>
+<td>词汇选择</td>
+<td>哪些词、搭配、句首、句末和禁用项跨样本稳定；它们承担什么功能？</td>
+</tr>
+<tr>
+<td>句式构造</td>
+<td>句子在告知、询问、建议、要求还是拒绝；主语、责任、焦点、逻辑和节奏怎样处理？</td>
+</tr>
+<tr>
+<td>段落结构</td>
+<td>段首怎样进入，中间怎样展开，段尾怎样退出；哪些骨架持续出现？</td>
+</tr>
+<tr>
+<td>整篇编排</td>
+<td>读者先得到答案、背景、案例还是悬念；证据、反例、行动和结尾怎样排列？</td>
+</tr>
+<tr>
+<td>阅读效果</td>
+<td>正式、距离、权力、确定、行动压力、情绪、具体、精确、密度、速度和互动分别偏向哪里？</td>
+</tr>
+<tr>
+<td>场景变化</td>
+<td>哪些倾向平时保持，哪些只在高风险、私密、正式或叙事情境中改变？</td>
+</tr>
+<tr>
+<td>排除项</td>
+<td>哪些特征只是题材、人物立场、文体默认、单章集中或不可迁移内容？</td>
+</tr>
+</tbody></table></div>
+<p>词频必须连同位置、搭配和功能一起看。主题词的复现用于稳定讨论对象；功能词显示常用推理方式；具体动词和抽象名词的比例反映文章的动作感或分析感。不要把统计结果变成机械配额。</p>
+<h2 id="standard-validation-先保存-styleextractionreport">先保存 StyleExtractionReport</h2>
+<p><code>LexicalProfile</code> 和 <code>NonLexicalStyleProfile</code> 是人类可读档案；需要长期复核、更新语料或生成 Skill 时，再保存完整 <code>StyleExtractionReport</code>。机器字段可以保持稳定英文键，字段内容、说明和例句仍使用目标语料语言：</p>
+<pre><code class="language-yaml">StyleExtractionReport:
+  context:
+    language:
+    textType:
+    medium:
+    purpose:
+    speakerRole:
+    readerRole:
+    relationship:
+    stakes:
+    corpusUnits:
+  observations:
+    - dimensionId:
+      applicability: applicable | not_applicable | insufficient_evidence
+      status: stable | contextual | tentative | rejected
+      primaryTendency:
+      secondaryTendency:
+      evidence:
+        count:
+        normalizedRate:
+        coverage:
+        positions:
+        contexts:
+        controlDelta:
+      functions:
+      inferredEffects:
+      confounds:
+      contextVariants:
+      confidence:
+      transferability:
+  pragmatics:
+    speechActs:
+    directness:
+    politeness:
+    optionSpace:
+    disagreementHandling:
+    reassurance:
+  perceivedAxes:
+    formality:
+    closeness:
+    power:
+    certainty:
+    actionPressure:
+    directness:
+    subjectivity:
+    emotionalValence:
+    emotionalIntensity:
+    warmth:
+    emotionalExplicitness:
+    concreteness:
+    precision:
+    density:
+    logicExplicitness:
+    explanationDepth:
+    readingSpeed:
+    pauseStrength:
+    interaction:
+    rhetoricDensity:
+  fingerprint:
+    stableCombinations:
+    contextVariants:
+    shiftTriggers:
+    forbiddenPatterns:
+    nonTransferableContent:
+  validation:
+    sampleFullStability:
+    holdoutReproduction:
+    controlDiscrimination:
+    oneVariableTests:
+    forwardGeneration:
+    contentPreservation:
+    provenanceLeakage:</code></pre>
+<p>每条观察标为“稳定”“场景限定”“暂定”或“否决”，并说明依据。不要预设所有语料共享同一次数、覆盖率或句长门槛；阈值随语料规模、文体和特征稀有度确定。</p>
+<p>公开或普通调用使用的报告只保存统计、来源编号和短上下文说明；含原文句子、人物身份、私人路径和完整溯源的证据另存私人层，只有复核来源或更新提取时读取。</p>
+<h2 id="standard-validation-生成-styleprofile">生成 StyleProfile</h2>
+<p>将跨文本稳定特征压成可执行配置；每项都应能在输出中检查。档案本身使用目标语言，并直接采用目标文风书写：克制的文风就用克制的句子，短促的文风就避免冗长解释，分析型文风就让规则呈现清楚的推理关系。不要一边把目标文风描述为“简洁”，一边用模板腔和抽象名词写出臃肿档案。</p>
+<pre><code class="language-text">StyleProfile
+（以下字段名称与内容均使用目标语料语言，不默认中英并列）
+适用范围：
+目标读者与文体：
+LexicalProfile：
+NonLexicalStyleProfile：
+词汇输出：
+句式输出：
+段落输出：
+整篇编排：
+言语行为与读者关系：
+阅读效果轴：
+主倾向与次倾向：
+场景变化与触发条件：
+三至五组声音指纹：
+禁止项：
+不可迁移项：
+正向校准样例：
+反向校准样例及失败层级：</code></pre>
+<p>示例不是要模仿某位作者，而是可检查的选择：</p>
+<pre><code class="language-text">词汇输出：保留核心术语；多用具体动词，少用抽象套词；核心词只在标题、段首、转折和结尾复现
+句式输出：中句解释，短句收束；需要转向时用完整因果或转折句
+段落输出：先事实或问题，再解释，再给行动或边界
+整篇编排：答案先行；背景在需要时补入；结尾写行动和成立条件
+言语行为与读者关系：面对非专业读者，直接但不过度口语化；普通问题用建议，高风险问题明确禁止
+阅读效果轴：冷静、清楚，避免居高临下；具体但不伪造精确度
+主倾向与次倾向：完整说明为主，短促行动句为辅
+场景变化与触发条件：安全或不可逆损失出现时提高行动压力，不提高攻击性
+三至五组声音指纹：具体动词 + 完整因果；中句解释 + 短句结论；结论先行 + 边界随后
+禁止项：口号、连续反问、无依据的程度词
+不可迁移项：来源人物立场、题材名词和故意错误
+正向校准样例：使用当前任务的中性事实新写三至五句，不复制来源原句
+反向校准样例及失败层级：用相同事实新写不符合版本，并指出问题在词汇、句式、段落还是整篇编排</code></pre>
+<p>最终档案只保留能执行、能检查的稳定结论。每个维度优先写一个主倾向和一个确有证据的次倾向，不把几十个维度都写成硬性配额。正反样例必须根据档案重新生成，只用于校准规则，不从受保护语料复制句子。</p>
+<h2 id="standard-validation-语言风格-skill-的正式档案规范">语言风格 Skill 的正式档案规范</h2>
+<p>建立五份档案前，完整读取 <a href="#four-layer-writing-contract.md">four-layer-writing-contract.md</a> 和 <a href="#four-layer-style-data-schema.md">four-layer-style-data-schema.md</a>。前者规定不可省略的分析维度，后者规定四层共同的数据结构；两者都不规定目标文风必须采用哪些技巧。每个维度都要留下状态，并建立参数词典：词汇保存实际词，句式保存实际结构，段落保存实际动作序列，整篇保存实际信息路线。四层参数同时写入 <code>style-data.json</code>，统一记录类型、频率、位置、组合和变化范围。只有目标语料支持的具体参数才能进入规则表和运行时档案。</p>
+<p>提取结果需要长期复用或绑定到 Agent 时，默认建立以下五份档案：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>文件</th>
+<th>负责内容</th>
+<th>普通运行是否加载</th>
+</tr></thead><tbody>
+<tr>
+<td><code>lexical-profile.md</code></td>
+<td>各类型词语、同义选择、频率、覆盖、位置、搭配、功能、场景和禁用项</td>
+<td>是；词汇是第一风格约束</td>
+</tr>
+<tr>
+<td><code>sentence-profile.md</code></td>
+<td>言语行为、主语与责任、焦点、条件和因果、否定、问句、命令、句长、断句和标点</td>
+<td>由 <code>style-profile.md</code> 汇总；复核时完整读取</td>
+</tr>
+<tr>
+<td><code>paragraph-profile.md</code></td>
+<td>段首进入、中段展开、段尾退出、常见骨架、拆段、过渡和列表</td>
+<td>由 <code>style-profile.md</code> 汇总；复核时完整读取</td>
+</tr>
+<tr>
+<td><code>composition-profile.md</code></td>
+<td>读者问题、答案位置、背景深度、证据与反例顺序、全文路线、行动和结尾</td>
+<td>由 <code>style-profile.md</code> 汇总；复核时完整读取</td>
+</tr>
+<tr>
+<td><code>style-profile.md</code></td>
+<td>四层运行参数、主次倾向、变化触发、声音指纹、禁止项、不可迁移项和校准样例</td>
+<td>是；作为统一运行时参数</td>
+</tr>
+<tr>
+<td><code>style-data.json</code></td>
+<td>四层客观参数、频率、位置、组合、变化范围及排行数据</td>
+<td>否；供生成、复核和 HTML 使用</td>
+</tr>
+</tbody></table></div>
+<p>五份文件使用以下文件级合同：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>文件</th>
+<th>必须出现的结构</th>
+</tr></thead><tbody>
+<tr>
+<td><code>lexical-profile.md</code></td>
+<td>目标语言与语料范围；逐类词典；规则 ID；实证词；状态；使用方式；频率、覆盖、位置、搭配或对照证据；置信度；未观察到和不可迁移类别</td>
+</tr>
+<tr>
+<td><code>sentence-profile.md</code></td>
+<td>规则 ID；规则类别；状态；适用范围；主次倾向；可观察证据；变化触发；混淆与例外；置信度；正反校准</td>
+</tr>
+<tr>
+<td><code>paragraph-profile.md</code></td>
+<td>与句式档案相同的规则字段；另写段首、展开、段尾、骨架、拆段、过渡和列表的适用性</td>
+</tr>
+<tr>
+<td><code>composition-profile.md</code></td>
+<td>与句式档案相同的规则字段；另写读者问题、答案、背景、证据、反例、行动和结尾的位置</td>
+</tr>
+<tr>
+<td><code>style-profile.md</code></td>
+<td>适用范围；分层验证状态；只含稳定或场景限定规则的“运行时规则”；规则 ID 回指；主次倾向；变化触发；三至五组声音指纹；禁止项；不可迁移项；正反校准与失败层级</td>
+</tr>
+</tbody></table></div>
+<p>生成 Skill 时还必须保存 <code>style-extraction-report.json</code>。它不是第六份风格档案，而是机器证据报告；至少包含 <code>context</code>、<code>layerMaturity</code>、<code>bodyStyleValidation</code>、带规则 ID 的 <code>observations</code>，以及 <code>sampleFullStability</code>、<code>holdoutReproduction</code>、<code>controlDiscrimination</code>、<code>oneVariableTests</code>、<code>forwardGeneration</code>、<code>contentPreservation</code>、<code>provenanceLeakage</code> 七项验证结果。每条 observation 必须保存规则类别、状态、适用性、主次倾向、证据、变化触发、混淆因素、验证结果和置信度，不能只写一个结论标签。每项验证必须是 <code>passed</code>，或在确实不适用时写成带原因的 <code>not_applicable</code>；未运行不能作为完成状态。</p>
+<p><code>bodyStyleValidation</code> 只审查面向人和 Agent 阅读的正文，不把标题、表格与表格数据、代码块、原始 JSON、导航和页面控件计入文风判断。审查范围至少包括目标 <code>SKILL.md</code>、五份正式档案、存在的答复与长文任务适配器，以及生成后的 HTML 正文。正文必须使用目标语料语言，并实际呈现词汇、句式、段落和整篇规则，不能只在表格里描述目标风格。独立任务完成复核后，保存版本、语言、所有被审查文件的正文哈希、整体源文件哈希、Markdown 与 HTML 正文哈希、四层审查结论和运行 ID；任何被审查文件改变后，旧记录必须失效。</p>
+<p><code>layerMaturity</code> 对词汇、句式、段落和整篇编排分别保存 <code>status</code>、<code>unitDefinition</code>、<code>corpusUnits</code>、<code>completedChecks</code>、<code>missingChecks</code> 与 <code>evidence</code>。<code>status</code> 只有 <code>complete</code>、<code>partial</code>、<code>insufficient</code> 三种；只有四层都为 <code>complete</code>，<code>overall</code> 才能为 <code>complete</code>。完成标准至少包括：词汇有分类、频率、覆盖、位置搭配、对照和复现；句式有句长分句、主语责任、焦点语序、言语行为、结构对照和人工复核；段落有可靠边界、段首、展开、段尾、骨架、拆段过渡和人工复核；整篇有足量完整文本、答案背景位置、证据反例顺序、全文路线、结尾合同、对照和人工复核。不满足的检查必须逐项列入 <code>missingChecks</code>，不能用前向写作测试替代来源提取证据。</p>
+<p>生成或更新语言风格 Skill 时，还必须同步生成 <code>style-guide.html</code>。它是给人查看的独立阅读版和默认用户入口，不是第六份风格档案，也不是新的规则事实源。页面必须由 <code>SKILL.md</code>、五份正式档案和 <code>style-extraction-report.json</code> 自动生成；存在任务适配器或补充指标时可以一并展示。页面至少提供目录、全文搜索、分档案折叠、明暗切换和打印，不依赖外部脚本、样式、字体或图片。页面语言跟随语料语言，页面文案直接采用目标文风。</p>
+<p>具体风格页面默认不重复讲解四层分类、提取方法、命名规则和验证合同。这些共同规则由 <code>clear-science-writing</code> 统一维护，并生成为 <code>references/language-style-standard.html</code>；读者需要时通过具体页面顶部的“通用规范”链接查看。具体页面只展示该风格实际使用什么词、怎样成句、怎样分段、怎样编排、规则何时变化以及验证结果。生成器不得把目标 <code>SKILL.md</code> 再展开成一个页面章节，以免把 Agent 执行说明和通用规范混进用户的风格参数阅读路径。</p>
+<p>面向人的具体风格页面必须按固定阅读路线重组源档案：先看整体，再依次阅读词汇、句式、段落、整篇编排，随后说明四层怎样共同使用，最后进入复核区。文件边界不能决定页面顺序。四个层级使用同一信息结构：主要特征；具体类型与表达方式；常见组合或骨架；场景变化；正反样例；数据与文本依据；置信度、未验证项和不能推出的结论。不能让词汇层有完整分类，而句式、段落和整篇只保留概括。</p>
+<p>每一层的实际结论后面必须就近附上可展开的“数据、文本依据与证据边界”。依据至少包含可观察事实、样本和全文范围、标准化频率或结构指标、覆盖率、位置和搭配、同文体或同场景对照、混淆因素、规则状态、验证结果和置信度；不适用于某一层的指标明确标为不适用。段落和整篇没有足够完整样本或人工标注时，仍展示其应分析的类型和候选骨架，但明确标注证据不足，不能把任务适配器写成来源风格。</p>
+<p>这里的“有依据”指可追溯、可复算、可对照和可证伪，不是使用“科学证明”一类笼统措辞。一个词出现次数多，只能证明它常见；还需要覆盖、位置、搭配、对照和上下文功能，才能判断它是否具有风格区分度。句式、段落和整篇必须分别保留自己的可观察指标和人工标注依据，不能从词汇统计直接跨层推出结论。</p>
+<p>五份 Markdown 档案和 JSON 报告改变后，必须重新生成 HTML。专用校验需要比较当前源文件与 HTML 的同步指纹；过期、手工复制、缺少正式档案或依赖外部资源的 HTML 都不能通过。Agent 普通运行不读取 HTML，避免它与正式档案形成重复上下文；用户查看、评审、打印或导出 PDF 时用系统浏览器打开它。不要把 Codex 源码查看器或文件预览当作 HTML 交付，因为这类预览可能禁用链接与脚本。除非用户主动要求原始档案，默认只向用户提供 HTML 入口。</p>
+<p><code>forwardGeneration</code> 对生成出的语言风格 Skill 始终适用，不能标为 <code>not_applicable</code>。通过时必须在 <code>evidence.runs</code> 中至少保存一条短答和一条长文记录。每条记录包含独立执行方式、运行 ID、原始中性任务摘要、结果摘要、通过状态、内容保持结果和来源泄漏结果。执行者必须是全新子 Agent 或独立任务；同一 Agent 的自我校准不能冒充独立前向测试。</p>
+<p>需要完整机器词典和逐项指标时，另存 <code>lexical-metrics.json</code>。含原文、来源身份、私人路径或完整上下文的证据放在独立溯源层，普通 Skill 不加载。</p>
+<p>每条分层规则采用统一记录方式：</p>
+<pre><code class="language-text">规则 ID：
+规则类别：语料观察 | 风格推断 | 任务适配 | 通用约束
+状态：稳定 | 场景限定 | 暂定 | 否决
+适用范围：
+主要倾向：
+次要倾向：
+可观察事实与证据引用：
+风格推断与输出规则：
+变化触发条件：
+避免方式：
+混淆因素与例外：
+验证结果与置信度：</code></pre>
+<p>四种规则不能混写：</p>
+<ul>
+<li><code>语料观察</code> 只说明出现了什么，不用“应当”把观察改成命令；</li>
+<li><code>风格推断</code> 必须回指观察证据，并说明适用场景、混淆因素和置信度；</li>
+<li><code>任务适配</code> 说明怎样把风格用于答复、调查或文档，不宣称来自语料；</li>
+<li><code>通用约束</code> 保存事实、安全、权限和人的权益要求，它始终优先，但不能进入声音指纹或用于证明风格名称。</li>
+</ul>
+<p><code>style-profile.md</code> 的运行时规则必须通过规则 ID 回指前四份档案。<code>稳定</code>规则可以直接进入；每条 <code>场景限定</code> 的来源规则和运行时规则都必须写出自己的触发条件；<code>暂定</code>、<code>否决</code>和<code>证据不足</code>只能留在分层档案及证据报告，不能进入运行时规则或声音指纹。三至五组声音指纹必须逐项回指已经存在的运行时规则 ID，不能只写一组无法追溯的形容词或组合。</p>
+<p>前四份档案是各层证据和状态的事实源，<code>style-profile.md</code> 是运行时汇总，任务适配器只说明如何用于答复或文档。旧入口需要继续兼容时，可以保留简短适配页并链接到总参数；不要复制整套规则形成第二个事实源。</p>
+<p>生成出的 <code>SKILL.md</code> 必须从一层链接直接指向五份正式档案、<code>style-extraction-report.json</code> 和 <code>style-guide.html</code>，并说明何时读取：普通运行读取 <code>lexical-profile.md</code> 与 <code>style-profile.md</code>；解释、复核或更新时读取句式、段落、整篇及机器证据；任务适配器按任务加载；用户需要浏览、搜索或打印整套档案时打开 HTML。引用不能只藏在另一份参考文件里。</p>
+<p>超过 100 行的参考档案在顶部提供索引。所有面向人的档案使用目标语料语言与目标文风；固定文件名、规则 ID、JSON 键、命令和代码保持机器合同。</p>
+<h2 id="standard-validation-创建与验证语言风格-skill">创建与验证语言风格 Skill</h2>
+<p>创建新 Skill 时遵循 <code>skill-creator</code> 的生命周期，不手工拼出一个无法验证的文件夹：</p>
+<ol>
+<li>使用本 Skill 的初始化封装；它内部调用 <code>skill-creator/scripts/init_skill.py</code>，并按语料语言生成五份档案骨架：</li>
+</ol>
+<p>``<code>powershell node scripts/init-language-style-skill.mjs &lt;skill-name&gt; --path &lt;输出目录&gt; --display-name &lt;正式名称&gt; --language &lt;zh|en&gt; --description &lt;触发说明&gt; </code>``</p>
+<ol>
+<li>完成语料提取，替换全部占位内容。不要让“待提取、TODO、To extract”进入最终 Skill。</li>
+<li>根据最终 <code>SKILL.md</code> 重新核对 <code>display_name</code>、<code>short_description</code> 和 <code>default_prompt</code>；metadata 改变时使用 <code>skill-creator/scripts/generate_openai_yaml.py</code> 重新生成。</li>
+<li>从当前正式档案生成给人阅读的 HTML：</li>
+</ol>
+<p>``<code>powershell node scripts/render-language-style-html.mjs &lt;目标 Skill 目录&gt; </code>``</p>
+<p>需要立即交给用户查看时增加 <code>--open</code>，让系统浏览器打开页面：</p>
+<p>``<code>powershell node scripts/render-language-style-html.mjs &lt;目标 Skill 目录&gt; --open </code>``</p>
+<ol>
+<li>先运行 <code>skill-creator/scripts/quick_validate.py &lt;目标 Skill 目录&gt;</code>，检查基础 Skill 结构。</li>
+<li>再运行专用校验：</li>
+</ol>
+<p>``<code>powershell node scripts/validate-language-style-skill.mjs &lt;目标 Skill 目录&gt; [--forbid-source &lt;作者、人物或作品名称&gt;] </code>``</p>
+<p>专用校验先检查五份档案、规则字段、证据报告、HTML 阅读版及同步指纹、直接链接、长文件索引、metadata、私人路径、来源名称，以及运行时是否混入暂定或否决规则；最终交付时再加 <code>--require-complete</code>。完整校验除核对四层状态外，还独立检查每层档案的必需参数、正向单位数、对照证据、可执行来源规则和通过验证的 observation；段落与整篇还必须记录人工复核。随后核对正文文风记录、目标语言、逐文件正文哈希和四层独立复核。报告自称 <code>complete</code>、正文只在表格里描述文风，或修改正文后仍沿用旧复核记录时都必须失败。结构通过但成熟度为 <code>partial</code> 或 <code>insufficient</code> 的结果只能作为未完成提取，不得标为正式完成版。</p>
+<ol>
+<li>使用全新子 Agent 或独立任务执行至少一个短答和一个较完整文档的前向测试。只传目标 Skill 路径和原始用户任务，不传预期答案、缺陷诊断或拟议修复；把运行 ID、执行方式、任务摘要、结果摘要、内容保持和来源隔离结果写入 <code>validation.forwardGeneration.evidence.runs</code>。记录结果后再修改 Skill，重新生成 HTML，并重新执行两种校验和前向测试。</li>
+</ol>
+<h2 id="standard-validation-验证提取结果">验证提取结果</h2>
+<p>至少完成以下验证：</p>
+<ol>
+<li><strong>样本与全文</strong>：固定样本发现的方向在全文中是否仍成立；若改变，说明漂移来自哪里。</li>
+<li><strong>保留样本</strong>：未参与规则发现的文本是否仍能被档案解释。</li>
+<li><strong>对照区分</strong>：同语言、同文体对照是否也同样具备该特征；若是，它可能只是共有写法。</li>
+<li><strong>单变量对照</strong>：只改变一个词、主语、句尾、断句或顺序，检验推定效果是否真的由该变量造成。</li>
+<li><strong>完整前向生成</strong>：用相同事实生成短答、段落和较完整文档，检查四层选择是否共同出现，而不是只插入代表词。</li>
+<li><strong>内容保持</strong>：事实、责任、数字、代码、安全和审批边界是否完全保留。</li>
+<li><strong>来源隔离</strong>：普通输出是否没有作者、人物、作品、世界观、原句和私人路径。</li>
+</ol>
+<p>验证失败的规则降为“场景限定”或“暂定”，无法排除题材和单场景影响时标为“否决”。</p>
+<h2 id="standard-validation-命名语言风格">命名语言风格</h2>
+<p>名称在 <code>LexicalProfile</code>、<code>NonLexicalStyleProfile</code> 和最终 <code>StyleProfile</code> 通过样本外复核后确定。它是对可迁移语言机制的短称，不是来源标签。</p>
+<ul>
+<li>中文正式名称使用“二至四字核心特征 + 语言风格”。核心特征优先概括推理、节奏、叙事推进、语气控制或词汇选择，例如“理性推演语言风格”“危机推进语言风格”。</li>
+<li>英文正式名称使用简短特征短语加 <code>Language Style</code>，通常控制在一至四个实义词。</li>
+<li>名称不得包含作者、人物、作品、文件名、站点名、粉丝称呼或其他来源身份。来源只写入溯源记录和证据说明。</li>
+<li>不用“高级、独特、强烈、冷酷”等缺少判断对象的形容词命名。名称必须能对应档案中已统计、可复核的选择。</li>
+<li>对白、叙事、说明文或其他文体若形成不同词汇与声音指纹，应分别命名。只有样本外测试证明它们共享主要选择时，才建立总称。</li>
+<li>名称不是永久标识。新语料改变结论时可以改名；全局或跨任务绑定只引用稳定的“当前语言风格”入口，由它映射到现行 Skill 或档案。更换风格时只修改映射，不修改每一处全局提示词。</li>
+</ul>
+<p>若产物是 Skill，还要同步迁移它的对外身份：</p>
+<ul>
+<li>正文标题和界面 <code>display_name</code> 使用目标语言正式名称；Skill 目录 slug 与 frontmatter <code>name</code> 使用与该正式名称对应、来源中立的 ASCII kebab-case。例如“理性推演语言风格”可映射为 <code>rational-inference-language-style</code>；</li>
+<li>frontmatter <code>description</code> 与触发说明只写可观察的词汇、句法、节奏、篇章和适用任务，例如“在需要条件分析、概率判断和明确行动结论时使用”；</li>
+<li>不写“模仿某人”“某作品风格”或把来源名称当关键词；</li>
+<li>作者、人物、作品和原始文件名只写入独立的 <code>source-provenance</code> 一类溯源文档。普通调用不加载该文档，只有复核来源、更新档案或查询证据时才读取。</li>
+</ul></div>
+</section><details class="source-review"><summary>查看通用规范源文件</summary><ul><li><a href="../SKILL.md">SKILL.md</a></li><li><a href="four-layer-writing-contract.md">references/four-layer-writing-contract.md</a></li><li><a href="four-layer-style-data-schema.md">references/four-layer-style-data-schema.md</a></li><li><a href="four-layer-feature-catalog.json">references/four-layer-feature-catalog.json</a></li><li><a href="four-layer-type-catalog.json">references/four-layer-type-catalog.json</a></li><li><a href="文风参数化方法论_四层类型字典版.html">references/文风参数化方法论_四层类型字典版.html</a></li><li><a href="文风参数库_四层类型字典.json">references/文风参数库_四层类型字典.json</a></li><li><a href="lexical-extraction.md">references/lexical-extraction.md</a></li><li><a href="nonlexical-style-extraction.md">references/nonlexical-style-extraction.md</a></li><li><a href="style-extraction.md">references/style-extraction.md</a></li></ul></details>
+  </main>
+</div><script>
+
+const navLinks=[...document.querySelectorAll('.layer-nav a, aside nav a')];
+const observedSections=navLinks.map(link=>document.querySelector(link.getAttribute('href'))).filter(Boolean);
+const setCurrentSection=id=>navLinks.forEach(link=>link.setAttribute('aria-current',link.getAttribute('href')==='#'+id?'true':'false'));
+if(observedSections[0])setCurrentSection(observedSections[0].id);
+if('IntersectionObserver'in window){const observer=new IntersectionObserver(entries=>{const visible=entries.filter(entry=>entry.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];if(visible)setCurrentSection(visible.target.id)},{rootMargin:'-18% 0px -68% 0px',threshold:[0,.2,.5]});observedSections.forEach(section=>observer.observe(section))}
+document.addEventListener('keydown',event=>{if(event.key==='/'&&!/^(INPUT|TEXTAREA|SELECT)$/u.test(document.activeElement?.tagName??'')){const search=document.getElementById('search');if(search){event.preventDefault();search.focus()}}});
+
+const root=document.documentElement;const panels=[...document.querySelectorAll('[data-searchable]')];const search=document.getElementById('search');const stored=localStorage.getItem('language-style-standard-theme');if(stored)root.dataset.theme=stored;search.addEventListener('input',()=>{const query=search.value.trim().toLocaleLowerCase();let visible=0;for(const panel of panels){const match=!query||panel.textContent.toLocaleLowerCase().includes(query);panel.hidden=!match;if(match)visible+=1}document.getElementById('empty').classList.toggle('visible',visible===0)});document.querySelector('[data-action="expand"]').addEventListener('click',()=>document.querySelectorAll('details').forEach(panel=>panel.open=true));document.querySelector('[data-action="collapse"]').addEventListener('click',()=>document.querySelectorAll('details').forEach(panel=>panel.open=false));document.querySelector('[data-action="print"]').addEventListener('click',()=>window.print());document.querySelector('[data-action="theme"]').addEventListener('click',()=>{root.dataset.theme=root.dataset.theme==='dark'?'light':'dark';localStorage.setItem('language-style-standard-theme',root.dataset.theme)});
+</script></body></html>

@@ -1,0 +1,53 @@
+{
+  "generatedAt": "2026-08-12T09:29:33.084Z",
+  "sourceFile": "文风参数库_四层类型字典.json",
+  "outputFile": "four-layer-type-catalog.json",
+  "counts": {
+    "vocabularyGroups": 8,
+    "vocabularyTypes": 193,
+    "sentenceTypeAxes": 9,
+    "sentenceTypes": 129,
+    "sentenceGroups": 8,
+    "sentencePatterns": 286,
+    "paragraphTypeAxes": 8,
+    "paragraphTypes": 112,
+    "paragraphGroups": 5,
+    "paragraphPatterns": 65,
+    "contentTypeAxes": 9,
+    "contentTypes": 118,
+    "contentGroups": 5,
+    "contentStructures": 60
+  },
+  "added": {
+    "vocabularyGroups": [],
+    "vocabularyTypes": [],
+    "sentenceTypeAxes": [],
+    "sentenceTypes": [],
+    "sentenceGroups": [],
+    "sentencePatterns": [],
+    "paragraphTypeAxes": [],
+    "paragraphTypes": [],
+    "paragraphGroups": [],
+    "paragraphPatterns": [],
+    "contentTypeAxes": [],
+    "contentTypes": [],
+    "contentGroups": [],
+    "contentStructures": []
+  },
+  "changed": {
+    "vocabularyGroups": [],
+    "vocabularyTypes": [],
+    "sentenceTypeAxes": [],
+    "sentenceTypes": [],
+    "sentenceGroups": [],
+    "sentencePatterns": [],
+    "paragraphTypeAxes": [],
+    "paragraphTypes": [],
+    "paragraphGroups": [],
+    "paragraphPatterns": [],
+    "contentTypeAxes": [],
+    "contentTypes": [],
+    "contentGroups": [],
+    "contentStructures": []
+  }
+}

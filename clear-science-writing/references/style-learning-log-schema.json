@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "style-learning-log-schema.json",
+  "title": "语言风格持续学习记录",
+  "description": "style-learning-log.jsonl 每一行的格式。记录候选样本和反馈，不直接充当正式风格参数。",
+  "type": "object",
+  "required": [
+    "sampleId",
+    "recordedAt",
+    "language",
+    "sourceKind",
+    "decision",
+    "layers",
+    "reviewStatus"
+  ],
+  "properties": {
+    "sampleId": { "type": "string", "minLength": 1 },
+    "recordedAt": { "type": "string", "format": "date-time" },
+    "language": { "type": "string", "minLength": 2 },
+    "sourceKind": {
+      "enum": ["source_corpus", "user_revision", "user_accepted", "user_rejected", "model_candidate"]
+    },
+    "decision": {
+      "enum": ["include_source_evidence", "include_adaptation_evidence", "negative_evidence", "candidate_only", "exclude"]
+    },
+    "textHash": { "type": "string" },
+    "textPath": { "type": "string" },
+    "differenceSummary": { "type": "string" },
+    "layers": {
+      "type": "array",
+      "items": { "enum": ["lexical", "sentence", "paragraph", "composition"] },
+      "uniqueItems": true
+    },
+    "candidateParameters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["layer", "form"],
+        "properties": {
+          "layer": { "enum": ["lexical", "sentence", "paragraph", "composition"] },
+          "parameterId": { "type": "string" },
+          "form": { "type": "string", "minLength": 1 },
+          "reason": { "type": "string" }
+        },
+        "additionalProperties": true
+      },
+      "default": []
+    },
+    "reviewStatus": { "enum": ["unreviewed", "reviewed", "rejected"] },
+    "reviewedBy": { "type": "string" },
+    "notes": { "type": "string" }
+  },
+  "anyOf": [
+    { "required": ["textHash"] },
+    { "required": ["textPath"] }
+  ],
+  "additionalProperties": true
+}
