@@ -1,4 +1,4 @@
 interface:
   display_name: "编程设计巡检"
-  short_description: "按你的设计风格巡检代码"
-  default_prompt: "Use $programming-design-review 按我的编程设计风格巡检这块代码，并输出设计矛盾报告。"
+  short_description: "针对已有逻辑做分析与巡检，按工程规范给出结论、代码位置和验证证据"
+  default_prompt: "使用 $programming-design-review，分析或巡检指定范围内的已有逻辑，并给出代码证据。"
