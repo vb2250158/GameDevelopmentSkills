@@ -8,13 +8,14 @@
 | :--- | :--- |
 | [`read-tencent-docs-opendoc`](read-tencent-docs-opendoc/) | 读取、搜索腾讯文档 opendoc 数据，并在明确授权时通过腾讯文档 MCP 修改在线表格。 |
 | [`ai-automation-workflow`](ai-automation-workflow/) | 从腾讯文档任务清单拉取待处理项，整理本地任务包，分析方案，回填方案并推进已确认修复。 |
-| [`chat-agent-bot-architecture`](chat-agent-bot-architecture/) | 设计聊天软件机器人到 Codex/Agent 的通用架构，包括消息接入、路由、会话、心跳和状态管理。 |
 | [`project-progress-pm`](project-progress-pm/) | 基于腾讯文档项目进度表做 PM 巡检，维护状态批注，拆分待实现 / 待验收 / 待确认队列并推进闭环。 |
 | [`github-submit-workflow`](github-submit-workflow/) | 通用 GitHub 提交流程，包含改动核对、脱敏处理、详细版本日志、提交说明和推送。 |
+| [`ai-code-security-review`](ai-code-security-review/) | 审查 AI 辅助代码与 Agent 执行链的秘钥、信任边界、危险执行和发布风险。 |
 | [`github-pull-workflow`](github-pull-workflow/) | 通用 GitHub 拉取流程，包含版本日志阅读、备份、拉取合并、冲突处理和配置/逻辑迁移。 |
 | [`programming-design-style`](programming-design-style/) | 写逻辑前加载适用规范，以此约束后续设计、编码、修改和验证，并按照规范实现。 |
 | [`programming-design-review`](programming-design-review/) | 针对已有逻辑使用：分析实现、检查代码规范和设计，给出结论与代码证据；进入修改前转用设计风格规范。 |
 | [`clear-science-writing`](clear-science-writing/) | 撰写、改写和审阅中文说明、科普、技术介绍与项目叙述，让非专业读者能理解内容，同时保留事实和证据边界。 |
+| [`run-stable-game-automation`](run-stable-game-automation/) | 以权威日志证据、人工接管租约、全局锁和有界重试安全运行并复核游戏每日/周常。 |
 
 ## 目录结构
 

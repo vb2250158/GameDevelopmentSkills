@@ -649,18 +649,15 @@ This page links the [lexical profile](lexical-profile.md), [sentence profile](se
 function run() {
   const options = parseArgs(process.argv.slice(2));
   const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
-  const initScript = path.resolve(
-    scriptDirectory,
-    "..",
-    "..",
-    ".system",
-    "skill-creator",
-    "scripts",
-    "init_skill.py",
-  );
+  const initCandidates = [
+    process.env.CODEX_HOME && path.join(process.env.CODEX_HOME, "skills", ".system", "skill-creator", "scripts", "init_skill.py"),
+    process.env.USERPROFILE && path.join(process.env.USERPROFILE, ".codex", "skills", ".system", "skill-creator", "scripts", "init_skill.py"),
+    path.resolve(scriptDirectory, "..", "..", ".system", "skill-creator", "scripts", "init_skill.py"),
+  ].filter(Boolean);
+  const initScript = initCandidates.find((candidate) => fs.existsSync(candidate));
 
-  if (!fs.existsSync(initScript)) {
-    throw new Error(`skill-creator init script not found: ${initScript}`);
+  if (!initScript) {
+    throw new Error(`skill-creator init script not found; checked: ${initCandidates.join(", ")}`);
   }
 
   fs.mkdirSync(options.parentDirectory, { recursive: true });
@@ -673,29 +670,44 @@ function run() {
       ? `使用 $${options.skillName}，按已经验证的词汇、句式、段落和整篇编排规则完成用户任务。`
       : `Use $${options.skillName} and apply its validated lexical, sentence, paragraph, and composition rules.`;
 
-  const result = spawnSync(
-    process.env.PYTHON || "python",
-    [
-      "-X",
-      "utf8",
-      initScript,
-      options.skillName,
-      "--path",
-      options.parentDirectory,
-      "--resources",
-      "references",
-      "--interface",
-      `display_name=${options.displayName}`,
-      "--interface",
-      `short_description=${shortDescription}`,
-      "--interface",
-      `default_prompt=${defaultPrompt}`,
-    ],
-    { encoding: "utf8" },
-  );
+  const initArguments = [
+    "-X",
+    "utf8",
+    initScript,
+    options.skillName,
+    "--path",
+    options.parentDirectory,
+    "--resources",
+    "references,scripts",
+    "--interface",
+    `display_name=${options.displayName}`,
+    "--interface",
+    `short_description=${shortDescription}`,
+    "--interface",
+    `default_prompt=${defaultPrompt}`,
+  ];
+  const pythonCandidates = [
+    process.env.PYTHON,
+    process.env.PYTHON_EXECUTABLE,
+    process.platform === "win32" && process.env.LOCALAPPDATA
+      ? path.join(process.env.LOCALAPPDATA, "Programs", "Python", "Python312", "python.exe")
+      : null,
+    "python3",
+    "python",
+  ].filter(Boolean);
+  let result = null;
+  const failures = [];
+  for (const python of [...new Set(pythonCandidates)]) {
+    const attempt = spawnSync(python, initArguments, { encoding: "utf8" });
+    if (attempt.status === 0) {
+      result = attempt;
+      break;
+    }
+    failures.push(`${python}: ${(attempt.stderr || attempt.stdout || attempt.error?.message || "failed").trim()}`);
+  }
 
-  if (result.status !== 0) {
-    throw new Error((result.stderr || result.stdout || "init_skill.py failed").trim());
+  if (!result) {
+    throw new Error(`init_skill.py failed; ${failures.join(" | ")}`);
   }
 
   const skillDirectory = path.join(options.parentDirectory, options.skillName);
@@ -708,6 +720,28 @@ function run() {
     fs.mkdirSync(path.dirname(outputPath), { recursive: true });
     fs.writeFileSync(outputPath, content, "utf8");
   }
+
+  for (const [sourceName, destinationName] of [
+    ["score-language-style.mjs", "score-style.mjs"],
+    ["build-style-score-config.mjs", "build-style-score-config.mjs"],
+  ]) {
+    fs.copyFileSync(
+      path.join(scriptDirectory, sourceName),
+      path.join(skillDirectory, "scripts", destinationName),
+    );
+  }
+  const scoreConfigResult = spawnSync(
+    process.execPath,
+    [path.join(skillDirectory, "scripts", "build-style-score-config.mjs"), skillDirectory],
+    { encoding: "utf8" },
+  );
+  if (scoreConfigResult.status !== 0) {
+    throw new Error((scoreConfigResult.stderr || scoreConfigResult.stdout || "score config initialization failed").trim());
+  }
+  const scoreSection = options.language === "zh"
+    ? `\n## 文风评分\n\n- 提取完成后用 \`node scripts/build-style-score-config.mjs .\` 从正式统计生成评分配置。\n- 输入文本评分：\`node scripts/score-style.mjs <目标文本> --json\`。\n- 只有完成多 Agent 采样、全文回扫和人工校准的层才可计入总分；未校准层必须明确显示为未评分。\n`
+    : `\n## Style scoring\n\n- After extraction, run \`node scripts/build-style-score-config.mjs .\` to derive a scoring configuration from measured data.\n- Score a text with \`node scripts/score-style.mjs <target-text> --json\`.\n- Only layers calibrated through multi-agent sampling, full-corpus recounts, and human review may contribute to the total score; uncalibrated layers must remain unscored.\n`;
+  fs.appendFileSync(path.join(skillDirectory, "SKILL.md"), scoreSection, "utf8");
 
   const htmlGuide = buildStyleGuide(skillDirectory);
   fs.writeFileSync(
@@ -724,6 +758,7 @@ function run() {
   console.log(
     `node "${path.join(scriptDirectory, "validate-language-style-skill.mjs")}" "${skillDirectory}"`,
   );
+  console.log(`node "${path.join(skillDirectory, "scripts", "score-style.mjs")}" <target-text> --json`);
 }
 
 try {

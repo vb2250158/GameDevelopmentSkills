@@ -594,14 +594,20 @@ function buildSentenceDictionaryPayload(data, catalog, isChinese) {
     };
     if (!existing || Number(measurement.frequency?.count ?? -1) > Number(existing.frequency?.count ?? -1)) patternMeasurements[catalogId] = measurement;
   }
-  const targetExtensionGroupId = "target-style-extensions";
+  const targetExtensionGroups = new Map();
+  const targetGroupId = (groupName) => {
+    if (!targetExtensionGroups.has(groupName)) targetExtensionGroups.set(groupName, `target-style-group-${targetExtensionGroups.size + 1}`);
+    return targetExtensionGroups.get(groupName);
+  };
   const targetExtensions = targetMatches
     .filter((item) => item.status !== "mapped")
     .map((match) => {
       const target = targetPatterns.find((item) => item.id === match.targetId);
+      const functionalGroup = target.manualAnalysis?.category ?? target.group ?? (isChinese ? "未分类候选" : "Unclassified candidate");
       return {
         id: `target-extension-${target.id}`,
-        group: targetExtensionGroupId,
+        group: targetGroupId(functionalGroup),
+        functionalGroup,
         name: target.name,
         template: target.template ?? "—",
         relation: isChinese ? "目标语料已有参数，但尚未与通用句式模板建立唯一对应。" : "The target corpus has this parameter, but no unique shared-pattern mapping exists yet.",
@@ -633,8 +639,21 @@ function buildSentenceDictionaryPayload(data, catalog, isChinese) {
   }
   const mappedCatalogIds = new Set(Object.keys(patternMeasurements));
   const displayedPatterns = [...catalogPatterns.filter((pattern) => mappedCatalogIds.has(pattern.id)), ...targetExtensions];
+  const extensionGroups = [...targetExtensionGroups.entries()].map(([name, id]) => ({
+    id, name,
+    description: isChinese ? "目标语料中人工复核、全文统计的实际功能组。" : "Functionally grouped, manually reviewed and corpus-counted target patterns.",
+  }));
+  const extensionTypes = extensionGroups.map((group) => {
+    const patterns = targetExtensions.filter((item) => item.group === group.id);
+    return {
+      id: `${group.id}-type`, group: "narrative-expression", name: group.name,
+      definition: isChinese ? "当前语料中实际使用的句式功能组。" : "An observed sentence-function group in the current corpus.",
+      criteria: isChinese ? "按各模板的识别式、人工复核状态与适用场景判断。" : "Use each template’s recognition rule, manual-review status, and applicability condition.",
+      example: patterns.slice(0, 3).map((item) => item.template), patternIds: patterns.map((item) => item.id),
+    };
+  });
   const typeMeasurements = {};
-  for (const type of catalog.sentenceTypes ?? []) {
+  for (const type of [...(catalog.sentenceTypes ?? []), ...extensionTypes]) {
     const measurements = (type.patternIds ?? []).map((id) => patternMeasurements[id]).filter(Boolean);
     const counted = measurements.filter((item) => typeof item.frequency?.count === "number");
     const validationStatuses = [...new Set(measurements.map((item) => item.validation?.status ?? item.status).filter(Boolean))];
@@ -652,8 +671,8 @@ function buildSentenceDictionaryPayload(data, catalog, isChinese) {
     description: isChinese ? "通用句式分类轴、类型和模板，与目标语料已有统计的映射结果。未映射表示尚未建立对应关系，不表示零次。" : "Shared sentence axes, types, and patterns with mapped target-corpus measurements. Unmapped does not mean zero occurrences.",
     measurementDimensions: catalog.measurementDimensions ?? [],
     sentenceTypeAxes: catalog.sentenceTypeAxes ?? [],
-    sentenceTypes: (catalog.sentenceTypes ?? []).filter((type) => (type.patternIds ?? []).some((id) => mappedCatalogIds.has(id))),
-    sentenceGroups: [...(catalog.sentenceGroups ?? []).filter((group) => displayedPatterns.some((pattern) => pattern.group === group.id)), ...(targetExtensions.length ? [{ id: targetExtensionGroupId, name: isChinese ? "目标文风扩展" : "Target-style extensions", description: isChinese ? "当前目标语料实际记录、但尚未进入通用句式字典的参数。" : "Parameters observed in the current target corpus but not yet promoted to the shared dictionary." }] : [])],
+    sentenceTypes: [...(catalog.sentenceTypes ?? []).filter((type) => (type.patternIds ?? []).some((id) => mappedCatalogIds.has(id))), ...extensionTypes],
+    sentenceGroups: [...(catalog.sentenceGroups ?? []).filter((group) => displayedPatterns.some((pattern) => pattern.group === group.id)), ...extensionGroups],
     sentencePatterns: displayedPatterns,
     patternMeasurements,
     typeMeasurements,
@@ -717,10 +736,15 @@ function buildStructuralDictionaryPayload(data, catalog, layer, isChinese) {
     const existing = measurements[catalogId];
     if (!existing || Number(measurement.frequency?.count ?? -1) > Number(existing.frequency?.count ?? -1)) measurements[catalogId] = measurement;
   }
-  const extensionGroupId = "target-style-extensions";
+  const manualGroups = new Map();
+  const manualGroupId = (name) => {
+    if (!manualGroups.has(name)) manualGroups.set(name, `manual-analysis-group-${manualGroups.size + 1}`);
+    return manualGroups.get(name);
+  };
   const extensions = targetMatches.filter((item) => item.status !== "mapped").map((match) => {
     const target = targetItems.find((item) => item.id === match.targetId);
-    return { id: `target-extension-${target.id}`, group: extensionGroupId, name: target.name, sequence: target[config.targetField] ?? [], purpose: isChinese ? `目标语料已有${config.title}参数，但尚未与通用模板建立唯一对应。` : `The target corpus has this ${layer} parameter, but no unique shared mapping exists yet.`, example: target.example ?? [], variants: [], notes: target.limitation ?? (isChinese ? "保留在目标扩展区；完成人工复核和跨语料验证后才可升级。" : "Keep as a target extension until validation supports promotion."), measure: [], typeIds: [], origin: "target_extension" };
+    const category = target.manualAnalysis?.category ?? (isChinese ? "未分类候选" : "Unclassified candidate");
+    return { id: `target-extension-${target.id}`, group: manualGroupId(category), name: target.name, sequence: target[config.targetField] ?? [], purpose: target.manualAnalysis?.function ?? (isChinese ? "人工分析未完整记录，不能作为评分特征。" : "Manual analysis is incomplete; this is not a scoring feature."), example: target.example ?? [], variants: [], notes: target.manualAnalysis?.sceneCondition ?? target.limitation ?? (isChinese ? "需要人工复核。" : "Requires manual review."), measure: [], typeIds: [], origin: "target_extension" };
   });
   for (const extension of extensions) {
     const target = targetItems.find((item) => `target-extension-${item.id}` === extension.id);
@@ -728,11 +752,17 @@ function buildStructuralDictionaryPayload(data, catalog, layer, isChinese) {
   }
   const mappedCatalogIds = new Set(Object.keys(measurements));
   const displayedItems = [...catalogItems.filter((item) => mappedCatalogIds.has(item.id)), ...extensions];
-  const displayedTypes = (catalog[config.types] ?? []).filter((type) => (type[config.typeLinks] ?? []).some((id) => mappedCatalogIds.has(id)));
-  const displayedAxes = (catalog[config.axes] ?? []).filter((axis) => displayedTypes.some((type) => type.group === axis.id));
-  const displayedGroups = [...(catalog[config.groups] ?? []).filter((group) => displayedItems.some((item) => item.group === group.id)), ...(extensions.length ? [{ id: extensionGroupId, name: isChinese ? "目标文风扩展" : "Target-style extensions", description: isChinese ? `当前目标语料实际记录、但尚未进入通用${config.title}字典的参数。` : "Target parameters not yet promoted to the shared dictionary." }] : [])];
+  const extensionGroups = [...manualGroups.entries()].map(([name, id]) => ({ id, name, description: isChinese ? "由原文人工分析确认的功能类别。" : "A functional category confirmed by manual source analysis." }));
+  const manualAxis = extensions.length ? { id: "manual-analysis-axis", name: isChinese ? "人工分析的功能类别" : "Manual-analysis function categories", description: isChinese ? "按 Agent 已读原文时记录的功能、场景和边界归组。" : "Grouped by function, scene and boundary recorded by the reviewing agent." } : null;
+  const extensionTypes = extensionGroups.map((group) => {
+    const items = extensions.filter((item) => item.group === group.id);
+    return { id: `${group.id}-type`, group: "manual-analysis-axis", name: group.name, definition: isChinese ? "当前语料经人工分析确认的结构功能。" : "A structural function confirmed by manual analysis of the current corpus.", criteria: isChinese ? "逐项遵守各结构的场景条件、反例和人工证据。" : "Respect each structure’s scene condition, counterexamples, and manual evidence.", example: items.slice(0, 3).map((item) => item.sequence), [config.typeLinks]: items.map((item) => item.id) };
+  });
+  const displayedTypes = [...(catalog[config.types] ?? []).filter((type) => (type[config.typeLinks] ?? []).some((id) => mappedCatalogIds.has(id))), ...extensionTypes];
+  const displayedAxes = [...(catalog[config.axes] ?? []).filter((axis) => displayedTypes.some((type) => type.group === axis.id)), ...(manualAxis ? [manualAxis] : [])];
+  const displayedGroups = [...(catalog[config.groups] ?? []).filter((group) => displayedItems.some((item) => item.group === group.id)), ...extensionGroups];
   const typeMeasurements = {};
-  for (const type of catalog[config.types] ?? []) {
+  for (const type of [...(catalog[config.types] ?? []), ...extensionTypes]) {
     const mapped = (type[config.typeLinks] ?? []).map((id) => measurements[id]).filter(Boolean);
     const counted = mapped.filter((item) => typeof item.frequency?.count === "number");
     typeMeasurements[type.id] = { mappedPatterns: mapped.length, measuredPatterns: counted.length, countSum: counted.reduce((sum, item) => sum + Number(item.frequency.count), 0), status: mapped.length ? counted.length ? "partially_measured" : "mapped_not_measured" : "not_mapped" };
@@ -1338,7 +1368,7 @@ export function buildStyleGuide(skillDirectory) {
     let sentenceView = 'patterns';
     const chinese = sentenceData.language !== 'en';
     const ui = chinese
-      ? { axes: '分类轴', types: '句式类型', patterns: '通用模板', extensions: '目标扩展', mapped: '已映射目标参数', mappedPatterns: '已映射模板 ', measuredPatterns: '已计数模板 ', count: '合计次数 ', definition: '客观定义：', criteria: '识别条件：', linked: '具体模板：', template: '结构模板：', relation: '表达关系：', markers: '形式标记：', example: '示例：', measurement: '目标统计：', noMeasurement: '尚未映射目标统计；不能解释为零次。', validation: '验证：', invalid: 'JSON 必须包含 sentenceTypeAxes、sentenceTypes、sentenceGroups 和 sentencePatterns 数组。', jsonName: '文风句式类型字典.json', htmlName: '语言风格_句式字典数据版.html' }
+      ? { axes: '分类轴', types: '句式类型', patterns: '通用模板', extensions: '实际模板', mapped: '已映射目标参数', mappedPatterns: '已映射模板 ', measuredPatterns: '已计数模板 ', count: '合计次数 ', definition: '客观定义：', criteria: '识别条件：', linked: '具体模板：', template: '结构模板：', relation: '表达关系：', markers: '形式标记：', example: '示例：', measurement: '目标统计：', noMeasurement: '尚未映射目标统计；不能解释为零次。', validation: '验证：', invalid: 'JSON 必须包含 sentenceTypeAxes、sentenceTypes、sentenceGroups 和 sentencePatterns 数组。', jsonName: '文风句式类型字典.json', htmlName: '语言风格_句式字典数据版.html' }
       : { axes: 'Axes', types: 'Sentence types', patterns: 'Shared patterns', extensions: 'Target extensions', mapped: 'Mapped target parameters', mappedPatterns: 'Mapped patterns ', measuredPatterns: 'Measured patterns ', count: 'Total count ', definition: 'Definition: ', criteria: 'Criteria: ', linked: 'Concrete patterns: ', template: 'Template: ', relation: 'Relation: ', markers: 'Markers: ', example: 'Example: ', measurement: 'Target measurement: ', noMeasurement: 'No target measurement is mapped; this does not mean zero occurrences.', validation: 'Validation: ', invalid: 'JSON must contain sentenceTypeAxes, sentenceTypes, sentenceGroups, and sentencePatterns arrays.', jsonName: 'language-style-sentence-dictionary.json', htmlName: 'language-style-sentence-data.html' };
     const escapeText = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
     const normalize = value => String(value ?? '').toLocaleLowerCase();
@@ -1369,7 +1399,7 @@ export function buildStyleGuide(skillDirectory) {
     };
     const renderPatterns = query => {
       const group = groupSelect.value; const measuredOnly = measuredInput.checked; const measurementMap = sentenceData.patternMeasurements ?? {};
-      const filtered = sortItems((sentenceData.sentencePatterns ?? []).filter(pattern => { const measurement = measurementMap[pattern.id]; const text = normalize([pattern.name,pattern.template,pattern.relation,pattern.example,...(pattern.markers ?? []),...(pattern.variants ?? []),pattern.notes].join(' ')); return Number(measurement?.frequency?.count ?? 0) > 0 && Number(measurement?.frequency?.coverageRatio ?? -1) >= 0.01 && (!group || pattern.group === group) && (!measuredOnly || measurement) && (!query || text.includes(query)); }), pattern => measurementScore(measurementMap[pattern.id]), pattern => pattern.name);
+      const filtered = sortItems((sentenceData.sentencePatterns ?? []).filter(pattern => { const measurement = measurementMap[pattern.id]; const text = normalize([pattern.name,pattern.template,pattern.relation,pattern.example,...(pattern.markers ?? []),...(pattern.variants ?? []),pattern.notes].join(' ')); const targetExtension = pattern.origin === 'target_extension'; return Number(measurement?.frequency?.count ?? 0) > 0 && (targetExtension || Number(measurement?.frequency?.coverageRatio ?? -1) >= 0.01) && (!group || pattern.group === group) && (!measuredOnly || measurement) && (!query || text.includes(query)); }), pattern => measurementScore(measurementMap[pattern.id]), pattern => pattern.name);
       const groups = groupCollections().filter(item => filtered.some(pattern => pattern.group === item.id));
       results.innerHTML = groups.map(groupData => { const cards = filtered.filter(pattern => pattern.group === groupData.id).map(pattern => { const measurement = measurementMap[pattern.id]; const example = Array.isArray(pattern.example) ? pattern.example.join(' → ') : pattern.example; return '<article class="dictionary-card word-card"><h3>' + escapeText(pattern.name) + '</h3><p><strong>' + ui.template + '</strong><code>' + escapeText(pattern.template) + '</code></p><p><strong>' + ui.relation + '</strong>' + escapeText(pattern.relation) + '</p><p><strong>' + ui.markers + '</strong>' + escapeText((pattern.markers ?? []).join('、') || '—') + '</p><p><strong>' + ui.example + '</strong>' + escapeText(example ?? '—') + '</p><p><strong>' + ui.measurement + '</strong>' + escapeText(measurementText(measurement)) + '</p><p class="dictionary-meta"><strong>' + ui.validation + '</strong>' + escapeText(measurement?.validation?.status ?? measurement?.status ?? 'unmapped') + '</p></article>'; }).join(''); return '<section class="dictionary-group"><header><h3>' + escapeText(groupData.name) + '</h3><p>' + escapeText(groupData.description ?? '') + '</p></header><div class="dictionary-group-body">' + cards + '</div></section>'; }).join('');
       return filtered.length;
@@ -1416,7 +1446,8 @@ export function buildStyleGuide(skillDirectory) {
       const filtered = sortItems((data.types ?? []).filter(type => {
         const score = typeScore(type);
         const searchable = normalize([type.name,type.definition,type.criteria,JSON.stringify(type.example),...typeLinks(type).map(id => patterns.get(id)?.name ?? id)].join(' '));
-        return score.count > 0 && score.hit >= 0.01 && (!groupSelect.value || type.group === groupSelect.value) && (!measured.checked || score.count > 0) && (!text || searchable.includes(text));
+        const manualType = String(type.id ?? '').startsWith('manual-analysis-group-');
+        return (manualType ? typeLinks(type).length > 0 : score.count > 0 && score.hit >= 0.01) && (!groupSelect.value || type.group === groupSelect.value) && (!measured.checked || manualType || score.count > 0) && (!text || searchable.includes(text));
       }), typeScore, item => item.name);
       const groups = collections().filter(axis => filtered.some(type => type.group === axis.id));
       results.innerHTML = groups.map(axis => '<section class="dictionary-group"><header><h3>' + escapeText(axis.name) + '</h3><p>' + escapeText(axis.description ?? '') + '</p></header><div class="dictionary-group-body">' + filtered.filter(type => type.group === axis.id).map(type => {
@@ -1432,7 +1463,9 @@ export function buildStyleGuide(skillDirectory) {
       const filtered = sortItems((data.patterns ?? []).filter(pattern => {
         const measurement = data.measurements?.[pattern.id];
         const searchable = normalize([pattern.name,pattern.purpose,JSON.stringify(pattern.sequence),JSON.stringify(pattern.example),pattern.notes].join(' '));
-        return Number(measurement?.frequency?.count ?? 0) > 0 && Number(measurement?.frequency?.coverageRatio ?? -1) >= 0.01 && (!groupSelect.value || pattern.group === groupSelect.value) && (!measured.checked || measurement) && (!text || searchable.includes(text));
+        const manualPattern = pattern.origin === 'target_extension';
+        const observed = manualPattern ? measurement?.frequency?.count == null || Number(measurement.frequency.count) > 0 : Number(measurement?.frequency?.count ?? 0) > 0 && Number(measurement?.frequency?.coverageRatio ?? -1) >= 0.01;
+        return observed && (!groupSelect.value || pattern.group === groupSelect.value) && (!measured.checked || manualPattern || measurement) && (!text || searchable.includes(text));
       }), pattern => measurementScore(data.measurements?.[pattern.id]), item => item.name);
       const groups = collections().filter(group => filtered.some(pattern => pattern.group === group.id));
       results.innerHTML = groups.map(group => '<section class="dictionary-group"><header><h3>' + escapeText(group.name) + '</h3><p>' + escapeText(group.description ?? '') + '</p></header><div class="dictionary-group-body">' + filtered.filter(pattern => pattern.group === group.id).map(pattern => '<article class="dictionary-card word-card"><h3>' + escapeText(pattern.name) + '</h3><p><strong>' + (chinese ? '结构序列：' : 'Sequence: ') + '</strong><code>' + escapeText((pattern.sequence ?? []).join(' → ')) + '</code></p><p><strong>' + (chinese ? '完成任务：' : 'Purpose: ') + '</strong>' + escapeText(pattern.purpose) + '</p><p><strong>' + (chinese ? '示例：' : 'Example: ') + '</strong>' + escapeText(Array.isArray(pattern.example) ? pattern.example.join(' → ') : pattern.example ?? '—') + '</p><p><strong>' + (chinese ? '目标统计：' : 'Measurement: ') + '</strong>' + escapeText(measurementText(data.measurements?.[pattern.id])) + '</p><p class="dictionary-meta"><strong>' + (chinese ? '验证：' : 'Validation: ') + '</strong>' + escapeText(data.measurements?.[pattern.id]?.validation?.status ?? data.measurements?.[pattern.id]?.status ?? 'unmapped') + '</p></article>').join('') + '</div></section>').join('');

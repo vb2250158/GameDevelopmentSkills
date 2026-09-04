@@ -130,6 +130,8 @@ Codex Hook 使用 [codex-language-style-hook.mjs](scripts/codex-language-style-h
 
 提取文风时先完整阅读 [references/lexical-extraction.md](references/lexical-extraction.md)。其中的词类和例词只是搜索范围，不是提取答案。必须回到实际语料，逐类找出主要使用的词、较少使用的同义词、稳定搭配、常见位置和覆盖范围。语料没有出现的类别只留在通用候选检查结果中，不写入目标风格 Skill 的正式参数、字典或正文。
 
+**根据目标语料创建时，先按 [多 Agent 全语料文风提取与评分工作流](references/multi-agent-corpus-workflow.md) 执行。** 这是硬门槛：先让独立 Agent 覆盖每份输入文本的分层样本，分别审阅词汇、句式、段落和整篇，再汇总人工确认的候选并跑全文回扫。禁止把通用候选库、单字命中或脚本高频项直接写成目标风格规则。每层还要保留主倾向、次倾向、场景限定与低频有效变体，不能把一部小说压成一个套路。生成 Skill 后还必须生成并校准可调用的评分器；未校准层不得计入总分。
+
 统计不能停在“出现多少次”。至少同时记录词频、标准化频率、样本覆盖率、句中位置、稳定搭配、承担功能、同义替代比例和对照组差异。单词相同但位置和作用不同，产生的文风也不同；例如“可以”可能表示许可、能力或可能性，必须按上下文分别统计。
 
 语料较大时先运行词汇扫描；采样、匿名路径、JSONL、开放词汇和全文复核的完整规则只保存在 [references/lexical-extraction.md](references/lexical-extraction.md)，不要在两处分别维护：
