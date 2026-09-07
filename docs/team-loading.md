@@ -1,14 +1,59 @@
-# 游戏项目技能加载说明
+# 团队技能加载与更新
 
-给使用 AI 协作的程序、美术和策划。公共技能来自 [GameDevelopmentSkills](https://github.com/vb2250158/GameDevelopmentSkills)，项目专用规则继续使用各项目自己的资料。
+给使用 AI 协作的程序、美术和策划。共用技能来自 [GameDevelopmentSkills](https://github.com/vb2250158/GameDevelopmentSkills)，项目专用规则随项目自身更新。
 
-## 直接发给 AI
+## 团队成员只需更新两处
 
-> 当前项目需要使用 https://github.com/vb2250158/GameDevelopmentSkills 的共用技能。请优先使用本机已有的对应仓库，核对远端与本地改动后更新；没有时克隆到我指定的工具目录。读取 docs/team-loading.md，预览并安装团队基础技能到项目的 .agents/skills/，保留已有项目技能和本地修改。按任务加载对应 SKILL.md 及其必要引用，不要全文加载整个仓库。项目入口使用本文的共用技能片段，与已有 AGENTS.md 合并；不要覆盖整个文件。报告实际安装位置、缺少的依赖和验证结果。
+项目已经包含加载入口时，首次把公共仓库克隆到项目同级的 `GameDevelopmentSkills` 目录。项目可以有不同名称；多个项目共用这一份仓库。
 
-这是安装与接入请求。克隆地址或读过 README 本身不表示安装完成。安装后的技能通常在后续任务或下一轮发现；若尚未列出，使用完整本地路径显式读取 `SKILL.md`，检查 Agent 的实际技能列表。
+```text
+工作目录/
+├─ GameDevelopmentSkills/
+├─ GameA/
+└─ GameB/
+```
 
-## 安装到项目
+```powershell
+# 在项目的父目录执行，只在首次使用时克隆。
+git clone https://github.com/vb2250158/GameDevelopmentSkills.git
+
+# 后续先检查本地修改，再拉取；遇到差异先合并，勿强制覆盖。
+git -C ./GameDevelopmentSkills status --short
+git -C ./GameDevelopmentSkills pull --ff-only
+```
+
+然后正常更新需要工作的私有项目（如 SVN Update）。项目入口会让 AI 直接读取公共仓库的当前技能，项目技能则读取项目自身文件。无需重新复制技能、运行安装器或传递个人目录。已有任务应在更新后重新读取适用技能；文件更新不会自动替换任务已经读入的旧文字。
+
+首次接入可以直接发给 AI：
+
+> 请按当前项目 AGENTS.md 和 .agents/skills/shared-game-development/SKILL.md 加载 GameDevelopmentSkills。检查 .agents/shared-skills.json 的路径，读取当前仓库清单及本次适用技能。检查本地差异后更新公共仓库和当前项目，报告解析路径及缺少的依赖。
+
+公共仓库不在项目同级时，将当前进程 `GAME_DEVELOPMENT_SKILLS_ROOT` 指向它的绝对路径。共享配置保留相对路径，不提交个人电脑目录。找不到时报告实际路径，不遍历磁盘或默默使用旧的个人技能副本。
+
+## 维护者首次接入项目
+
+1. 将 [配置模板](../templates/shared-skills.json) 放入项目 `.agents/shared-skills.json`。
+2. 将 [加载入口](../templates/shared-game-development/SKILL.md) 放入项目 `.agents/skills/shared-game-development/SKILL.md`。
+3. 在项目根 `AGENTS.md` 写明：共用技能先读取 `.agents/skills/shared-game-development/SKILL.md`，然后按任务读取共享源文件。其它 Agent 的入口（例如 `.github/copilot-instructions.md`）引用同一个根入口。
+4. 检查项目必需的专用技能、脚本和引用是否随项目提交。内部服务和业务规则留在私有项目；不要把个人账号、凭据或全局设置复制过来。
+5. 提交这些精确文件，团队成员更新项目即可得到入口。不要假定所有 Agent 都会自动注册外部技能；入口要求按实际文件路径显式读取。
+
+检查命令只读取文件：
+
+```powershell
+pwsh -NoProfile -File ./GameDevelopmentSkills/scripts/Test-SharedSkillLoading.ps1 -ProjectPath ./GameA
+```
+
+成功时显示项目与公共仓库的实际路径、14 个技能和已解析依赖。该检查覆盖文件入口、清单和语言绑定；Agent 是否实际读取、外部工具连接和 Unity 运行效果另需在使用端核验。
+
+## 外部软件
+
+阅读 Markdown 技能本身不需要安装 Python 或 Unity 插件。操作 Prefab、浏览器、表格、内部服务时才按 [依赖说明](dependencies.md) 检查相应软件、连接器和账号。拉取仓库不会替使用者登录，也不会自动安装软件。普通改图和文案工作不以 PM、发布或账号配置作为前置流程。
+
+## 独立复制安装（可选）
+
+仅适用于需要独立技能副本的项目。采用前面的直接引用方式时不运行本节。旧副本不会随公共仓库拉取自动刷新；改用直接引用后，项目入口明确读取共享源，维护者确认无项目改写内容后才清理旧副本。
+
 
 需要 Git 和 PowerShell 7。把示例路径替换成该电脑的实际目录；工作副本仍使用团队指定的正式目录。
 
@@ -29,36 +74,3 @@ pwsh -NoProfile -File .\scripts\Install-TeamSkills.ps1 -ProjectPath "D:\Projects
 基础清单见 [team-skills.json](../team-skills.json)：安装语言入口及其绑定风格、持续执行、编程设计与设计巡检，共五个技能。设计规范与巡检、语言入口与风格分别保持同级。
 
 美术需要查看 Prefab 源文件时，可在安装命令末尾增加 `-Include unity-prefab-source-editing`；该技能的 Python 依赖另按[依赖说明](dependencies.md)安装。其它可选技能按实际任务安装，不把 PM、外部发送、发布或安全审查流程变成每次改图的前置条件。
-
-## 项目入口写什么
-
-把下面片段合并到当前项目的 `AGENTS.md`，保留原有内容。路径都相对当前项目根目录。已有同类段落时修改原段落，避免重复维护。
-
-```markdown
-## 共用 AI 技能
-
-共用技能来自 https://github.com/vb2250158/GameDevelopmentSkills，项目安装目录为 `.agents/skills/`。更新和依赖说明见该仓库 `docs/team-loading.md`。
-
-- 用户可见答复使用 `.agents/skills/current-language-style/SKILL.md`，再按其中相对绑定加载风格与必要档案。
-- 多步实施、调试和研究使用 `.agents/skills/continuous-task-execution/SKILL.md`；普通短答不启动完整工程流程。
-- 写逻辑前使用 `.agents/skills/programming-design-style/SKILL.md`；分析已有逻辑使用 `.agents/skills/programming-design-review/SKILL.md`。
-- Prefab 源文件任务在已安装时使用 `.agents/skills/unity-prefab-source-editing/SKILL.md`。缺少解析工具时按技能说明安装；源文件检查与 Unity 导入、视觉及运行验收分别报告。
-- 只读取当前任务需要的技能及引用。缺失时报告精确路径和依赖，继续可独立完成的工作，不声称已经读取。
-- 项目自己的配置、资源、SVN、发布和验收规则继续适用；共用技能不扩大用户授权。
-```
-
-对于 Copilot 或其它 Agent，把同一段项目路由放进其支持的入口，或明确要求它读取根 `AGENTS.md`；不要假定所有工具都会自动识别 `.agents/skills/`。现有无条件确认与授权规则冲突时，按负责人确认的现行规则统一，不能只加一个新链接而保留互相矛盾的要求。
-
-## 项目专用技能
-
-可选技能的同仓库依赖由安装器自动补齐，例如选择 `project-progress-pm` 会同时安装表格协作与腾讯文档读取。外部软件仍按依赖说明单独配置。
-
-具体项目的配置、资源、存档、部署和验收规则由项目自己的入口与技能维护。个人目录中被团队必需流程引用的技能，应在确认可共享范围后迁入对应项目，并修复相对引用；私有内容不进入本公共仓库。
-
-没有根 `AGENTS.md` 时可用上述片段建立共用技能入口，再补充项目自己的规则。已有其它 Agent 入口时保留并核对适用约束。专项资料按实际存在的文件定位；缺失时取得原文件或修正错误路由，不用名字相似的资料冒充替代，也不照搬另一项目的内部规则。
-
-## 检查是否接入成功
-
-让 AI 报告五个基础技能的实际路径，读取语言绑定中的目标文件，再按一个真实小任务只加载适用资料。安装脚本再次运行应报告 `AddedOrPlanned=0`。如果已有文件不同，比较并合并差异后再运行，脚本没有强制覆盖选项。
-
-安装成功只说明文件已就位。远端美术电脑上的 Agent 发现、Unity 插件连接和界面效果仍在该电脑检查。
