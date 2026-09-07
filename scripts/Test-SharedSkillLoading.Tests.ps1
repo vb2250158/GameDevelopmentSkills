@@ -36,7 +36,7 @@ try {
     Copy-Item -LiteralPath "$source/current-language-style/references/runtime-settings.json" -Destination "$shared/current-language-style/references/runtime-settings.json"
     Set-Content -LiteralPath "$shared/direct-evidence-language-style/references/style-data.json" -Value '{}' -Encoding utf8
     $first = & $validator -ProjectPath $project
-    Check ($first.Repository -eq $shared -and $first.Skills -eq 14 -and $first.Writes -eq 0) 'Relocated sibling checkout with spaces'
+    Check ($first.Repository -eq $shared -and $first.Skills -eq (@($manifest.core) + @($manifest.optional)).Count -and $first.Writes -eq 0) 'Relocated sibling checkout with spaces'
     Check (-not (Test-Path -LiteralPath "$project/.agents/skills/current-language-style")) 'No copied skill installation'
     Push-Location ([IO.Path]::GetTempPath())
     try { $otherCwd = & $validator -ProjectPath $project } finally { Pop-Location }
@@ -51,7 +51,7 @@ try {
     Expect-Failure { & $validator -ProjectPath $project } 'Reject missing skill after incomplete update'
     $null = New-Item -ItemType Directory -Path "$shared/new-shared-skill"
     Set-Content -LiteralPath "$shared/new-shared-skill/SKILL.md" -Value '# Newly pulled skill' -Encoding utf8
-    Check ((& $validator -ProjectPath $project).Skills -eq 15) 'Updated shared source visible without reinstalling project'
+    Check ((& $validator -ProjectPath $project).Skills -eq ($first.Skills + 1)) 'Updated shared source visible without reinstalling project'
     $manifest.dependencies.'current-language-style' = @('unregistered-style')
     $manifest | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath "$shared/team-skills.json" -Encoding utf8
     Expect-Failure { & $validator -ProjectPath $project } 'Reject unregistered dependency'

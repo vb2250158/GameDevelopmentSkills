@@ -7,7 +7,7 @@
 - **在项目中使用**：[技能加载说明](docs/team-loading.md)，包含首次克隆、日常更新、项目入口与路径检查。
 - **缺少工具或插件**：[依赖说明](docs/dependencies.md)，区分技能文件、电脑软件和项目私有流程。
 - **维护共享技能**：[维护说明](docs/maintaining.md)，说明本地来源、同步与更新检查。
-- **查看本轮整理范围**：[14 项技能整理记录](docs/skill-review.md)，说明保留、调整和验证范围。
+- **查看本轮整理范围**：[技能整理记录](docs/skill-review.md)，说明保留、调整和验证范围。
 
 只克隆仓库不会自动加载全部技能。项目接入后，按加载说明让 AI 明确读取公共仓库中的适用技能；未接入的项目先添加入口。不要一次性加载整个仓库。
 
@@ -29,6 +29,8 @@
 | [`programming-design-review`](programming-design-review/) | 针对已有逻辑使用：分析实现、检查代码规范和设计，给出结论与代码证据；进入修改前转用设计风格规范。 |
 | [`clear-science-writing`](clear-science-writing/) | 撰写、改写和审阅中文说明、科普、技术介绍与项目叙述，让非专业读者能理解内容，同时保留事实和证据边界。 |
 | [`run-stable-game-automation`](run-stable-game-automation/) | 以权威日志证据、人工接管租约、全局锁和有界重试安全运行并复核游戏每日/周常。 |
+
+| [`agent-instruction-maintenance`](agent-instruction-maintenance/) | 精简全局与项目指令入口，迁移专项规则并核对读取预算和团队同步。 |
 
 ## 目录结构
 

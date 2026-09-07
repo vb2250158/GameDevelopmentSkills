@@ -44,7 +44,7 @@ git -C ./GameDevelopmentSkills pull --ff-only
 pwsh -NoProfile -File ./GameDevelopmentSkills/scripts/Test-SharedSkillLoading.ps1 -ProjectPath ./GameA
 ```
 
-成功时显示项目与公共仓库的实际路径、14 个技能和已解析依赖。该检查覆盖文件入口、清单和语言绑定；Agent 是否实际读取、外部工具连接和 Unity 运行效果另需在使用端核验。
+成功时显示项目与公共仓库的实际路径、15 个技能和已解析依赖。该检查覆盖文件入口、清单和语言绑定；Agent 是否实际读取、外部工具连接和 Unity 运行效果另需在使用端核验。
 
 ## 外部软件
 

@@ -1,10 +1,19 @@
 {
   "schemaVersion": 1,
   "dependencies": {
-    "current-language-style": ["direct-evidence-language-style"],
-    "programming-design-review": ["programming-design-style"],
-    "ai-automation-workflow": ["read-tencent-docs-opendoc"],
-    "project-progress-pm": ["ai-automation-workflow", "read-tencent-docs-opendoc"]
+    "current-language-style": [
+      "direct-evidence-language-style"
+    ],
+    "programming-design-review": [
+      "programming-design-style"
+    ],
+    "ai-automation-workflow": [
+      "read-tencent-docs-opendoc"
+    ],
+    "project-progress-pm": [
+      "ai-automation-workflow",
+      "read-tencent-docs-opendoc"
+    ]
   },
   "optional": [
     "unity-prefab-source-editing",
@@ -15,7 +24,8 @@
     "github-submit-workflow",
     "clear-science-writing",
     "ai-code-security-review",
-    "run-stable-game-automation"
+    "run-stable-game-automation",
+    "agent-instruction-maintenance"
   ],
   "core": [
     "current-language-style",

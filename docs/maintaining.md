@@ -24,3 +24,9 @@
 ## 验证范围
 
 直接引用模式运行 `scripts/Test-SharedSkillLoading.ps1 -ProjectPath <project>`，核对项目入口、全部技能、依赖和语言绑定。复制安装兼容检查覆盖安装清单、同级引用和语言绑定。运行 `pwsh -NoProfile -File scripts/Test-TeamSkillInstallation.ps1`，在仓库外临时夹具验证预览不写入、安装、重复安装、依赖补齐、冲突整批拒绝及路径保护。临时夹具不是游戏工作副本，不复制项目业务文件。Prefab 工具验证源文件 CLI 与路径解析；Unity 导入和远端电脑的 Agent 加载由对应环境验收。
+
+## 全局与项目入口维护
+
+维护 AGENTS.md 的长度、规则拆分或技能路由时，使用 [指令维护技能](../agent-instruction-maintenance/SKILL.md)。全局入口示例在该技能的 [参考模板](../agent-instruction-maintenance/references/global-AGENTS.md)；已有个人配置须先检查差异并合并。公共仓库拉取不会自动修改个人全局文件。
+
+根入口保持必要约定和任务索引，细则放入对应技能或按模式读取的参考。按 UTF-8 字节检查入口预算，并检查原有约束已迁移、调用入口可达、规则审计跟随新的事实来源。不要把整份大文件移到参考后仍要求每次完整读取。
