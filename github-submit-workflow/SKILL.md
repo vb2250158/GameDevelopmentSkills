@@ -7,7 +7,13 @@ description: 通用 GitHub 提交、脱敏、版本日志、提交说明、推�
 
 ## Core Rule
 
-Treat every GitHub submission as a publish operation. Verify scope, remove sensitive data, write a useful version log, then commit and push only the intended changes.
+Treat every GitHub submission as a publish operation. Before staging, reverting, merging, committing, or pushing, analyze the exact operation and create a commit approval record; then verify scope, remove sensitive data, write a useful version log, and publish only intended changes. Authorization comes from the user's request, not from loading this skill or writing a record. Continue a clearly authorized submission without asking for the same permission again.
+
+## Git Operation Approval
+
+For each operation group, record the exact paths and exclusions; operation class; base/local/upstream diff; owner; dependency or migration evidence; intended staged diff; rollback; and validation. Classify removals as migration cleanup, genuinely obsolete content, or accidental deletion to restore. A missing file, an unstaged deletion, a teammate saying “unused,” a same-named replacement, or a branch difference is evidence only, never a deletion decision by itself.
+
+If migration evidence, active references, ownership, upstream merge semantics, target branch, or publish destination remain ambiguous, stop that operation group and report the concrete decision required. Otherwise proceed through staging, commit, and push without a second approval request.
 
 ## Workflow
 
@@ -16,7 +22,7 @@ Treat every GitHub submission as a publish operation. Verify scope, remove sensi
    - Identify the current branch, upstream branch, and target remote.
    - If the repo is not initialized, has no remote, or the target branch is ambiguous, ask the user before publishing.
 
-2. Inspect the full change set.
+2. Inspect the full change set and form the Git operation approval.
    - Use `git diff --stat`, `git diff`, and `git diff --cached`.
    - Include untracked files in the review with `git status --short`.
    - Do not stage unrelated user changes.

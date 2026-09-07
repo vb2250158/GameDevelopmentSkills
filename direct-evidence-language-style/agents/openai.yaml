@@ -1,0 +1,4 @@
+interface:
+  display_name: "务实极简风格"
+  short_description: "先判断文字用途，只保留读者理解、判断或行动必需的信息"
+  default_prompt: "Use $direct-evidence-language-style to rewrite this as the shortest complete version."

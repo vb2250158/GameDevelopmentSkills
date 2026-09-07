@@ -11,6 +11,9 @@ import { LANGUAGE_STYLE_READER_BEHAVIOR, LANGUAGE_STYLE_READER_CSS } from "./lan
 const STANDARD_FILE = "language-style-standard.html";
 const SOURCE_FILES = [
   { fileName: "SKILL.md", relativePath: "SKILL.md" },
+  { fileName: "writing-guide.md", relativePath: "references/writing-guide.md" },
+  { fileName: "style-extraction-guide.md", relativePath: "references/style-extraction-guide.md" },
+  { fileName: "multi-agent-corpus-workflow.md", relativePath: "references/multi-agent-corpus-workflow.md" },
   { fileName: "four-layer-writing-contract.md", relativePath: "references/four-layer-writing-contract.md" },
   { fileName: "four-layer-style-data-schema.md", relativePath: "references/four-layer-style-data-schema.md" },
   { fileName: "four-layer-feature-catalog.json", relativePath: "references/four-layer-feature-catalog.json" },

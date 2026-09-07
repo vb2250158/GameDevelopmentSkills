@@ -1,6 +1,6 @@
 ---
 name: ai-code-security-review
-description: Reviews AI-assisted code changes and agent execution chains for security, secrets, unsafe trust boundaries, and release risk. Use when generated or modified code touches authentication, authorization, external input, shell/process execution, filesystem paths, network calls, secrets, dynamic configuration, agent tools/MCP, CI, packaging, deployment, or public release.
+description: Review AI-assisted code or agent execution chains when a security review is requested or a concrete change crosses a trust boundary, handles secrets, or exposes privileged execution. Ordinary text edits and unrelated code work do not trigger the full audit.
 ---
 
 # AI Code Security Review
@@ -34,7 +34,7 @@ The scanner is a prefilter. A clean result is not approval.
 
 ### 2. Review trust boundaries semantically
 
-Read [REFERENCE.md](REFERENCE.md) and trace each relevant path from untrusted source to privileged sink. Always inspect:
+Read the applicable sections of [REFERENCE.md](REFERENCE.md) and trace each relevant path from untrusted source to privileged sink. Inspect the boundaries touched by the change:
 
 - authentication separately from authorization;
 - mutable configuration separately from trusted policy;
@@ -59,4 +59,6 @@ After a fix, re-run the deterministic scan and every check that produced the fin
 
 ## Mandatory escalation
 
-Require explicit human approval before enabling remote access, weakening authentication/TLS/sandboxing, exposing a security mode through an API, forwarding credentials, running code from an untrusted repository, or publishing an artifact with unresolved `Critical`/`High` findings.
+Check existing explicit human authorization before enabling remote access, weakening authentication/TLS/sandboxing, exposing a security mode through an API, forwarding credentials, running code from an untrusted repository, or publishing an artifact with unresolved `Critical`/`High` findings.
+
+Ask only for an unresolved authority or scope decision; do not repeat an approval already granted for the same concrete action. Higher-priority restrictions remain in force.

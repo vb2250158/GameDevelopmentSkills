@@ -1,4 +1,4 @@
-﻿# 子Agent任务模板
+# 子Agent任务模板
 
 派发聚焦分析任务时使用这个模板。子 Agent 不共享主 Agent 上下文，所以提示词必须自包含。
 
@@ -25,8 +25,8 @@
 
 ```text
 先阅读并遵守这些规范文档：
-C:\Users\%USERNAME%\.codex\skills\ai-automation-workflow\SKILL.md
-C:\Users\%USERNAME%\.codex\skills\ai-automation-workflow\references\subagent-task-rules.md
+<实际 ai-automation-workflow 技能目录>\SKILL.md
+<实际 ai-automation-workflow 技能目录>\references\subagent-task-rules.md
 ```
 
 同时在任务包中重复下面的规范块，作为兜底。不要假设子 Agent 已经加载主 Agent 的 Skill 上下文。
@@ -35,7 +35,7 @@ C:\Users\%USERNAME%\.codex\skills\ai-automation-workflow\references\subagent-tas
 
 ```text
 通用规范（每次任务都必须遵守）：
-- 你和主 agent 不共享上下文；只能依据本提示、给定文档、截图和目标项目自行查证。
+- 不要依赖继承的主任务历史；只能依据本提示、给定文档、截图和目标项目自行查证。
 - 只处理明确分配给你的 row/section，不要顺手分析或修改其他条目。
 - 如果本任务包包含太多跨系统条目、缺少具体问题内容、缺少文档路径或截图，请返回 `状态：信息不足` 并说明任务包需要拆分或补充什么，不要自行扩大/重分组。
 - 如果任务包是大范围行号、批量文本分类或要求你一次处理几十条，请拒绝该任务包，要求拆成小批次；不要硬做。
@@ -45,7 +45,7 @@ C:\Users\%USERNAME%\.codex\skills\ai-automation-workflow\references\subagent-tas
 - Prefab/Scene/UI 问题可以读 YAML、Prefab 路径和组件引用；不要建议手改 raw YAML，方案写 Unity 里需要调整的对象、组件、绑定、层级或 RectTransform。
 - 资源问题先判断是否是逻辑引用、显示状态、层级、材质、动画或特效切换错误；只有证据指向资源本身时才建议补图/换图/改材质/动画/特效。
 - 配置问题要写具体配置表、字段、行或 ID；不要只写“检查配置”。
-- 不要泛化总结，不要套无关规范，不要把无关问题归到存档、LFActionRunner 或其他不相关系统。
+- 不要泛化总结，不要套无关规范，不要把无关问题归到存档、无关内部模块 或其他不相关系统。
 - `状态：信息不足` 主要用于以下情况：优化调整项的意图不明确；不知道这条到底想改成什么；不知道期望表现是什么；有多个合理修法但拿不定该选哪一个。不要瞎想，不要硬凑方案。
 - 如果按需求描述应该存在某个入口、文件、Prefab、资源、配置或模块，但在目标项目中找不到，也输出 `状态：信息不足`。这表示需求和项目现状对不上，无法判断怎么改。
 - 这类 `信息不足` 必须写清：查了哪些路径/关键词；没找到什么；需要用户确认真实入口、资源名、配置 ID 或模块名。
@@ -58,8 +58,8 @@ C:\Users\%USERNAME%\.codex\skills\ai-automation-workflow\references\subagent-tas
 
 ```text
 先阅读并遵守这些规范文档：
-C:\Users\%USERNAME%\.codex\skills\ai-automation-workflow\SKILL.md
-C:\Users\%USERNAME%\.codex\skills\ai-automation-workflow\references\subagent-task-rules.md
+<实际 ai-automation-workflow 技能目录>\SKILL.md
+<实际 ai-automation-workflow 技能目录>\references\subagent-task-rules.md
 
 只读分析 row <行号>，目标项目 <项目目录>，不要修改任何文件，不启动 Unity。
 

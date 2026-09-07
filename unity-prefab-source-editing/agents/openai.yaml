@@ -1,0 +1,4 @@
+interface:
+  display_name: "Unity Prefab Source Editing"
+  short_description: "直接解析并安全修改 Unity Prefab YAML 源文件"
+  default_prompt: "Use $unity-prefab-source-editing to inspect or safely modify a Unity YAML prefab source file without launching or connecting to Unity."

@@ -1,11 +1,24 @@
 # GameDevelopmentSkills
 
-这个仓库用于同步和沉淀 Codex 游戏研发相关的可复用 Skills。
+这个开源仓库维护可复用的游戏研发 AI 技能。可以把所需技能安装到项目的 `.agents/skills/`，随项目版本管理，避免换电脑后找不到。
+
+## 开始使用
+
+- **在项目中使用**：[技能加载说明](docs/team-loading.md)，包含可直接发给 AI 的要求、安装命令和项目入口片段。
+- **缺少工具或插件**：[依赖说明](docs/dependencies.md)，区分技能文件、电脑软件和项目私有流程。
+- **维护共享技能**：[维护说明](docs/maintaining.md)，说明本地来源、同步与更新检查。
+- **查看本轮整理范围**：[14 项技能整理记录](docs/skill-review.md)，说明保留、调整和验证范围。
+
+只克隆仓库不会自动加载全部技能。按加载说明安装所需目录，或让 AI 明确读取本地技能路径。不要一次性加载整个仓库。
 
 ## Skills
 
 | Skill | 用途 |
 | :--- | :--- |
+| [`current-language-style`](current-language-style/) | 选择当前语言风格，配套安装下方风格技能；绑定使用相对路径。 |
+| [`direct-evidence-language-style`](direct-evidence-language-style/) | 用简短、具体的中文解释结果、证据和剩余事项。 |
+| [`continuous-task-execution`](continuous-task-execution/) | 推进多步任务、处理失败并按实际验收结果收尾；不安装全局 Hook。 |
+| [`unity-prefab-source-editing`](unity-prefab-source-editing/) | 查看、比较和小范围修改 Unity 文本 Prefab；另需安装 Python 解析工具。 |
 | [`read-tencent-docs-opendoc`](read-tencent-docs-opendoc/) | 读取、搜索腾讯文档 opendoc 数据，并在明确授权时通过腾讯文档 MCP 修改在线表格。 |
 | [`ai-automation-workflow`](ai-automation-workflow/) | 从腾讯文档任务清单拉取待处理项，整理本地任务包，分析方案，回填方案并推进已确认修复。 |
 | [`project-progress-pm`](project-progress-pm/) | 基于腾讯文档项目进度表做 PM 巡检，维护状态批注，拆分待实现 / 待验收 / 待确认队列并推进闭环。 |

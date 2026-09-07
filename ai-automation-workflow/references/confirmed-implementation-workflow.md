@@ -1,5 +1,7 @@
 # 已确认方案实施工作流
 
+以下分工只在已选择且允许委派时适用；单 Agent 执行同样的领取、实现、验证和回读步骤，不因缺少子 Agent 停止。
+
 用户确认具体方案后，才进入实施阶段。
 
 ## `确认修正方案` 状态机
@@ -48,12 +50,12 @@
 
 ## 实施子Agent提示模板
 
-每次都要求子 Agent 阅读 `C:\Users\%USERNAME%\.codex\skills\ai-automation-workflow\SKILL.md` 和 `C:\Users\%USERNAME%\.codex\skills\ai-automation-workflow\references\subagent-task-rules.md`。同时包含 `subagent-task-template.md` 中的必带规范块，再追加下面实施规则。
+每次都要求子 Agent 阅读 `<实际 ai-automation-workflow 技能目录>\SKILL.md` 和 `<实际 ai-automation-workflow 技能目录>\references\subagent-task-rules.md`。同时包含 `subagent-task-template.md` 中的必带规范块，再追加下面实施规则。
 
 ```text
 先阅读并遵守这些规范文档：
-C:\Users\%USERNAME%\.codex\skills\ai-automation-workflow\SKILL.md
-C:\Users\%USERNAME%\.codex\skills\ai-automation-workflow\references\subagent-task-rules.md
+<实际 ai-automation-workflow 技能目录>\SKILL.md
+<实际 ai-automation-workflow 技能目录>\references\subagent-task-rules.md
 
 实施修复 row <行号>，目标项目 <项目目录>。
 

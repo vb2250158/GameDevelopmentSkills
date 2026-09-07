@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "targetLanguage": "zh-CN",
+  "activeStyleSkill": "direct-evidence-language-style",
+  "activeStyleSkillUrl": "../direct-evidence-language-style",
+  "activeStyleData": "../direct-evidence-language-style/references/style-data.json",
+  "applyDuring": [
+    "planning",
+    "visible_reasoning",
+    "commentary",
+    "final",
+    "documents"
+  ],
+  "audit": {
+    "enabled": true,
+    "reportErrors": true,
+    "blockFinalOutput": false
+  }
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "当前语言风格"
+  short_description: "将 Codex 用户可见输出绑定到可以随时替换的现行语言风格"
+  default_prompt: "使用 $current-language-style，按当前绑定的语言风格完成用户可见输出。"

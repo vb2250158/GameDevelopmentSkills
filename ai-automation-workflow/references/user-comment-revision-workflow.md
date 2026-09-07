@@ -27,7 +27,7 @@
 
 ## 子Agent补充提示
 
-某行有用户批注时，在普通子 Agent 模板后追加下面内容。每次提示词还必须要求子 Agent 阅读 `C:\Users\%USERNAME%\.codex\skills\ai-automation-workflow\references\subagent-task-rules.md`，并重复 `subagent-task-template.md` 中的必带规范块。
+某行有用户批注时，在普通子 Agent 模板后追加下面内容。每次提示词还必须要求子 Agent 阅读 `<实际 ai-automation-workflow 技能目录>\references\subagent-task-rules.md`，并重复 `subagent-task-template.md` 中的必带规范块。
 
 ```text
 用户批注：
