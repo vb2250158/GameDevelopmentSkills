@@ -1,4 +1,4 @@
-# read-tencent-docs-opendoc
+# 腾讯文档读取与维护
 
 读取、搜索腾讯文档 `opendoc` 数据，并在用户明确授权时通过腾讯文档 MCP 修改在线表格。
 

@@ -1,9 +1,9 @@
 ---
 name: unity-prefab-source-editing
-description: Directly inspect, validate, diff, and narrowly edit text-serialized Unity Prefab YAML source files without launching or connecting to Unity. Use when the user asks to read or change .prefab source YAML, fileID-targeted fields, serialized references, or round-trip safety outside Unity; do not use for arbitrary visual authoring that requires Unity import or runtime validation.
+description: "在不启动或连接 Unity 时，直接读取、验证、比较和精确修改文本序列化的 Prefab YAML。用于源码、fileID 字段、序列化引用与无损往返检查；不替代需要 Unity 导入或运行验证的视觉制作。"
 ---
 
-# Unity Prefab Source Editing
+# Unity Prefab 源文件编辑
 
 使用 `socialpoint-labs/unity-yaml-parser` 的可维护下游，直接处理文本序列化的 Unity `.prefab`。工具不启动也不连接 Unity。
 

@@ -1,6 +1,6 @@
 ---
 name: continuous-task-execution
-description: Keep non-trivial Codex work moving to verified completion while reducing repeated searches, polling, context growth, passive waiting, and premature stopping. Use for implementation, debugging, migration, deployment, testing, research, or other multi-step tasks.
+description: "用于实施、调试、迁移、部署、测试、研究等多步任务，持续推进到可验证完成，减少重复搜索、轮询、无效上下文、被动等待和提前停止。"
 ---
 
 # 持续执行与完成

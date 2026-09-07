@@ -1,90 +1,90 @@
-# AI code security review reference
+# AI 代码安全审查参考
 
-Use this reference after the deterministic diff screen. The core question is not only “does the code work?” but “what can untrusted input influence, with which authority, and where can data leave?”
+确定性差异初筛后使用本页。除功能是否正常外，还要追踪不可信输入能够影响什么、使用何种权限，以及数据可能从哪里流出。
 
-## Three independent gates
+## 三类独立检查
 
-| Gate | Protects | Typical failure | Evidence required |
-|---|---|---|---|
-| Agent execution | workstation, credentials, tools, external systems | prompt injection steers file reads, commands, writes, or outbound calls | trust labels, least-privilege tools, approval boundary, audit receipt |
-| Produced code | application and its users | insecure authorization, injection, unsafe parsing, path/command/network abuse | diff review, focused tests, SAST/SCA, semantic source-to-sink reasoning |
-| Release | repository, package, deployment, public data | secrets/private data shipped; reviewed source differs from artifact | exact commit, clean re-scan, reproducible build, package-content and checksum evidence |
+| 检查 | 保护对象 | 常见失败 | 所需证据 |
+| --- | --- | --- | --- |
+| Agent 执行 | 工作电脑、凭据、工具与外部系统 | 提示注入改变文件读取、命令、写入或对外请求 | 信任来源、最小工具权限、审批范围与执行回执 |
+| 生成代码 | 应用及使用者 | 授权、注入、解析、路径、命令或网络处理不安全 | 差异审查、匹配测试、静态安全与依赖分析、输入到高权限操作的调用链 |
+| 发布 | 仓库、软件包、部署与公开数据 | 带出凭据或私有数据，审查源码与产物不同 | 精确提交、重新扫描、可复现构建、包内容与校验和 |
 
-Passing one gate never substitutes for another.
+一类检查通过不能替代其它类别。
 
-## Risk surfaces
+## 风险范围
 
-### Identity and authority
+### 身份与权限
 
-- Every state-changing endpoint authenticates the caller.
-- Every object/action separately checks authorization and ownership.
-- Security modes, allowlists, roles, and sandbox flags cannot be changed through a lower-trust API.
-- Local/developer bypasses are unreachable in packaged or remote modes.
+- 改变状态的接口验证调用者身份。
+- 每个对象与动作分别检查权限及归属。
+- 低信任 API 不能改变安全模式、允许清单、角色和沙箱开关。
+- 本机或开发绕过方式不能在打包或远程模式中到达。
 
-### Commands and tools
+### 命令与工具
 
-- Prefer argument arrays and direct process creation; avoid shells.
-- If a shell is unavoidable, use a fixed executable and fixed command shape with validated values.
-- Tool permissions are narrow, time-bounded, and scoped to the requested workspace/target.
-- Untrusted text cannot select tools that read secrets, write files, publish, message, or control devices.
+- 优先参数数组和直接创建进程，避免 shell。
+- 必须使用 shell 时，固定可执行文件与命令结构，并验证变量值。
+- 工具权限限制在必要范围、有效期和本次工作区或目标内。
+- 不可信文本不能选择读取凭据、写文件、发布、发消息或控制设备的工具。
 
-### Files and paths
+### 文件与路径
 
-- Reject absolute paths, parent traversal, alternate streams, device paths, and unsafe symlink/junction escapes where relevant.
-- Resolve the final path and verify containment in an explicit allowed root.
-- Treat archive extraction, upload names, log paths, cache paths, and configuration-selected directories as inputs.
-- Use atomic writes for state and make destructive targets explicit.
+- 按场景拒绝绝对路径、父目录穿越、备用数据流、设备路径和符号链接或目录联接越界。
+- 解析最终路径，确认仍位于明确允许的根目录内。
+- 解压路径、上传文件名、日志、缓存和配置所选目录都作为输入校验。
+- 状态使用原子写入；破坏性操作须有精确目标。
 
-### Network and SSRF
+### 网络与服务端请求伪造（SSRF）
 
-- Use an immutable provider allowlist owned by trusted configuration.
-- Restrict schemes, hosts, ports, redirects, DNS/IP classes, response sizes, and timeouts.
-- Never forward credentials to a destination selected by request data or mutable user configuration.
-- Remote listeners require authentication, explicit opt-in, and a narrow bind address.
+- 服务提供方允许清单由可信配置持有，不能由请求修改。
+- 限制协议、主机、端口、重定向、DNS/IP 类别、响应大小与超时。
+- 不向请求数据或可变用户配置选定的目标转发凭据。
+- 远程监听须有认证、明确启用决定和受限绑定地址。
 
-### Parsing, rendering, and queries
+### 解析、渲染与查询
 
-- Choose non-executable parsers and safe loader modes.
-- Parameterize data values; allowlist identifiers that cannot be parameterized.
-- Escape output for its exact context; avoid raw HTML sinks.
-- Enforce resource limits for archives, regexes, parsers, uploads, and generated content.
+- 使用不执行代码的解析器与安全加载模式。
+- 数据值参数化；不能参数化的标识符使用允许清单。
+- 按实际输出上下文转义，避免直接写入原始 HTML。
+- 对压缩包、正则、解析、上传和生成内容限制资源消耗。
 
-### Secrets and privacy
+### 凭据与隐私
 
-- Keep secrets out of source, prompts, logs, URLs, errors, fixtures, screenshots, packages, and generated reports.
-- Test data must be unmistakably fake.
-- Redact by structure before logging; do not rely on later cleanup.
-- Review package contents, not only tracked source.
+- 凭据不进入源码、提示词、日志、URL、错误、测试数据、截图、软件包和报告。
+- 测试数据须能明确识别为虚构数据。
+- 写日志前按结构脱敏，不依赖事后清理。
+- 检查软件包内容，不能只检查版本控制中的源码。
 
-### Dependencies, CI, and release
+### 依赖、CI 与发布
 
-- Review manifest and lockfile changes together.
-- Inspect install/build hooks before running them.
-- Use dependency audit/SCA and secret scanning when available.
-- CI jobs processing untrusted issues/PRs must not also hold write tokens or repository secrets.
-- Release from the reviewed commit and verify hashes and privacy exclusions.
+- 清单与锁文件一起审查。
+- 安装或构建 Hook 执行前检查内容。
+- 可用时运行依赖审计/SCA 与凭据扫描。
+- 处理不可信议题或 PR 的 CI 作业不能同时持有写入令牌或仓库凭据。
+- 从已审查提交发布，核对哈希与隐私排除项。
 
-## Suggested evidence by risk
+## 按风险选择证据
 
-| Change | Minimum evidence |
-|---|---|
-| ordinary pure logic | focused tests + diff review |
-| external input or parser | negative/limit tests + source-to-sink review |
-| auth/authz or sensitive object access | caller/owner matrix tests + denial-path evidence |
-| filesystem/process/network | boundary tests + platform-specific containment/argument evidence |
-| Agent/MCP/automation tool | prompt-injection trust analysis + tool/secret/output separation |
-| install/build/release | manifest/hook review + dependency/secret scan + exact artifact evidence |
+| 改动 | 最低证据 |
+| --- | --- |
+| 普通纯逻辑 | 匹配测试与差异审查 |
+| 外部输入或解析器 | 拒绝和边界测试、输入到高权限操作的调用链 |
+| 认证、授权或敏感对象访问 | 调用者/归属矩阵测试与拒绝路径 |
+| 文件、进程或网络 | 边界测试与平台路径限制、参数证据 |
+| Agent、MCP 或自动化工具 | 提示注入分析，工具、凭据和输出隔离 |
+| 安装、构建或发布 | 清单与 Hook 审查、依赖与凭据扫描、精确产物证据 |
 
-## Finding format
+## 发现记录格式
 
 ```text
-[Severity] Short title
-Location: file:line
-Boundary: untrusted source -> transformation/policy -> privileged sink
-Impact: what an attacker or mistaken Agent could cause
-Evidence: code path, test, or scanner result
-Required action: smallest safe fix
-Verification: command/test/review that proves closure
+[严重程度] 简短标题
+位置：文件:行号
+边界：不可信来源 -> 转换或策略 -> 高权限操作
+影响：攻击者或误操作的 Agent 能造成什么结果
+证据：代码路径、测试或扫描结果
+所需处理：最小安全修复
+验证：能证明已修复的命令、测试或审查
 ```
 
-Do not include secret values, exploit payloads, private user data, or unsupported certainty.
+不包含凭据值、利用载荷、私人数据或没有依据的确定性结论。

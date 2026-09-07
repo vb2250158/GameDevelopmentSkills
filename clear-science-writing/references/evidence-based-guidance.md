@@ -38,14 +38,14 @@ CDC 建议用接近相关文字的简单视觉元素帮助读者识别主信息�
 
 ## 来源
 
-- [CDC Clear Communication Index: How to Use the Index](https://www.cdc.gov/ccindex/tool/how-to-use.html)：受众、主信息、行动要求、通俗语言、分块和科学状态的起草流程。
-- [CDC Clear Communication Index FAQ](https://www.cdc.gov/ccindex/tool/faq.html)：该工具的七项检查范围及其研究基础定位。
-- [CDC Clear Communication Index Score Sheet](https://www.cdc.gov/ccindex/pdf/full-index-score-sheet.pdf)：主信息、行动、语言、信息设计、科学状态、数字和风险的具体核对问题。
-- [National Academies: Communicating Science Effectively](https://nap.nationalacademies.org/read/23674/chapter/4)：科学不确定性的来源及其沟通挑战。
-- [National Academies: Communicating Science Effectively, summary](https://www.nationalacademies.org/read/23674/chapter/2)：科学沟通应依据受众与具体情境选择方法。
-- [NIH Plain Language: Getting Started or Brushing Up](https://www.nih.gov/institutes-nih/nih-office-director/office-communications-public-liaison/clear-communication/plain-language-nih/plain-language-getting-started-or-brushing-up)：写作前准备、连接读者、呈现信息、视觉清晰度和测试修订的工作框架。
-- [PLOS: Ten Simple Rules for Structuring Papers](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005619)：中心贡献、读者的阅读路径，以及背景—内容—结论结构。
-- [UK Department for Education: Plain Language Guidance](https://design.education.gov.uk/content-design/plain-language)：按用户语言写作，首次出现术语时给出通俗解释。
+- [CDC 清晰沟通指标：使用方法](https://www.cdc.gov/ccindex/tool/how-to-use.html)：受众、主信息、行动要求、通俗语言、分块和科学状态的起草流程。
+- [CDC 清晰沟通指标：常见问题](https://www.cdc.gov/ccindex/tool/faq.html)：该工具的七项检查范围及其研究基础定位。
+- [CDC 清晰沟通指标：评分表](https://www.cdc.gov/ccindex/pdf/full-index-score-sheet.pdf)：主信息、行动、语言、信息设计、科学状态、数字和风险的具体核对问题。
+- [美国国家科学院：有效科学传播](https://nap.nationalacademies.org/read/23674/chapter/4)：科学不确定性的来源及其沟通挑战。
+- [美国国家科学院：有效科学传播（摘要）](https://www.nationalacademies.org/read/23674/chapter/2)：科学沟通应依据受众与具体情境选择方法。
+- [NIH 简明语言：入门与复习](https://www.nih.gov/institutes-nih/nih-office-director/office-communications-public-liaison/clear-communication/plain-language-nih/plain-language-getting-started-or-brushing-up)：写作前准备、连接读者、呈现信息、视觉清晰度和测试修订的工作框架。
+- [PLOS：组织论文的十条简单规则](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005619)：中心贡献、读者的阅读路径，以及背景—内容—结论结构。
+- [英国教育部：简明语言指南](https://design.education.gov.uk/content-design/plain-language)：按用户语言写作，首次出现术语时给出通俗解释。
 - [中国科协：科技工作者科普创作指南](https://www.carm.org.cn/tzgg/art/2026/art_f12e332e5ff2d76ba28de1516c085027.html)：中文文本科普的受众、流程、科学性、通俗性与可及性原则。
 - [教育部：普通高中语文课程标准有关说明](https://www.moe.gov.cn/jyb_xxgk/xxgk_jyta/jyta_jiaocaiju/202009/t20200910_486904.html)：根据具体情境和对象进行表达交流的课程要求。
 - [教育部：高考作文题传递怎样的教改信号](https://www.moe.gov.cn/jyb_xwfb/s5148/201606/t20160608_248574.html)：材料、具体情境与逻辑思辨在高考作文命题中的作用。

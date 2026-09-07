@@ -1,6 +1,6 @@
 ---
 name: read-tencent-docs-opendoc
-description: 读取、搜索和在用户明确授权时修改腾讯文档表格。Use when 用户提供 docs.qq.com 的 dop-api/opendoc JSONP 链接、要求 Codex 查看腾讯文档表格行列/单元格、在不粘贴 Cookie 的前提下搜索腾讯文档内容，或使用 TENCENT_DOCS_TOKEN 通过腾讯文档 MCP 修改在线表格。
+description: 读取、搜索和在用户明确授权时修改腾讯文档表格。用于用户提供 docs.qq.com 的 dop-api/opendoc JSONP 链接、要求 Codex 查看腾讯文档表格行列/单元格、在不粘贴 Cookie 的前提下搜索腾讯文档内容，或使用 TENCENT_DOCS_TOKEN 通过腾讯文档 MCP 修改在线表格。
 ---
 
 # 读取腾讯文档 Opendoc

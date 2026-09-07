@@ -1,79 +1,56 @@
 ---
 name: github-submit-workflow
-description: 通用 GitHub 提交、脱敏、版本日志、提交说明、推送流程。Use when Codex needs to submit local changes to GitHub in any project, including checking diffs, protecting secrets, writing detailed changelogs, committing, pushing, and optionally preparing PR information.
+description: 用于向 GitHub 提交本地改动，包括检查差异、脱敏、维护版本日志、撰写提交说明、提交与推送，以及按需准备 PR 资料。
 ---
 
-# GitHub Submit Workflow
+# GitHub 提交工作流
 
-## Core Rule
+## 核心规则
 
-Treat every GitHub submission as a publish operation. Before staging, reverting, merging, committing, or pushing, analyze the exact operation and create a commit approval record; then verify scope, remove sensitive data, write a useful version log, and publish only intended changes. Authorization comes from the user's request, not from loading this skill or writing a record. Continue a clearly authorized submission without asking for the same permission again.
+提交到 GitHub 按发布操作处理。暂存、回退、合并、提交或推送前，分析精确操作并记录提交判断，再核对范围、移除敏感内容、编写版本说明，只发布预期修改。授权来自用户要求，读取技能或写记录本身不授予权限；明确授权的提交继续执行，不重复询问同一批准。
 
-## Git Operation Approval
+## Git 操作判断
 
-For each operation group, record the exact paths and exclusions; operation class; base/local/upstream diff; owner; dependency or migration evidence; intended staged diff; rollback; and validation. Classify removals as migration cleanup, genuinely obsolete content, or accidental deletion to restore. A missing file, an unstaged deletion, a teammate saying “unused,” a same-named replacement, or a branch difference is evidence only, never a deletion decision by itself.
+每组操作记录精确路径和排除项、操作类别、base/local/upstream 差异、修改归属、依赖或迁移证据、预期暂存内容、回退方法与验证。删除分为迁移清理、确定废弃或误删恢复。文件缺失、未暂存删除、同事说“没用”、同名替代或分支差异只是线索，不能单独决定删除。
 
-If migration evidence, active references, ownership, upstream merge semantics, target branch, or publish destination remain ambiguous, stop that operation group and report the concrete decision required. Otherwise proceed through staging, commit, and push without a second approval request.
+迁移证据、有效引用、修改归属、上游合并语义、目标分支或发布位置仍不明确时，只停止该组操作，说明所需决定；其余已核对的操作继续暂存、提交和推送，不增加第二次审批。
 
-## Workflow
+## 工作流程
 
-1. Confirm repository context.
-   - Run `git status --short --branch` and `git remote -v`.
-   - Identify the current branch, upstream branch, and target remote.
-   - If the repo is not initialized, has no remote, or the target branch is ambiguous, ask the user before publishing.
+1. 确认仓库上下文。
+   - 执行 `git status --short --branch` 和 `git remote -v`，确认当前分支、上游和目标远端。
+   - 仓库未初始化、无远端或目标分支不明确时，发布前询问用户。
+2. 检查完整改动并形成操作判断。
+   - 使用 `git diff --stat`、`git diff`、`git diff --cached`。
+   - 通过 `git status --short` 纳入未跟踪文件检查。
+   - 不暂存无关用户修改；未经用户明确要求不回退用户修改。
+3. 完成脱敏。
+   - 检查改动文件中的凭据、私有服务地址、令牌、Cookie、认证头、访问密钥、私钥、密码、电话、邮箱、内部 ID 和机器绝对路径。
+   - 重点检查配置、日志、截图、生成导出物、`.env`、锁文件和复制的命令输出。
+   - 敏感值替换为 `<redacted>`、`<token>`、`<internal-host>` 或项目认可的环境变量名。
+   - 真实凭据已提交或可能泄露时，明确告知用户需要轮换，不打印凭据值。
+4. 项目有版本信息时同步更新。
+   - 核对 `package.json`、锁文件、清单、构建及应用版本、既有发布日志。
+   - 本次改变交付行为且项目有明确版本号时，提交前提升相应版本。
+   - `package.json` 与 `package-lock.json` 等配套文件保持一致。
+   - 有变更或发布日志时新增或更新条目；日志和提交正文明确写出发布版本。
+5. 提交前验证。
+   - 运行项目最小有效测试、构建、代码检查、格式或校验命令。
+   - 无可靠验证入口时如实报告。
+   - 验证失败先修复，除非用户明确要求发布已知失败状态。
+6. 写版本日志。
+   - 有版本号时明确新版本，说明改了什么、原因、涉及文件或模块。
+   - 包含行为与配置变化、迁移、兼容及验证结果。
+   - 优先更新已有变更日志；没有时放在提交正文或 PR 说明。
+7. 写提交说明。
+   - 标题简短且说明真实改动，例如“新增 GitHub 发布工作流技能”。
+   - 非简单改动附正文，列出适用版本、行为、脱敏、版本日志和验证。
+   - 避免只写 `update`、`fix` 或 `changes`。
+8. 暂存、提交与推送。
+   - 只暂存已审查文件；提交前再次查看 `git diff --cached --stat` 和 `git diff --cached`。
+   - 暂存内容与预期范围一致后提交，推送到正确远端和分支。
+   - 新分支推送时用 `git push -u` 明确上游。
 
-2. Inspect the full change set and form the Git operation approval.
-   - Use `git diff --stat`, `git diff`, and `git diff --cached`.
-   - Include untracked files in the review with `git status --short`.
-   - Do not stage unrelated user changes.
-   - Never revert user changes unless the user explicitly asks.
+## 汇报
 
-3. Perform mandatory desensitization.
-   - Search changed files for secrets, private endpoints, tokens, cookies, authorization headers, access keys, private keys, passwords, phone numbers, email addresses, internal IDs, and machine-specific absolute paths.
-   - Inspect config files, logs, screenshots, generated exports, `.env` files, lockfiles, and copied command output especially carefully.
-   - Replace sensitive values with placeholders such as `<redacted>`, `<token>`, `<internal-host>`, or project-approved environment variable names.
-   - If a real secret was already committed or may have been exposed, tell the user clearly that the credential should be rotated. Do not print the secret.
-
-4. Update project version metadata when present.
-   - Check common version sources such as `package.json`, lockfiles, manifest files, build metadata, app metadata, and existing release or changelog files.
-   - If the project has an explicit version number and the submission changes shipped behavior, bump the appropriate version before committing.
-   - Keep paired version files in sync, such as `package.json` and `package-lock.json`.
-   - If the project has a changelog or release log, add or update an entry for the new version.
-   - The version log and commit body must explicitly name the released version number.
-
-5. Verify behavior before committing.
-   - Run the smallest meaningful test, build, lint, format, or validation command available for the project.
-   - If no reliable validation exists, state that explicitly in the final summary.
-   - If validation fails, fix the issue before committing unless the user asks to publish a known failing state.
-
-6. Write a detailed version log.
-   - State the new version number when the project has version metadata.
-   - Summarize what changed, why it changed, and which files or modules were affected.
-   - Include behavior changes, configuration changes, migration notes, compatibility notes, and validation results.
-   - Prefer adding or updating the project changelog when the repo already has one.
-   - If there is no changelog, include the detailed version log in the commit body or PR notes.
-
-7. Prepare a good commit message.
-   - Use a concise subject that names the actual change, for example `Add GitHub publish workflow skills`.
-   - Add a commit body when the change is non-trivial.
-   - Include bullets for: version number when present, changed behavior, desensitization result, version log, and validation.
-   - Avoid vague messages such as `update`, `fix`, or `changes`.
-
-8. Stage, commit, and push.
-   - Stage only reviewed files.
-   - Re-run `git diff --cached --stat` and `git diff --cached` before committing.
-   - Commit after the staged diff matches the intended scope.
-   - Push to the correct remote and branch.
-   - If pushing creates a new branch, set upstream explicitly with `git push -u`.
-
-## Output
-
-End with a compact publish report:
-
-- branch and remote pushed
-- commit hash and subject
-- released version number when present
-- version log summary
-- desensitization result
-- validation command and result
-- any follow-up needed, such as opening a PR or rotating exposed credentials
+简要报告远端与分支、提交哈希及标题、适用的发布版本、变化、脱敏结果、验证命令和结果，以及创建 PR 或轮换已泄露凭据等剩余事项。

@@ -1,6 +1,6 @@
 ---
 name: shared-game-development
-description: Resolve shared game development skills for this project. Use for skill discovery, team setup, and before loading shared language, implementation, review, or Unity source editing guidance.
+description: "为当前项目定位和加载共用游戏研发技能。用于技能发现、团队接入，以及读取共享语言、实施、审查或 Unity 源文件编辑规范前的路径解析。"
 ---
 
 # 加载共用技能
@@ -15,3 +15,5 @@ description: Resolve shared game development skills for this project. Use for sk
 6. 技能文件就位不等于外部软件、账号和服务就绪。只在实际任务需要时读取公共仓库 `docs/dependencies.md`，发现当前可用能力；缺失软件按授权安装，缺少账号或服务配置时报告具体缺口，继续独立工作。
 
 入口只负责解析与路由，不自动加载全部技能，也不授权发布、发送消息或写入真实数据。
+
+所有 Skill 的标题、触发描述、操作说明、配套参考和界面提示统一使用中文；技能标识、文件名、命令、代码与 API 字段保持原样。后续新增和修改继续遵循本约定。

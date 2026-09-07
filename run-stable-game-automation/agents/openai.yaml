@@ -1,4 +1,4 @@
 interface:
-  display_name: "稳定游戏自动化"
-  short_description: "以日志证据、人工接管租约和有界重试安全运行游戏每日与周常"
-  default_prompt: "Use $run-stable-game-automation to safely run and verify the current game dailies and weeklies."
+  display_name: 稳定游戏自动化
+  short_description: 以日志证据、人工接管租约和有界重试安全运行游戏每日与周常
+  default_prompt: 使用 $run-stable-game-automation，根据实际执行器能力完成游戏自动化，记录可复核证据与接管边界。
