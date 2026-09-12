@@ -30,6 +30,14 @@ git -C ./GameDevelopmentSkills pull --ff-only
 
 公共仓库不在项目同级时，将当前进程 `GAME_DEVELOPMENT_SKILLS_ROOT` 指向它的绝对路径。共享配置保留相对路径，不提交个人电脑目录。找不到时报告实际路径，不遍历磁盘或默默使用旧的个人技能副本。
 
+## 已有个人规则的电脑
+
+若个人 `AGENTS.md` 仍强制读取个人路径下的同名技能，按 [全局入口模板](../agent-instruction-maintenance/references/global-AGENTS.md) 合并“共享源优先”和任务触发条件，不整份覆盖个人文件。保留个人账号例外和机器配置，不把它们提交到公共仓库或项目。公共仓库更新不会自动修改个人全局规则。
+
+可交给另一端 Agent：
+
+> 更新后请检查个人与项目 AGENTS.md 的同名技能来源。项目配置共享入口时只读取共享正文；普通状态查询、路径查找和文案修改不触发编程实施或系统化巡检。先展示差异，取得本机规则修改授权后精确合并，保留账号、凭据和项目安全边界。最后验证共享加载，并重新读取本任务适用规则。
+
 ## 维护者首次接入项目
 
 1. 将 [配置模板](../templates/shared-skills.json) 放入项目 `.agents/shared-skills.json`。
