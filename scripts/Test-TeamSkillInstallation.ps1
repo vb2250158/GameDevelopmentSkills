@@ -13,7 +13,9 @@ function Assert-True([bool]$Condition, [string]$Message) {
 $preview = & $installer -ProjectPath $fixture | ConvertFrom-Json
 Assert-True (-not $preview.Applied -and -not (Test-Path -LiteralPath (Join-Path $fixture '.agents'))) 'Preview wrote files.'
 $first = & $installer -ProjectPath $fixture -Apply | ConvertFrom-Json
-Assert-True ($first.Applied -and $first.AddedOrPlanned -gt 0 -and $first.Skills.Count -eq 5) 'Core installation failed.'
+Assert-True ($first.Applied -and $first.AddedOrPlanned -gt 0 -and $first.Skills.Count -eq 6) 'Core installation with design dependency failed.'
+$designDependency = Join-Path $fixture '.agents/skills/design-responsive-interactions/SKILL.md'
+Assert-True (Test-Path -LiteralPath $designDependency -PathType Leaf) 'Responsive interaction design dependency was not installed.'
 $again = & $installer -ProjectPath $fixture -Apply | ConvertFrom-Json
 Assert-True ($again.AddedOrPlanned -eq 0 -and $again.Unchanged -eq $first.AddedOrPlanned) 'Repeated installation was not idempotent.'
 $bindingRoot = Join-Path $fixture '.agents/skills/current-language-style'

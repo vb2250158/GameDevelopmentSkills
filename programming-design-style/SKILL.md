@@ -31,6 +31,7 @@ description: "写逻辑前使用：把工程规范用于设计、编码、修改
 | --- | --- | --- |
 | 业务状态、内容扩展、配置、身份、缓存、存档或工具保存 | [数据驱动与数据归属](references/data-ownership-and-workflows.md) | 数据定义与执行能力如何分工；谁真正读写 |
 | UI、引擎组件、客户端或其他表现入口 | [逻辑与表现边界](references/logic-presentation-boundaries.md) | 既有拥有者、表现职责和真实写入链路 |
+| 用户交互、后台计算、同步、保存、加载或等待恢复 | [流畅交互与后台处理设计](../design-responsive-interactions/SKILL.md) | 优先无感、连续操作、必要等待的最小范围、真实结果与可恢复状态 |
 | 编码、重构或代码规范审查 | [代码质量基线](references/code-quality-standards.md) | 项目规则、可读性、失败处理和验证 |
 | 按 ID 查找对象、Unity 运行时引用、海量列表/事件流或事件绑定 | [运行时查找、海量数据与事件绑定](references/runtime-lookup-large-data-and-bindings.md) | 索引维护、首屏与渐进加载、缓存边界、声明式绑定及生命周期 |
 | 替换旧逻辑、兼容、删除或归档 | [质量基线中的退役规则](references/code-quality-standards.md#新旧逻辑归档和兼容) | 当前内容可恢复性、局部与整文件退役 |

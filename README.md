@@ -27,6 +27,7 @@
 | [`github-pull-workflow`](github-pull-workflow/) | 通用 GitHub 拉取流程，包含版本日志阅读、备份、拉取合并、冲突处理和配置/逻辑迁移。 |
 | [`programming-design-style`](programming-design-style/) | 写逻辑前加载适用规范，以此约束后续设计、编码、修改和验证，并按照规范实现。 |
 | [`programming-design-review`](programming-design-review/) | 针对已有逻辑使用：分析实现、检查代码规范和设计，给出结论与代码证据；进入修改前转用设计风格规范。 |
+| [`design-responsive-interactions`](design-responsive-interactions/) | 软件与游戏的流畅交互设计：内部处理优先无感，确需等待时提供真实状态、最小操作限制与恢复路径。 |
 | [`clear-science-writing`](clear-science-writing/) | 撰写、改写和审阅中文说明、科普、技术介绍与项目叙述，让非专业读者能理解内容，同时保留事实和证据边界。 |
 | [`run-stable-game-automation`](run-stable-game-automation/) | 以权威日志证据、人工接管租约、全局锁和有界重试安全运行并复核游戏每日/周常。 |
 

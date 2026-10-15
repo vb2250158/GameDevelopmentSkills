@@ -1,0 +1,4 @@
+interface:
+  display_name: "流畅交互与后台处理设计"
+  short_description: "让软件与游戏的内部处理尽量无感，确需等待时提供真实状态和局部恢复"
+  default_prompt: "使用 $design-responsive-interactions，设计或审查这段交互，优先无感完成内部处理，确认必要等待的最小范围及失败恢复方式。"

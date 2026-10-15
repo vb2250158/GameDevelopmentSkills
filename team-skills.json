@@ -7,6 +7,9 @@
     "programming-design-review": [
       "programming-design-style"
     ],
+    "programming-design-style": [
+      "design-responsive-interactions"
+    ],
     "ai-automation-workflow": [
       "read-tencent-docs-opendoc"
     ],
@@ -16,6 +19,7 @@
     ]
   },
   "optional": [
+    "design-responsive-interactions",
     "unity-prefab-source-editing",
     "read-tencent-docs-opendoc",
     "ai-automation-workflow",
