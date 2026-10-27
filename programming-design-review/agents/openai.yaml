@@ -1,4 +1,4 @@
 interface:
   display_name: "编程设计巡检"
-  short_description: "针对已有逻辑做分析与巡检，按工程规范给出结论、代码位置和验证证据"
+  short_description: "已有逻辑巡检；重点或高影响疑点按详细模式多 Agent 取证并制定具体方案"
   default_prompt: "使用 $programming-design-review，分析或巡检指定范围内的已有逻辑，并给出代码证据。"

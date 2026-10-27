@@ -1,6 +1,9 @@
 {
   "schemaVersion": 1,
   "dependencies": {
+    "continuous-task-execution": [
+      "programming-design-review"
+    ],
     "current-language-style": [
       "direct-evidence-language-style"
     ],
