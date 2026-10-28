@@ -1,0 +1,3 @@
+﻿interface:
+  display_name: "玩法画面清单与效果图张数"
+  short_description: "先列操作、状态、每屏信息与点击变化，再决定效果图张数"
