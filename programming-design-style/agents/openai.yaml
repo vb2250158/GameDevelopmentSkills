@@ -1,4 +1,4 @@
 interface:
   display_name: "编程设计风格"
-  short_description: "写逻辑前加载规范，约束后续设计、编码、修改与验证，再按规范实现"
+  short_description: "设计与编码规范：数据归属、日志记录、输入锁、黑屏与相机锁定"
   default_prompt: "使用 $programming-design-style，先加载本次适用规范，再按照规范编写逻辑。"

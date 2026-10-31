@@ -1,6 +1,6 @@
 ---
 name: programming-design-style
-description: "写逻辑前使用：把工程规范用于设计、编码、修改和验证。按触及范围约束数据驱动、数据归属、查找性能、渐进加载、事件绑定、日志、协作锁与旧逻辑收尾。分析或巡检已有逻辑使用 programming-design-review；纯路径查询、状态读取或普通文案修改不触发。"
+description: "写逻辑前使用：把工程规范用于设计、编码、修改和验证。按触及范围约束数据驱动、数据归属、查找性能、渐进加载、事件绑定、日志记录与性能、输入锁、黑屏和相机锁定与旧逻辑收尾。分析或巡检已有逻辑使用 programming-design-review；纯路径查询、状态读取或普通文案修改不触发。"
 ---
 
 # 编程设计风格
@@ -38,7 +38,7 @@ description: "写逻辑前使用：把工程规范用于设计、编码、修改
 | 编码、重构或代码规范审查 | [代码质量基线](references/code-quality-standards.md) | 项目规则、可读性、失败处理和验证 |
 | 按 ID 查找对象、Unity 运行时引用、海量列表/事件流或事件绑定 | [运行时查找、海量数据与事件绑定](references/runtime-lookup-large-data-and-bindings.md) | 索引维护、首屏与渐进加载、缓存边界、声明式绑定及生命周期 |
 | 替换旧逻辑、兼容、删除或归档 | [质量基线中的退役规则](references/code-quality-standards.md#新旧逻辑归档和兼容) | 当前内容可恢复性、局部与整文件退役 |
-| 关键操作、数据变动、日志、输入锁、黑屏或异步锁定 | [操作日志与协作锁](references/operation-logging-and-lock-coordination.md) | 数据源和堆栈追踪、开关分组、逐次释放 |
+| 关键操作、数据变动、日志、输入锁、黑屏、相机或异步锁定 | [日志记录与操作锁定](references/operation-logging-and-lock-coordination.md) | 数据源和堆栈追踪、开关分组、逐次释放 |
 
 只有核对设计来源时才读 [来源摘录](references/source-notes.md)，不把来源举例当作当前项目的强制框架。
 
