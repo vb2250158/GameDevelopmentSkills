@@ -1,0 +1,4 @@
+interface:
+  display_name: "Avalonia 桌面界面"
+  short_description: "复用主题与控件，核对布局、绑定、焦点和真实窗口行为"
+  default_prompt: "使用 $avalonia-ui-design，先读取项目主题和控件规范，再完成界面修改及实际窗口验证。"

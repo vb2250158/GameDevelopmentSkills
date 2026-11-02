@@ -1,0 +1,4 @@
+interface:
+  display_name: "面向用户设计"
+  short_description: "按用户任务组织界面、文案、导航和使用说明"
+  default_prompt: "使用 $design-for-users，核对读者、目标、下一步和失败恢复，整理当前界面或文档。"

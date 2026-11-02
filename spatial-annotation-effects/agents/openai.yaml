@@ -1,0 +1,4 @@
+interface:
+  display_name: "空间与时序标注"
+  short_description: "逐帧语义定位、挂点与轨迹校对，复用统一坐标规范"
+  default_prompt: "使用 $spatial-annotation-effects，加载统一视觉标注与多帧规则，核对目标、采样、实现和漂移。"

@@ -1,0 +1,4 @@
+interface:
+  display_name: "UI 设计与实施"
+  short_description: "按阶段加载通用 UI 规范，复用项目组件并验证真实交互"
+  default_prompt: "使用 $ui-design-workflow，先读取项目 UI 规范与现有组件，再按当前阶段完成设计、实现及对应验证。"

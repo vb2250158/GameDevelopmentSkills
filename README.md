@@ -8,6 +8,7 @@
 - **缺少工具或插件**：[依赖说明](docs/dependencies.md)，区分技能文件、电脑软件和项目私有流程。
 - **维护共享技能**：[维护说明](docs/maintaining.md)，说明本地来源、同步与更新检查。
 - **查看本轮整理范围**：[技能整理记录](docs/skill-review.md)，说明保留、调整和验证范围。
+- **选择 UI 设计能力**：[UI 技能分工](docs/ui-skill-map.md)，区分通用流程、项目规范与外部工具。
 
 只克隆仓库不会自动加载全部技能。项目接入后，按加载说明让 AI 明确读取公共仓库中的适用技能；未接入的项目先添加入口。不要一次性加载整个仓库。
 
@@ -28,11 +29,25 @@
 | [`programming-design-style`](programming-design-style/) | 写逻辑前加载适用规范，以此约束后续设计、编码、修改和验证，并按照规范实现。 |
 | [`programming-design-review`](programming-design-review/) | 针对已有逻辑使用：分析实现、检查代码规范和设计，给出结论与代码证据；进入修改前转用设计风格规范。 |
 | [`design-responsive-interactions`](design-responsive-interactions/) | 软件与游戏的流畅交互设计：内部处理优先无感，确需等待时提供真实状态、最小操作限制与恢复路径。 |
-| [gameplay-screen-effect-inventory](gameplay-screen-effect-inventory/) | 出玩法效果图前：列操作与状态、每屏信息与点击变化，再决定效果图张数。 |
 | [`clear-science-writing`](clear-science-writing/) | 撰写、改写和审阅中文说明、科普、技术介绍与项目叙述，让非专业读者能理解内容，同时保留事实和证据边界。 |
 | [`run-stable-game-automation`](run-stable-game-automation/) | 以权威日志证据、人工接管租约、全局锁和有界重试安全运行并复核游戏每日/周常。 |
-
 | [`agent-instruction-maintenance`](agent-instruction-maintenance/) | 精简全局与项目指令入口，迁移专项规则并核对读取预算和团队同步。 |
+
+## UI 设计与交互
+
+项目先读取自身 UI 入口，再由通用流程选择本次能力。品牌、颜色、组件、资源路径和具体工具配置保存在项目；外部技能按 [分工与安装说明](docs/ui-skill-map.md) 获取。
+
+| Skill | 用途 |
+| --- | --- |
+| [`ui-design-workflow`](ui-design-workflow/) | 通用入口：复用、阶段分流、设计交接、Unity UI 实施与验收。 |
+| [`design-for-users`](design-for-users/) | 用户任务、导航、文案与使用说明。 |
+| [`gameplay-screen-effect-inventory`](gameplay-screen-effect-inventory/) | 先列操作和状态、每屏信息及点击变化，再决定效果图张数。 |
+| [`visual-annotation-effects`](visual-annotation-effects/) | 统一坐标、批注预览、UI 映射和视觉验证。 |
+| [`spatial-annotation-effects`](spatial-annotation-effects/) | 空间与时序兼容入口，复用视觉标注及多帧细则。 |
+| [`design-chat-app-experience`](design-chat-app-experience/) | 聊天产品的会话、未读、投递、通知和恢复体验。 |
+| [`avalonia-ui-design`](avalonia-ui-design/) | Avalonia 桌面布局、绑定、焦点与实际窗口验证。 |
+
+后台加载、等待和恢复继续使用上方 `design-responsive-interactions`，业务代码继续使用 `programming-design-style`；按任务选择读取，安装依赖不表示全部加载。
 
 ## 目录结构
 

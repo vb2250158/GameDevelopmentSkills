@@ -24,6 +24,12 @@ Assert-True (Test-Path -LiteralPath (Join-Path $bindingRoot ($binding.activeStyl
 Assert-True (Test-Path -LiteralPath (Join-Path $bindingRoot $binding.activeStyleData)) 'Style data binding cannot resolve.'
 $optional = & $installer -ProjectPath $fixture -Include project-progress-pm -Apply | ConvertFrom-Json
 Assert-True ('ai-automation-workflow' -in $optional.Skills -and 'read-tencent-docs-opendoc' -in $optional.Skills) 'Optional dependencies were omitted.'
+$ui = & $installer -ProjectPath $fixture -Include ui-design-workflow -Apply | ConvertFrom-Json
+$uiRequired = @('ui-design-workflow', 'design-for-users', 'gameplay-screen-effect-inventory', 'visual-annotation-effects', 'spatial-annotation-effects', 'design-chat-app-experience', 'avalonia-ui-design')
+Assert-True (@($uiRequired | Where-Object { $_ -notin $ui.Skills }).Count -eq 0) 'UI workflow dependencies were omitted.'
+Assert-True (Test-Path -LiteralPath (Join-Path $fixture '.agents/skills/visual-annotation-effects/references/motion-annotation.md') -PathType Leaf) 'Spatial route lost its shared reference.'
+$uiAgain = & $installer -ProjectPath $fixture -Include ui-design-workflow -Apply | ConvertFrom-Json
+Assert-True ($uiAgain.AddedOrPlanned -eq 0) 'Repeated UI installation was not idempotent.'
 $target = Join-Path $fixture '.agents/skills/continuous-task-execution/SKILL.md'
 [IO.File]::AppendAllText($target, "`nLocal custom rule.`n")
 $hash = (Get-FileHash -LiteralPath $target).Hash

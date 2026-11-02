@@ -6,6 +6,7 @@
 | --- | --- | --- |
 | 项目基础协作 | 默认直接读取共享仓库；复制安装时包含 `team-skills.json` 中的基础技能及其依赖 | 能读取本地文件的 Agent；语言绑定使用同级相对路径 |
 | 软件与游戏的流畅交互设计 | `design-responsive-interactions`；随编程设计技能安装，也可单独使用 | 设计阶段无需外部工具；运行验收使用目标应用的测试与性能测量能力 |
+| UI 设计、标注与平台界面 | `ui-design-workflow` 及其依赖，或选择单项 | 见 [UI 分工](ui-skill-map.md)；图片生成、Unity Editor、Avalonia/Android 构建及设备按任务提供，技能文件不包含这些运行环境 |
 | 只供个人跨项目使用 | Agent 支持的用户级 skills 目录，例如 Codex 的 `$CODEX_HOME/skills` | 全目录安装；同名项目副本也存在时明确实际加载路径，不依赖隐含优先级 |
 | Prefab YAML 查看与修改 | `unity-prefab-source-editing` 技能目录 | Git、PowerShell、带 `py` 启动器的 Python 3.11、独立解析器虚拟环境 |
 | Unity 内的可视化制作与验收 | 各电脑安装团队使用的 Unity 插件与项目桥接工具 | 目标 Unity 版本、项目导入与编译正常、对应 Editor 可连接 |

@@ -1,0 +1,4 @@
+interface:
+  display_name: "视觉标注与还原"
+  short_description: "用同一份坐标数据生成批注、实施映射并验证视觉结果"
+  default_prompt: "使用 $visual-annotation-effects，先查看目标并记录坐标 JSON，展示和自检预览，再完成已授权实现与对比。"
